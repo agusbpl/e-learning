@@ -13,8 +13,9 @@ capturas y la historia anterior quedan en la instalación privada.
 - [x] Revisar semánticamente las cuatro actividades y rúbricas del tutorial según la regla de evaluación rigurosa. Ver [revision-tutorial.md](revision-tutorial.md).
 - [x] Reproducir y corregir la oscilación del PDF; prueba que falla antes y pasa después. Ver [pendientes-interfaz.md](pendientes-interfaz.md).
 - [x] Crear y verificar respaldo privado de la historia Git, el diff local y los archivos sin seguimiento antes de reemplazar la historia pública.
-- [ ] Sustituir la rama pública por una historia inicial filtrada con identidad pública; comprobar ramas, tags y clones posteriores.
-- [ ] Completar Python, MCP y los 15 recorridos de navegador sobre el candidato corregido, y CI sobre el commit publicado.
+- [x] Sustituir la rama pública por una historia inicial filtrada con identidad pública; comprobar ramas, tags y clones posteriores.
+- [x] Completar 104 pruebas Python sin omisiones, MCP y los 15 recorridos de navegador; repetir los recorridos desde un clon público limpio.
+- [ ] Completar CI sobre el commit publicado, incluyendo las correcciones surgidas en GitHub.
 - [x] Reportes privados de vulnerabilidades habilitados en GitHub.
 - [x] Revisar el despliegue local actual: sin proceso Tailscale, CLI, socket o unidad local de Serve/Funnel disponibles. No se habilitó acceso público.
 - [ ] Crear el tag `v0.1.0` y publicar notas y paquete correspondientes al commit verificado.
@@ -55,3 +56,9 @@ referencias internas, corresponde el procedimiento de
 No se declara una purga del servidor sin confirmación de GitHub.
 
 Los resultados y límites históricos se conservan en [auditoria-release.md](auditoria-release.md).
+
+El clon público posterior a la sustitución no contiene los diez commits
+anteriores y sus archivos coinciden con el manifiesto. La consulta directa
+del SHA anterior todavía responde en GitHub: la limpieza de la rama está
+comprobada, la purga de objetos del servidor no. Se preparó una solicitud
+privada para GitHub Support; no se envió automáticamente.

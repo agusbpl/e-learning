@@ -16,5 +16,7 @@ Preparada el 2026-10-15. La fecha de publicación se fija al crear la release.
 
 - Se corrigió la oscilación del PDF al abrirlo con barras de desplazamiento clásicas: el lector reserva su espacio antes de ajustar la página al ancho. La prueba nueva falla con el código anterior y comprueba también la resolución eDP de 1366×768. No se integró el parche experimental anterior.
 
-Resultados y límites en [la auditoría](docs/auditoria-release.md). La publicación queda pendiente de completar [la verificación de release](docs/release.md).
+- Se corrigió el robo tardío del foco al cerrar el diálogo de renombrar: el evento de cierre ya no pisa una selección posterior del lector.
+- CI corrige el contexto de su directorio temporal y espera el guardado confirmado antes de leer el Markdown persistido.
 
+Resultados y límites en [la auditoría](docs/auditoria-release.md). La publicación queda pendiente de completar [la verificación de release](docs/release.md).

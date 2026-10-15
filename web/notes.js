@@ -228,7 +228,7 @@ window.ClassNotes=(()=>{
   function properties(id=current?.id){return manage(id,'properties');}
   async function manage(id,kind){
     await flush();const note=noteById(id);if(!note)return;
-    const origin=document.activeElement,title=E('input',{'aria-label':'Nuevo nombre del apunte',required:'required',maxlength:200}),folderInput=E('input',{'aria-label':'Carpeta del apunte',maxlength:120,placeholder:'Sin carpeta'}),share=E('input',{type:'checkbox'});
+    const title=E('input',{'aria-label':'Nuevo nombre del apunte',required:'required',maxlength:200}),folderInput=E('input',{'aria-label':'Carpeta del apunte',maxlength:120,placeholder:'Sin carpeta'}),share=E('input',{type:'checkbox'});
     title.value=note.title;folderInput.value=note.folder;share.checked=note.shared;
     const save=E('button',{type:'submit',class:'quiet'},'Guardar'),form=E('form',{onsubmit:async e=>{
       e.preventDefault();save.disabled=true;
@@ -244,7 +244,9 @@ window.ClassNotes=(()=>{
     }},E('h2',{},kind==='rename'?'Nombre del apunte':kind==='folder'?'Mover de carpeta':'Propiedades del apunte'));
     if(kind!=='folder')form.append(E('label',{},'Nombre',title));if(kind!=='rename')form.append(E('label',{},'Carpeta',folderInput));if(kind==='properties')form.append(E('label',{class:'check'},share,'Compartir con el agente autor'));
     form.append(E('div',{class:'dialog-actions'},E('button',{type:'button',class:'text-button',onclick:()=>dialog.close()},'Cancelar · Esc'),save));
-    const dialog=E('dialog',{class:'note-manage-dialog'+(kind==='rename'?' note-rename-dialog':'')},form);dialog.addEventListener('close',()=>{dialog.remove();if(origin?.isConnected)origin.focus({preventScroll:true});});document.body.append(dialog);dialog.showModal();(kind==='folder'?folderInput:title).focus();(kind==='folder'?folderInput:title).select();
+    // Native close() restores focus synchronously. Its queued close event must
+    // not override a newer panel selection or the submit handler's focus.
+    const dialog=E('dialog',{class:'note-manage-dialog'+(kind==='rename'?' note-rename-dialog':'')},form);dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);dialog.showModal();(kind==='folder'?folderInput:title).focus();(kind==='folder'?folderInput:title).select();
   }
   function restoreListFocus(id){if(document.body.classList.contains('notes-list-open'))document.getElementById('class-note-search')?.focus();else document.getElementById('main')?.focus({preventScroll:true});}
   async function deleteNote(id=current?.id){

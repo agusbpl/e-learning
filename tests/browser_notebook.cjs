@@ -42,6 +42,10 @@ server.ThreadingHTTPServer(('127.0.0.1',server.PORT),server.Handler).serve_forev
   await page.keyboard.type('gr');await page.waitForSelector('.note-rename-dialog[open]');await page.getByLabel('Nuevo nombre del apunte',{exact:true}).fill('Libro · Unidad 1');await page.keyboard.press('Control+Enter');await page.waitForSelector('.note-rename-dialog',{state:'detached'});assert.equal(await page.locator('#note-name-button').textContent(),'Libro · Unidad 1');
   const afterRename=(await get(base+'/api/state')).library.notes[0];assert.equal(afterRename.id,beforeRename.id);assert.equal(afterRename.title,'Libro · Unidad 1');assert.equal(afterRename.documentId,beforeRename.documentId);assert.deepEqual(afterRename.pageNotes,beforeRename.pageNotes);assert(await canvasBeforeRename.evaluate(e=>e.isConnected));await pdfPage(1);
   await page.locator('#note-name-button').click();await page.getByLabel('Nuevo nombre del apunte',{exact:true}).fill('Nombre descartado');await leave();assert.equal(await page.locator('#note-name-button').textContent(),'Libro · Unidad 1');assert.equal((await get(base+'/api/state')).library.notes[0].title,'Libro · Unidad 1');
+  // A queued dialog close must not steal focus after the user selects the reader.
+  await page.locator('#note-name-button').click();await page.waitForSelector('.note-rename-dialog[open]');
+  await page.evaluate(()=>{document.querySelector('.note-rename-dialog').close();const reader=document.querySelector('.source-reader');reader.tabIndex=-1;reader.focus({preventScroll:true});});
+  await page.waitForSelector('.note-rename-dialog',{state:'detached'});assert(await page.evaluate(()=>document.activeElement.matches('.source-reader')),'Closing the rename dialog must preserve a newer reader focus');
   // Resize by keyboard and pointer, persist the split, and preserve notes/page.
   await leave();await page.keyboard.press('Control+Space');await page.keyboard.press('h');
   const split=page.locator('.notes-splitter'),layout=page.locator('.resizable-notes'),initialWidth=(await page.locator('.source-reader').boundingBox()).width;

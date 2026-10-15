@@ -171,3 +171,32 @@ como despliegue predeterminado y Serve privado como opción por configurar.
 La sustitución de la rama se verificará desde un clon nuevo y con las referencias
 de GitHub. No elimina copias anteriores ni acredita que GitHub haya purgado
 objetos no referenciados; una solicitud de purga requiere GitHub Support.
+
+### Verificación del árbol publicado y correcciones de CI
+
+La rama main se sustituyó mediante `--force-with-lease`, comprobando el SHA
+anterior. Un clon público nuevo recibió únicamente la historia limpia y
+308 archivos permitidos más el manifiesto, todos con sus SHA-256 correctos.
+La API no anunció forks ni PR históricos. El SHA anterior aún responde por
+consulta directa: no se declara purgado. Quedó preparado un borrador privado
+para GitHub Support, sin enviar mensajes externos.
+
+Python local 3.14 pasó las 104 pruebas sin omisiones con el entorno de autoría
+temporal. MCP pasó la integración actual y legacy. Los 15 recorridos pasaron
+con Chromium oficial 145, GPU desactivada, y se repitieron desde el clon público.
+El arranque real con `start.sh` en datos temporales comprobó loopback, un pliego
+local vacío y el tutorial único en Primer trazo.
+
+La primera ejecución de Actions falló al validar el YAML: `runner.temp` no es
+un contexto admitido en el env del job. Se reemplazó por una ruta temporal
+dentro de cada runner Linux aislado. La siguiente corrida pasó Python 3.11,
+Python 3.12 y MCP, pero detectó dos carreras en los recorridos de navegador:
+la prueba de Markdown leía el espejo antes de confirmar el guardado; además,
+el close diferido del diálogo de renombrar devolvía el foco al encabezado
+y podía anular el prefijo de cambio de panel.
+
+La prueba de Markdown espera ahora el estado de guardado confirmado. Se agregó
+un caso que cierra el diálogo y selecciona inmediatamente el lector: falla
+antes de la corrección de foco. El cierre usa ahora la devolución síncrona
+nativa del navegador, y su evento diferido únicamente retira el diálogo. No
+se relajaron las comprobaciones de contenido, página o IDs.

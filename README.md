@@ -33,4 +33,4 @@ Los cursos y las evaluaciones requieren revisión humana de fuentes y rúbricas.
 
 ## Participar
 
-El código que se libere de Glosa se ofrece bajo [Apache License 2.0](LICENSE). Las contribuciones se reciben bajo la misma licencia; consultá [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md) y [SUPPORT.md](SUPPORT.md). Las bibliotecas vendorizadas conservan sus licencias, indicadas en [NOTICE](NOTICE). El árbol y la historia de trabajo aún requieren la [revisión de release](docs/release.md) antes de publicarse; los materiales de terceros necesitan permisos independientes.
+El código de Glosa se distribuye bajo [Apache License 2.0](LICENSE). Las contribuciones se reciben bajo la misma licencia; consultá [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md) y [SUPPORT.md](SUPPORT.md). Las bibliotecas vendorizadas conservan sus licencias, indicadas en [NOTICE](NOTICE). La distribución usa un árbol y una historia filtrados según la [revisión de release](docs/release.md); los materiales de terceros necesitan permisos independientes.

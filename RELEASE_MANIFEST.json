@@ -28,8 +28,8 @@
       "bytes": 746
     },
     "CHANGELOG.md": {
-      "sha256": "e394b8e30e277c95f402a03c760055a20a2903f75945c9c97acad44a1d1f0f7e",
-      "bytes": 1603
+      "sha256": "81f938b8efd5390a85f3500ba8f2f304032168fef910b1e1110f4aa4ad740bd1",
+      "bytes": 1868
     },
     "CODE_OF_CONDUCT.md": {
       "sha256": "cdd11e40d1dda148d4e0add4367a833d5883ea2e866bd9981e912af2fdd33a9d",
@@ -48,8 +48,8 @@
       "bytes": 880
     },
     "README.md": {
-      "sha256": "f9e45dc221530b92ae418686a660238094004837d443adf11c1cf678886ae483",
-      "bytes": 2624
+      "sha256": "c56a735500f1ca3cf80677d33721a0dbe2e4440285cb3b41484ddc5e1a9c3e02",
+      "bytes": 2607
     },
     "SECURITY.md": {
       "sha256": "ef61c2e76f7c312718a402beb4926193fd7435a844a73c69186feb745c341115",
@@ -84,8 +84,8 @@
       "bytes": 1549
     },
     "docs/auditoria-release.md": {
-      "sha256": "2cc25595e4e2e3479778a72baddb8a7cce8648c6df4a81ed602b0b97a50b020b",
-      "bytes": 13393
+      "sha256": "ee6beecebc0dd00272973692719c5564f6ce15bab9d1f0febbe56fa2306cd5a2",
+      "bytes": 15156
     },
     "docs/contexto-tutor.md": {
       "sha256": "a4f36951bb4f286c7172df411d9268727e9e5242bdaf7d430e6c0a2ed02e7c0c",
@@ -120,8 +120,8 @@
       "bytes": 7251
     },
     "docs/release.md": {
-      "sha256": "025ecc951d536387750375c08940973803d43d49e3ae45a3230b8a1becd6f044",
-      "bytes": 3802
+      "sha256": "9d3d5277691ad6adb220b8a7e5da3719b152b3b28295b401e558fb2041c47af3",
+      "bytes": 4275
     },
     "docs/revision-tutorial.md": {
       "sha256": "b9a15df21a1735dc815f28f1b0d7561305211decc8017d0acd10f0aae48e5a40",
@@ -224,8 +224,8 @@
       "bytes": 9085
     },
     "tests/browser_headers.cjs": {
-      "sha256": "85c793d66aa3c8777f399be9ba933a0a392cb7d2707ea2710f3cfeecb9062f97",
-      "bytes": 4423
+      "sha256": "9c2304338366bbf39635ecbef2df0de89c8ac0db592acfefe7288a1df1d18e65",
+      "bytes": 4532
     },
     "tests/browser_highlights.cjs": {
       "sha256": "b60a3122e180887940d1260708b44de3aa7d773e3fc058fd97a0f29107657b9f",
@@ -244,8 +244,8 @@
       "bytes": 8627
     },
     "tests/browser_notebook.cjs": {
-      "sha256": "40c7432842f5d5fee25226d906453886fd7f4b66436a79d6be7b725fc32f28b3",
-      "bytes": 16977
+      "sha256": "5906769d1f05688d3042ec85c439a30bfcd0ceac9d1d776e294e88efc4d3e009",
+      "bytes": 17577
     },
     "tests/browser_notes_workspace.cjs": {
       "sha256": "2c5b543e677fed6816ea5e2bf810f039c1f6ee69cce25b877fc084a7b4051444",
@@ -384,8 +384,8 @@
       "bytes": 9923
     },
     "web/notes.js": {
-      "sha256": "eed9f6d23801405f99af78402b1cdbb0193be1cd813d2ede8c0b75e79c6663cf",
-      "bytes": 59679
+      "sha256": "6e22be2bb1b27a5643e6a2be39ae19e91c8f2a7250e50da6eba5cbd31a6c37fa",
+      "bytes": 59743
     },
     "web/plan.js": {
       "sha256": "c3d4f1c4573bf97c8209abfa29589cc23ee6f408de09604e10e2134103ffc376",
