@@ -1,0 +1,215 @@
+/* Página silenciosa: la lectura es el centro; los paneles se convocan. */
+body.silent-ui{--bg:#fcfbf8;--ink:#242422;--muted:#7c7b77;--green:#424a40;--pale:#f1f1eb;--line:#e6e4de;padding-bottom:115px}
+.silent-ui .topbar{height:76px;padding:0 40px;border-bottom:0;gap:24px}
+.silent-ui .brand{font:16px Georgia,serif;letter-spacing:5px}
+.silent-ui .context-button{background:none;border:0;color:var(--muted);font:14px var(--serif);padding:10px;max-width:320px;text-align:left}
+.silent-ui nav{margin:auto;gap:26px}
+.silent-ui .nav{font:15px var(--serif);height:42px}
+.silent-ui .nav.active{color:var(--ink);border-bottom:1px solid var(--ink)}
+.silent-ui .workspace,.silent-ui.global-focus .workspace:not(.notes-view){display:block;min-height:calc(100vh - 191px)}
+.silent-ui .workspace>main,.silent-ui.global-focus .workspace:not(.notes-view)>main{max-width:780px;padding:65px 30px 55px}
+.silent-ui h1{font:normal 43px/1.18 var(--serif);letter-spacing:-1px;margin:18px 0 24px}
+.silent-ui .lede{font:17px/1.8 var(--serif);color:var(--muted)}
+.silent-ui .lesson-meta{margin:0}
+.silent-ui .reading-details{font-size:11px;margin:22px 0 44px;color:var(--muted)}
+.silent-ui summary{cursor:pointer}
+.silent-ui .theory{font:19px/1.85 var(--serif)}
+.silent-ui .theory-section{margin:38px 0}
+.silent-ui .theory-section h2{font-size:26px;margin-bottom:20px}
+.silent-ui .source-list a{font-size:11px}
+.silent-ui .activity{border:0;border-radius:0;background:none;padding:22px 0;margin:20px 0 40px;border-bottom:1px solid var(--line)}
+.silent-ui .activity h3{font:22px/1.4 var(--serif);margin:16px 0 22px}
+.silent-ui .activity textarea{background:transparent;border-radius:0;font:16px/1.7 var(--serif);padding:18px;min-height:130px}
+.silent-ui .choice-option{border:0;border-bottom:1px solid var(--line);border-radius:0;padding:14px 9px;font:16px/1.5 var(--serif)}
+.silent-ui .choice-option{position:relative;gap:0;cursor:pointer}
+.silent-ui .choice-option input[type=radio]{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.silent-ui .choice-option:has(input:focus-visible){outline:2px solid #9fbb8f;outline-offset:2px}
+.silent-ui .choice-option:has(input:checked) .choice-text{font-weight:600}
+.silent-ui .plan-status{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.silent-ui .plan-status .text-button{font-size:11px;white-space:nowrap}
+.silent-ui .plan-settings{display:inline-flex;align-items:center;gap:14px;margin-top:24px;font:14px var(--serif);color:var(--muted)}
+.silent-ui .plan-settings:hover,.silent-ui .plan-settings:focus-visible{color:var(--ink)}
+.silent-ui .tutor-context-link{display:flex;align-items:center;gap:14px;align-self:flex-start;font:14px var(--serif);margin:0 0 12px;color:var(--muted);flex-shrink:0}
+.context-manager{max-width:780px;max-height:92dvh;overflow:auto}
+.context-manager input[type=search]{margin-bottom:20px;background:transparent}
+.context-manager .context-choice{display:flex;align-items:flex-start;gap:10px;margin:12px 0;font-size:13px;cursor:pointer}
+.context-choice small{display:block;color:var(--muted);font-size:11px;margin-top:4px;white-space:pre-wrap;overflow-wrap:anywhere}
+.context-choice input[type=checkbox]{flex-shrink:0;margin:4px 0 0;accent-color:var(--green)}
+.context-flags{padding-bottom:12px;border-bottom:1px solid var(--line)}
+.context-section{margin:20px 0}
+.context-section>summary{font:18px var(--serif)}
+.context-source{padding:7px 0;border-bottom:1px solid var(--line)}
+.context-source-options{margin:0 0 12px 23px}
+.context-source-options[hidden]{display:none}
+.context-source-options input[hidden]{display:none}
+.context-add-actions{display:flex;flex-wrap:wrap;gap:22px}
+.context-preview{font-size:12px;overflow-wrap:anywhere}
+.context-preview pre{max-height:350px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px}
+.context-error{color:#82462d;font-size:13px}
+.context-text-source{padding:16px 0;border-bottom:1px solid var(--line)}
+.context-manager .dialog-actions{flex-wrap:wrap}
+.silent-ui .primary,.silent-ui .quiet{border-radius:3px}
+.silent-ui .global-controls{position:fixed;inset:auto 0 0;height:43px;flex-wrap:nowrap;padding:0 30px;gap:18px;border-top:1px solid var(--line);border-bottom:0;background:var(--bg);z-index:25}
+.silent-ui .global-controls .text-button{font-size:11px;color:var(--muted);white-space:nowrap}
+.silent-ui #global-mode{font:bold 10px monospace;letter-spacing:1px;white-space:nowrap}
+.silent-ui #global-keyboard-hint{flex:1;text-align:right;font-size:10px}
+.silent-ui .global-controls select{max-width:100px;border:0;padding:3px;font-size:10px}
+.silent-ui #session-clock{font:11px monospace;white-space:nowrap}
+.silent-ui #panel-backdrop{position:fixed;inset:76px 0 43px;background:#26262112;border:0;z-index:30;cursor:default}
+.silent-ui #panel-backdrop[hidden]{display:none}
+.silent-ui .workspace>.sidebar,.silent-ui .workspace>.tutor{display:none;position:fixed;z-index:35;background:var(--bg);box-shadow:0 8px 45px #24242215}
+.silent-ui.outline-open .workspace>.sidebar{display:flex;inset:76px auto 43px 0;width:min(360px,92vw);overflow:auto;padding:26px;border:1px solid var(--line)}
+.silent-ui .panel-close{align-self:flex-end;font-size:11px;margin:0 0 18px auto}
+.silent-ui #tutor-dock{position:fixed;bottom:43px;left:50%;transform:translateX(-50%);width:min(780px,100%);display:flex;align-items:center;gap:20px;border:0;border-top:1px solid var(--line);padding:18px 30px;background:var(--bg);text-align:left;z-index:20}
+.silent-ui #tutor-preview{font:15px/1.6 var(--serif);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;flex:1}
+.silent-ui .dock-shortcut{font:11px monospace;color:var(--muted);white-space:nowrap}
+.silent-ui.global-focus #tutor-dock,.silent-ui[data-workspace-view=notes] #tutor-dock,.silent-ui[data-workspace-view=notebook] #tutor-dock,.silent-ui[data-workspace-view=plan] #tutor-dock{display:none}
+.silent-ui.tutor-open .workspace>.tutor{display:flex;left:50%;bottom:12px;top:12px;transform:translateX(-50%);width:min(850px,100%);height:auto;min-height:0;overflow:auto;padding:22px 30px;border:1px solid var(--line);border-radius:4px}
+.silent-ui.tutor-open #panel-backdrop{inset:0}
+.silent-ui.tutor-open #tutor-chat{min-height:0;max-height:none}
+.silent-ui .tutor-intro{margin:0 0 15px}
+.silent-ui .tutor-head h2{font-size:26px}
+.silent-ui .message{font:15px/1.7 var(--serif);border-radius:0;padding:14px 0}
+.silent-ui .message.assistant{background:none;border:0;border-bottom:1px solid var(--line)}
+.silent-ui .message.student{background:var(--pale);padding:12px;margin-left:30px}
+.silent-ui .tutor-bottom{flex-direction:row;gap:25px;margin-top:12px}
+.silent-ui #notice{bottom:120px;z-index:100}
+.silent-ui dialog{border-radius:4px}
+.silent-ui dialog::backdrop{background:#24242228}
+.silent-ui .stat,.silent-ui .simulation{border-radius:3px;background:var(--pale)}
+/* Los tres modos de notas comparten documento y referencias. */
+.silent-ui .workspace.notes-view>main{max-width:none;padding:0}
+.silent-ui[data-workspace-view=notes]{padding-bottom:43px}
+.silent-ui .notes-toolbar{display:flex;justify-content:center;align-items:center;padding:15px 40px;gap:16px;border-bottom:1px solid var(--line)}
+.silent-ui .notes-toolbar select{border:0;background:none;font:14px var(--serif);padding:8px}
+.silent-ui .class-notes-layout{display:block;min-height:calc(100vh - 181px)}
+.silent-ui .notes-sidebar{display:none;position:fixed;inset:135px auto 43px 20px;width:min(320px,90vw);max-height:70vh;overflow:auto;z-index:36;background:var(--bg);box-shadow:0 8px 45px #24242222;border:1px solid var(--line);padding:24px}
+.silent-ui.notes-list-open .notes-sidebar{display:flex;inset:50% auto auto 50%;transform:translate(-50%,-50%);width:min(420px,calc(100vw - 32px));max-height:calc(100dvh - 48px)}
+.silent-ui .note-editor{max-width:780px;padding:48px 30px;gap:22px}
+.silent-ui .note-title-input{font-size:40px}
+.silent-ui .note-content{font:17px/1.9 ui-monospace,monospace;min-height:420px}
+.silent-ui .note-meta input{background:none;border:0;border-bottom:1px solid var(--line);border-radius:0}
+.silent-ui .note-source-choice select{border-radius:0;background:none}
+.silent-ui .note-source-choice{display:none}
+.silent-ui .class-notes-layout.with-document.notes-mode-parallel{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+.silent-ui .source-reader{position:sticky;top:0;height:calc(100vh - 181px);min-height:400px;background:#f2f1ed;border:0;border-right:1px solid var(--line)}
+.silent-ui .reader-toolbar{background:var(--bg)}
+.silent-ui .source-reader{display:flex;flex-direction:column}
+.silent-ui .source-reader #pdf-scroll{min-height:0;flex:1;outline:none}
+.silent-ui .pdf-position{display:flex;justify-content:space-between;gap:20px;padding:10px 18px;font:11px var(--sans);color:var(--muted);background:var(--bg)}
+.silent-ui .pdf-position span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.silent-ui .note-editor.continuous-editor{padding:24px 30px;gap:0;min-height:calc(100dvh - 180px)}
+.silent-ui .continuous-editor>.note-topline,.silent-ui .continuous-editor>.note-title-input,.silent-ui .continuous-editor>.note-meta,.silent-ui .continuous-editor>.note-source-choice,.silent-ui .continuous-editor>.note-writing-controls,.silent-ui .continuous-editor>.note-ask-button,.silent-ui .continuous-editor>.note-footer{display:none}
+.silent-ui .continuous-editor .note-content{width:100%;height:calc(100dvh - 228px);min-height:300px;resize:none;border:0;padding:12px 0;outline:none;font:15px/24px ui-monospace,monospace}
+.silent-ui .pdf-picker-list{display:flex;flex-direction:column;max-height:55dvh;overflow:auto;gap:10px;margin:20px 0}
+.silent-ui .pdf-picker-list button{text-align:left;padding:10px 0}
+.silent-ui .note-notebook-wrapper{min-width:0;width:100%}
+.silent-ui .note-notebook{display:flex;flex-direction:column;gap:18px;max-height:calc(100dvh - 260px);overflow:auto;padding:3px}
+.silent-ui .note-page-cell{border:1px solid var(--line);border-left:2px solid transparent;padding:16px 18px;background:var(--bg)}
+.silent-ui .note-page-cell.active{border-left-color:var(--green)}
+.silent-ui .note-cell-heading{border:0;background:none;padding:0;margin-bottom:10px;font:13px ui-monospace,monospace;color:var(--muted);cursor:pointer;text-align:left}
+.silent-ui .note-page-cell.active .note-cell-heading{color:var(--green)}
+.silent-ui .note-cell-content{display:block;width:100%;min-height:110px;resize:vertical;border:0;background:transparent;padding:0;outline:none;font:15px/24px ui-monospace,monospace;color:var(--ink)}
+.silent-ui .note-new-cell{margin:14px 0;font-size:12px}
+.silent-ui .note-raw-editor{font-size:12px;color:var(--muted)}
+.silent-ui .note-raw-editor:not([hidden]){margin-top:12px}
+.silent-ui .note-raw-editor .note-content{height:320px;min-height:220px;margin-top:14px}
+@media(max-width:700px){.silent-ui .note-notebook{max-height:none}.silent-ui .note-page-cell{padding:14px}}
+.silent-ui .notes-mode-parallel .note-editor{padding:36px;max-width:none}
+.silent-ui .note-content-details summary{font-size:12px;color:var(--muted)}
+.silent-ui .margin-page-label{font-size:11px;color:var(--muted)}
+.silent-ui .note-writing-controls{display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.silent-ui .note-writing-controls select{background:none;border:0;padding:6px 0;font-size:12px;max-width:100%}
+.silent-ui .note-writing-controls .muted{font-size:11px}
+.silent-ui .note-writing-controls .text-button{font-size:11px;min-width:28px}
+.silent-ui .note-writing-controls .text-button:last-child{margin-left:auto}
+.silent-ui .note-ask-button{align-self:flex-start;font-size:12px;padding:10px 0}
+.tutor-answer-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.75}
+.note-tutor-question{white-space:pre-wrap;overflow-wrap:anywhere;border-left:2px solid var(--line);padding-left:12px;color:var(--muted)}
+.note-tutor-output:not(:empty){margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
+.note-tutor-entry{margin:14px 0;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+.source-note-dialog,.note-tutor-dialog{max-height:90dvh;overflow:auto}
+.source-note-dialog .dialog-actions,.note-tutor-dialog .dialog-actions{flex-wrap:wrap}
+#note-tutor-history{font-size:12px;color:var(--ink)}
+.silent-ui main:focus-visible{outline:none}
+.silent-ui .source-anchor .text-button{margin-right:12px;font:11px/1.6 system-ui}
+@media(max-width:1000px){.silent-ui .context-button{max-width:180px;font-size:12px}.silent-ui .topbar{padding:0 24px;gap:12px}.silent-ui nav{gap:16px}}
+@media(max-width:700px){.silent-ui .topbar{height:auto;min-height:85px;padding:15px 20px;flex-wrap:wrap;gap:6px 16px}.silent-ui .brand{font-size:13px;letter-spacing:3px}.silent-ui .context-button{margin-left:auto;max-width:220px;font-size:11px}.silent-ui nav{order:3;width:100%;justify-content:center;gap:25px;height:32px}.silent-ui .nav{height:32px;font-size:13px}.silent-ui #global-command-button{font-size:11px}.silent-ui .workspace>main,.silent-ui.global-focus .workspace:not(.notes-view)>main{padding:42px 24px}.silent-ui h1{font-size:34px}.silent-ui .theory{font-size:18px}.silent-ui .global-controls{height:48px;padding:0 12px;gap:10px}.silent-ui #global-keyboard-hint,.silent-ui .global-controls .keyboard-label,.silent-ui #session-clock{display:none}.silent-ui #global-mode{margin-left:auto;font-size:9px}.silent-ui #tutor-dock{bottom:48px;padding:13px 24px;gap:12px}.silent-ui #tutor-preview{font-size:13px}.silent-ui.tutor-open .workspace>.tutor{bottom:48px;padding:18px 22px;height:75vh}.silent-ui #panel-backdrop{inset:95px 0 48px}.silent-ui.outline-open .workspace>.sidebar{top:95px;bottom:48px}.silent-ui .tutor-bottom{gap:14px}.silent-ui .notes-toolbar{padding:12px 20px}.silent-ui .notes-toolbar select{font-size:12px;max-width:220px}.silent-ui .notes-sidebar{inset:145px 10px auto}.silent-ui .class-notes-layout.with-document.notes-mode-parallel{display:block}.silent-ui .source-reader{position:relative;height:55vh;min-height:300px}.silent-ui .note-editor,.silent-ui .notes-mode-parallel .note-editor{padding:30px 24px}.silent-ui .note-title-input{font-size:30px}.silent-ui .note-content{font-size:14px}.silent-ui .note-footer{gap:10px}.silent-ui .source-anchor button{margin-right:15px}}
+
+/* Chrome mínimo: ajustes en el diálogo, sin breadcrumb ni barras persistentes. */
+body.silent-ui{padding-bottom:55px}
+.silent-ui #outline-button[hidden],.silent-ui #settings-button[hidden]{display:none}
+.silent-ui .topbar{justify-content:space-between}
+.silent-ui .topbar nav{margin:auto}
+.silent-ui #settings-dialog .global-controls{position:static;height:auto;display:flex;flex-wrap:wrap;border:0;padding:0;margin:15px 0;gap:14px;background:none;z-index:auto}
+.silent-ui #settings-dialog .global-controls .keyboard-label{display:flex}
+.silent-ui #settings-dialog #session-clock{display:inline}
+.silent-ui #settings-dialog #global-keyboard-hint{display:block;flex-basis:100%;text-align:left;order:5}
+.silent-ui .mode-indicator{position:fixed;bottom:16px;right:24px;color:var(--muted);z-index:25;pointer-events:none}
+.silent-ui #tutor-dock{left:24px;bottom:12px;transform:none;width:auto;padding:6px 0;border:0;background:none;gap:10px}
+.silent-ui #tutor-dock .eyebrow{font:12px var(--serif);letter-spacing:0;font-weight:normal}
+.silent-ui #tutor-preview{display:none}
+.silent-ui #panel-backdrop{bottom:0}
+.silent-ui.outline-open .workspace>.sidebar{bottom:0}
+.silent-ui.tutor-open .workspace>.tutor{top:12px;bottom:12px;height:auto}
+.silent-ui[data-workspace-view=notes]{padding-bottom:30px}
+.silent-ui .source-reader{height:calc(100vh - 160px)}
+.silent-ui .notes-sidebar{bottom:20px}
+@media(max-width:700px){.silent-ui .topbar{min-height:80px;padding:16px 24px;gap:12px}.silent-ui #global-command-button{margin-left:auto}.silent-ui .topbar nav{gap:25px}.silent-ui #tutor-dock{left:24px;bottom:12px;padding:6px 0}.silent-ui .mode-indicator{bottom:16px;right:24px}.silent-ui #panel-backdrop{inset:95px 0 0}.silent-ui .source-reader{height:55vh}.silent-ui.tutor-open .workspace>.tutor{bottom:0}.silent-ui #settings-dialog .global-controls{padding:0;height:auto}.silent-ui .notes-sidebar{bottom:auto}}
+@media(max-width:700px){.silent-ui.tutor-open .workspace>.tutor{top:0;bottom:0;height:auto;border-radius:0}.silent-ui.tutor-open #panel-backdrop{inset:0}}
+.group-conversation-actions { margin: 1.5rem 0 3rem; }
+.notebook-history { margin: 1.5rem 0; color: var(--muted); }
+.notebook-history button { margin: .75rem .75rem .5rem 0; }
+.environment-context{position:absolute;left:50%;transform:translateX(-50%);max-width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.85rem;color:var(--muted)}
+.workspace-mode-button{position:fixed;bottom:16px;left:24px;z-index:35;border:0;background:var(--paper,#fbfaf7);font:11px monospace;letter-spacing:.12em;padding:6px;color:#53554d}
+#mode-dialog{max-width:350px;width:calc(100% - 64px);padding:32px}
+#mode-dialog nav{display:flex;flex-direction:column;align-items:stretch;gap:4px}
+#mode-dialog .nav{padding:12px;text-align:left;border:0;font-size:1rem}
+#mode-dialog .nav.active{background:#e9ede3}
+#mode-settings{width:100%}#mode-settings small{float:right;color:#777}
+.silent-ui #tutor-dock{left:170px;bottom:16px}
+.calendar-heading{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.calendar-views,.calendar-actions{display:flex;gap:24px}.calendar-views .active{border-bottom:1px solid #536344}
+.calendar-actions{margin:0 0 32px}.calendar-navigation{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));margin:24px 0 40px;border-top:1px solid #ddd}
+.calendar-day{min-height:110px;padding:10px 6px;border-bottom:1px solid #ddd;border-right:1px solid #e6e5df;min-width:0}
+.calendar-week .calendar-day{min-height:250px}.calendar-day.is-today .calendar-date{color:#465738;border-bottom:1px solid #465738}
+.calendar-day.outside-month{opacity:.45}.calendar-weekday{font:11px monospace;padding:12px 6px;color:#777}
+.calendar-event{display:flex;flex-direction:column;align-items:flex-start;gap:5px;text-align:left;max-width:100%;padding:10px 0;font-size:.82rem;overflow-wrap:anywhere}
+.calendar-event small{font:10px monospace;color:#85877f}.calendar-event[data-kind=exam]{color:#6b4a32}.calendar-event[data-kind=deadline]{color:#775648}
+.calendar-allowance{display:block;font-size:10px;margin-top:24px}.calendar-upcoming{padding:14px 0;border-bottom:1px solid #e6e5df}.plan-next{margin:48px 0}.plan-course-details{margin:40px 0}
+.calendar-edit-dialog{width:min(430px,calc(100% - 50px))}.lesson-footer{justify-content:flex-end}.continuation-handoff{margin:16px 0 32px;font-size:12px;color:var(--muted)}.continuation-handoff summary{cursor:pointer;width:fit-content}.continuation-handoff p{max-width:48em}
+@media(max-width:700px){.environment-context{font-size:.65rem;max-width:45%}.workspace-mode-button{left:12px;bottom:10px}.silent-ui #tutor-dock{left:125px;bottom:10px}.calendar-week{grid-template-columns:repeat(2,minmax(0,1fr))}.calendar-week .calendar-day{min-height:160px}.calendar-month .calendar-day{padding:8px 2px;min-height:85px}.calendar-month .calendar-event{font-size:9px;padding:7px 0}.calendar-month .calendar-event small{font-size:8px}.calendar-date{font-size:12px}.calendar-heading h1{font-size:2.7rem}.calendar-views{gap:18px}}
+.silent-ui .workspace>main.plan-view,.silent-ui.global-focus .workspace:not(.notes-view)>main.plan-view{max-width:1200px}
+@media(max-width:700px){.calendar-month .calendar-event span{display:none}.calendar-month .calendar-event small{font-size:9px}.calendar-month .calendar-event small[data-has-time=false]{font-size:0}.calendar-month .calendar-event small[data-has-time=false]::before{content:'·';font-size:20px;color:#637152}}
+
+/* Apuntes comparte el encabezado; Foco dedica toda la altura al contenido. */
+.silent-ui #notes-heading[hidden],.silent-ui #note-name-button[hidden],.silent-ui #environment-context[hidden]{display:none}
+#settings-dialog label[hidden]{display:none}
+.silent-ui #notes-list-button{font-size:12px}
+.silent-ui .class-notes-layout{min-height:calc(100dvh - 106px)}
+.silent-ui .source-reader{height:calc(100dvh - 106px);min-height:0}
+@media(max-width:700px){.silent-ui .source-reader{height:55dvh}.silent-ui #notes-list-button{font-size:11px}}
+body.silent-ui.global-focus{padding-bottom:0}
+.silent-ui.global-focus .topbar,.silent-ui.global-focus .workspace-mode-button,.silent-ui.global-focus .mode-indicator,.silent-ui.global-focus #tutor-dock,.silent-ui.global-focus .pdf-position{display:none}
+.silent-ui.global-focus .workspace,.silent-ui.global-focus .class-notes-layout{min-height:100dvh}
+.silent-ui.global-focus .source-reader{height:100dvh;min-height:0}
+
+.silent-ui #notes-heading{display:flex;align-items:center;gap:18px;max-width:55%}
+.silent-ui #note-name-button{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:15px var(--serif)}
+.silent-ui #notes-list-button{flex-shrink:0}
+@media(max-width:700px){.silent-ui #notes-heading{flex-direction:column;gap:3px;max-width:42%}.silent-ui #note-name-button{max-width:100%;font-size:12px}.silent-ui #notes-list-button{padding:0}}
+
+/* Separación ajustable sin agregar una barra de herramientas. */
+.silent-ui .class-notes-layout.resizable-notes.with-document{grid-template-columns:minmax(0,var(--reader-share,52.38%)) 0 minmax(0,1fr)}
+.silent-ui .resizable-notes>.source-reader{grid-column:1;grid-row:1}
+.silent-ui .resizable-notes>.note-editor{grid-column:3;grid-row:1;min-width:0}
+.silent-ui .notes-splitter{grid-column:2;grid-row:1;position:relative;left:-6px;width:12px;align-self:stretch;cursor:col-resize;touch-action:none;z-index:3;outline-offset:-3px}
+.silent-ui .notes-splitter::after{content:'';position:absolute;left:5px;top:0;bottom:0;width:2px;background:transparent}
+.silent-ui .notes-splitter:hover::after,.silent-ui .notes-splitter:focus-visible::after,.silent-ui .resizing-keys>.notes-splitter::after,.resizing-pointer .notes-splitter::after{background:var(--green)}
+body.resizing-pointer{cursor:col-resize;user-select:none}
+@media(max-width:700px){.silent-ui .resizable-notes.with-document{display:block}.silent-ui .notes-splitter{display:none}}
+
+.silent-ui #rooms-button{color:var(--ink);padding:0;border:0;background:none;cursor:pointer}
+#rooms-dialog{width:min(550px,calc(100vw - 32px))}#room-list{display:flex;flex-direction:column;gap:12px}.room-choice{text-align:left;padding:12px 0;border-bottom:1px solid var(--line)}
+.pliego-actions{display:flex;gap:18px;flex-wrap:wrap;margin:20px 0}.pliego-create{display:flex;align-items:center;gap:12px;margin:20px 0}.pliego-create input{min-width:0;flex:1;padding:9px;border:1px solid var(--line);border-radius:5px;background:var(--paper)}#room-list{display:flex;flex-direction:column;align-items:flex-start;gap:8px}#rooms-dialog{max-height:85vh;overflow:auto}.video-frame{display:block;background:#ebe9e4}#tutor-dock[hidden]{display:none}

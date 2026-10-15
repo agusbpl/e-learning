@@ -1,0 +1,81 @@
+// Run with NODE_PATH pointing to the installed Playwright package directory.
+const {chromium}=require('playwright');
+const fs=require('fs'),os=require('os'),path=require('path'),net=require('net'),assert=require('assert/strict');
+const {spawn}=require('child_process');
+(async()=>{
+ const root=path.resolve(__dirname,'..'),data=fs.mkdtempSync(path.join(os.tmpdir(),'estudio-browser-'));
+ const listener=net.createServer();await new Promise(r=>listener.listen(0,'127.0.0.1',r));const port=listener.address().port;await new Promise(r=>listener.close(r));
+ const server=spawn('python3',['server.py'],{cwd:root,env:{...process.env,LEARNING_DATA_DIR:data,LEARNING_PORT:String(port)},stdio:['ignore','pipe','pipe']});
+ let browser;const base=`http://127.0.0.1:${port}`;let stderr='';server.stderr.on('data',d=>stderr+=d);
+ try{
+  for(let n=0;n<100;n++){try{if((await fetch(base+'/api/state')).ok)break;}catch{}await new Promise(r=>setTimeout(r,100));if(n===99)throw Error('Server did not start: '+stderr);}
+  browser=await chromium.launch({headless:true,executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE||chromium.executablePath()});
+  const page=await browser.newPage({viewport:{width:1400,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.addInitScript(()=>{delete Map.prototype.getOrInsertComputed;delete Map.prototype.getOrInsert;delete WeakMap.prototype.getOrInsertComputed;delete WeakMap.prototype.getOrInsert;});
+  await page.addInitScript(()=>localStorage.setItem('glosa-active-room','local'));await page.goto(base);await page.waitForSelector('.activity');
+  assert.equal(await page.locator('#global-mode').textContent(),'NORMAL');
+  assert.equal(await page.locator('#course-outline').isVisible(),false);assert.equal(await page.locator('#tutor-panel').isVisible(),false);
+  const qa=path.join(root,'output','qa');fs.mkdirSync(qa,{recursive:true});
+  await page.screenshot({path:path.join(qa,'estudiar-desktop.png')});
+  await page.locator('#main').focus();await page.keyboard.press('g');await page.keyboard.press('t');await page.waitForSelector('#tutor-panel',{state:'visible'});
+  assert(await page.evaluate(()=>document.activeElement.matches('#chat-input, #tutor-panel .cm-content')));
+  const tutorBounds=await page.locator('#tutor-panel').boundingBox();assert(tutorBounds.y<=16);assert(tutorBounds.height>=950);
+  await page.locator('#tutor-panel .cm-content').click();assert.equal(await page.locator('#notice').isVisible(),false);
+  await page.locator('#tutor-chat').click();assert.equal(await page.locator('#notice').isVisible(),false);assert.equal(await page.locator('#annotation-dialog').isVisible(),false);
+  await page.locator('#tutor-panel .cm-content').focus();await page.keyboard.type('Borrador conservado');
+  await page.screenshot({path:path.join(qa,'tutor-altura-desktop.png')});
+  await page.setViewportSize({width:390,height:844});const mobileTutorBounds=await page.locator('#tutor-panel').boundingBox();assert.equal(mobileTutorBounds.y,0);assert.equal(mobileTutorBounds.height,844);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  await page.screenshot({path:path.join(qa,'tutor-altura-mobile.png')});await page.setViewportSize({width:1400,height:1000});
+  await page.keyboard.press('Escape');await page.keyboard.press('Escape');assert.equal(await page.locator('#tutor-panel').isVisible(),false);
+  await page.locator('h1').click();assert.equal(await page.locator('#notice').isVisible(),false);
+  await page.locator('#main').focus();
+  await page.keyboard.press('/');await page.waitForSelector('#course-outline',{state:'visible'});assert.equal(await page.evaluate(()=>document.activeElement.id),'lesson-search');await page.keyboard.press('Escape');
+  await page.keyboard.press('g');await page.keyboard.press('t');assert.equal(await page.locator('#chat-input').inputValue(),'Borrador conservado');await page.keyboard.press('Escape');
+  await page.setViewportSize({width:390,height:844});await page.evaluate(()=>scrollTo(0,0));assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:path.join(qa,'estudiar-mobile.png')});await page.setViewportSize({width:1400,height:1000});
+  await page.locator('#main').focus();await page.keyboard.press('Space');await page.waitForSelector('.leader-cheatsheet');await page.keyboard.press('Escape');
+  await page.keyboard.press(':');await page.waitForSelector('.command-palette[open]');await page.keyboard.press('Escape');
+  const order=await page.locator('.activity').first().locator('input[type=radio]').evaluateAll(items=>items.map(i=>Number(i.value)));
+  const radios=page.locator('.activity').first().locator('input[type=radio]');
+  assert.equal(await radios.first().evaluate(el=>getComputedStyle(el).opacity),'0');
+  await radios.first().focus();await page.keyboard.press('Space');assert(await radios.first().isChecked());
+  const selectedBackground=await radios.first().evaluate(el=>getComputedStyle(el.closest('.choice-option')).backgroundColor);assert.notEqual(selectedBackground,'rgba(0, 0, 0, 0)');
+  await page.keyboard.press('ArrowDown');assert(await radios.nth(1).isChecked());assert.equal(await radios.nth(1).evaluate(el=>getComputedStyle(el.nextElementSibling).fontWeight),'600');
+  await page.screenshot({path:path.join(qa,'opciones-sin-circulos.png')});
+  assert.deepEqual([...order].sort((a,b)=>a-b),[0,1,2]);await page.reload();await page.waitForSelector('.activity');
+  assert.deepEqual(await page.locator('.activity').first().locator('input[type=radio]').evaluateAll(items=>items.map(i=>Number(i.value))),order);
+  const firstLessonId=await page.evaluate(()=>lid);
+  await page.getByRole('button',{name:'Seguir estudiando →',exact:true}).click();await page.waitForFunction(id=>lid!==id,firstLessonId);
+  await page.keyboard.press('Escape');await page.keyboard.type('gp');await page.locator('.plan-course-details summary').click();await page.waitForSelector('.plan-row');
+  const firstPlanRow=page.locator('.plan-row').first();assert((await firstPlanRow.textContent()).includes('Revisada por vos'));
+  await firstPlanRow.getByRole('button',{name:/Deshacer revisión de/}).click();await page.waitForFunction(()=>document.querySelector('.plan-row')?.textContent.includes('Por explorar'));
+  await page.keyboard.press('Escape');await page.keyboard.type('ge');await page.waitForSelector('.activity');
+  await page.evaluate(id=>chooseLesson(id),firstLessonId);await page.waitForSelector('.activity');
+  await page.locator('#main').focus();
+  await page.keyboard.press('v');await page.keyboard.press('l');await page.keyboard.press('a');await page.waitForSelector('#annotation-dialog[open]');
+  await page.keyboard.type('Duda creada con teclado');await page.keyboard.press('Control+Enter');await page.waitForSelector('.note-inline');
+  await page.locator('.annotation-actions button').filter({hasText:'Editar'}).first().focus();await page.keyboard.press('Enter');
+  await page.keyboard.press('Control+A');await page.keyboard.type('Duda corregida');await page.keyboard.press('Control+Enter');
+  await page.waitForFunction(()=>document.querySelector('.note-inline')?.textContent.includes('Duda corregida'));
+  // The two note modes, PDF cells and annotation CRUD have dedicated scenarios.
+  // This smoke covers study navigation, rendered controls and global preferences.
+  await page.locator('.annotation-actions button').filter({hasText:'Borrar'}).first().click();
+  await page.getByRole('button',{name:'Borrar anotación',exact:true}).click();
+  await page.waitForFunction(()=>!document.querySelector('.annotation-actions'));
+  const saved=await (await fetch(base+'/api/state')).json();
+  assert.equal(saved.events.filter(e=>e.kind==='annotation').length,0);
+  assert.equal(saved.annotationRevisions.length,0);
+  await page.locator('#main').focus();await page.keyboard.press('z');
+  await page.waitForFunction(()=>document.body.classList.contains('global-focus'));
+  assert.equal(await page.locator('.topbar').isVisible(),false);
+  await page.reload();await page.waitForSelector('.activity');
+  assert(await page.locator('body').evaluate(b=>b.classList.contains('global-focus')));
+  await page.keyboard.press('z');await page.keyboard.type('ga');
+  await page.waitForSelector('#settings-dialog[open]');
+  await page.locator('#global-keyboard-profile').selectOption('vimium');
+  await page.waitForFunction(()=>document.getElementById('global-mode').textContent==='Teclado libre');
+  await page.keyboard.press('Escape');await page.reload();await page.waitForSelector('.activity');
+  assert.equal(await page.locator('#global-keyboard-profile').inputValue(),'vimium');
+  assert.deepEqual(errors,[]);
+  console.log('OK: keyboard study navigation, tutor draft, leader help, command menu, persistent option order, native radio keys, review undo, annotation CRUD, focus and keyboard preferences, desktop/mobile.');
+ }finally{await browser?.close();server.kill();await new Promise(resolve=>server.exitCode!==null?resolve():server.once('exit',resolve));fs.rmSync(data,{recursive:true,force:true});}
+})().catch(e=>{console.error(e);process.exitCode=1;});

@@ -1,0 +1,40 @@
+.local-data/
+tutor-credentials.json
+.tutor-credentials-*.json
+__pycache__/
+*.pyc
+.venv-author/
+.venv/
+node_modules/
+.env
+.env.*
+!.env.example
+*.sqlite3
+*.sqlite3-*
+*.log
+# Material de cátedra y texto extraído: conservar solo en cada instalación.
+sources/
+source-archives/
+.md_cache/
+# Ejemplos de estudio privados de la instalación original; no redistribuir.
+/courses/*.json
+!/courses/tutorial.json
+/scripts/build_course.py
+/output/disenos/
+/web/media/
+# Capturas de pruebas y prototipos pueden contener material personal.
+output/qa/
+output/auditoria/
+output/backups/
+output/exports/
+output/recordings/
+output/screenshots/
+output/videos/
+backups/
+exports/
+recordings/
+*.glosa-backup.zip
+output/*.tar.gz
+output/preview-check.js
+output/vista-estudio-celular.html
+sites/

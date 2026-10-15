@@ -1,0 +1,116 @@
+/* Keep fit-to-width rendering independent of the vertical scrollbar appearing. */
+#pdf-scroll{scrollbar-gutter:stable}
+.note-markdown-editor{flex:1;min-width:0}
+.note-markdown{min-height:320px;padding:12px 0;font:19px/1.8 var(--serif);overflow-wrap:anywhere}
+.note-markdown>:first-child{margin-top:0}
+.note-markdown p{margin:0 0 1em}
+.note-markdown h1,.note-markdown h2,.note-markdown h3,.note-markdown h4,.note-markdown h5,.note-markdown h6{line-height:1.3;margin:1.3em 0 .5em}
+.note-markdown h1{font-size:1.8em}
+.note-markdown h2{font-size:1.4em}
+.note-markdown h3{font-size:1.15em}
+.note-markdown a{color:var(--green);text-decoration:underline;text-underline-offset:3px}
+.note-markdown ul,.note-markdown ol{padding-left:1.5em;margin:0 0 1em}
+.note-markdown li p{margin:.3em 0}
+.note-markdown blockquote{margin:1em 0;padding:0 1em;border-left:2px solid var(--line);color:var(--muted)}
+.note-markdown code{font: .8em/1.6 ui-monospace,monospace;background:var(--panel,var(--bg));padding:2px 5px}
+.note-markdown pre{overflow:auto;border:1px solid var(--line);padding:14px;white-space:pre;overflow-wrap:normal}
+.note-markdown pre code{padding:0;background:none}
+.note-markdown img{max-width:100%;height:auto}
+.note-table-scroll{overflow:auto;margin:1em 0}
+.note-markdown table{border-collapse:collapse;width:100%;font-size:.9em}
+.note-markdown th,.note-markdown td{border-bottom:1px solid var(--line);padding:8px 12px;text-align:left}
+.silent-ui .note-markdown-editor>[hidden],.silent-ui .note-writing-controls>[hidden]{display:none}
+@media(max-width:700px){.note-markdown{font-size:18px;min-height:260px}}
+.silent-ui .minimal-note{display:block;position:relative}
+.silent-ui .minimal-note:focus,.silent-ui .minimal-note .note-markdown:focus{outline:none}
+.note-options{position:absolute;right:20px;top:48px;z-index:20}
+.note-options>summary{list-style:none;cursor:pointer;color:var(--muted);font:24px/1.2 var(--sans,sans-serif);padding:4px 8px}
+.note-options>summary::-webkit-details-marker{display:none}
+.note-options-panel{position:absolute;top:100%;right:0;z-index:10;width:min(390px,calc(100vw - 48px));max-height:70dvh;overflow:auto;background:var(--bg);border:1px solid var(--line);box-shadow:0 8px 30px #0000000d;padding:20px;display:flex;flex-direction:column;gap:20px;font-size:12px}
+.silent-ui .note-options-panel .note-meta{flex-direction:column;align-items:stretch;gap:12px}
+.silent-ui .note-options-panel .note-meta input{max-width:none;width:100%}
+.silent-ui .note-options-panel .note-source-choice{display:flex;flex-wrap:wrap}
+.silent-ui .note-options-panel .note-source-choice select{max-width:100%;width:100%;font-size:12px}
+.silent-ui .note-options-panel .note-source-choice button{font-size:12px}
+.silent-ui .note-options-panel .note-footer{flex-wrap:wrap;gap:12px;font-size:12px}
+.silent-ui .note-options-panel .note-footer .check{flex-basis:100%}
+.silent-ui .minimal-note .note-markdown{min-height:0;padding:0}
+.silent-ui .minimal-note .note-content{min-height:420px;outline:none}
+.silent-ui .minimal-note>[hidden]{display:none}
+.note-options-panel #note-tutor-history:empty{display:none}
+.silent-ui .class-note-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:4px}
+.class-note-row .class-note-link{min-width:0;overflow-wrap:anywhere}
+.silent-ui .notes-sidebar #class-note-list{max-height:none;overflow:visible}
+.note-list-actions{position:relative;margin-top:10px}
+.note-list-actions>summary{list-style:none;cursor:pointer;padding:6px 10px;color:var(--muted);font:20px/1 var(--sans,sans-serif)}
+.note-list-actions>summary::-webkit-details-marker{display:none}
+.note-list-actions[open]{z-index:2}
+.note-list-actions-menu{position:absolute;right:0;top:100%;min-width:175px;padding:8px;background:var(--bg);border:1px solid var(--line);box-shadow:0 6px 20px #0000000d;display:flex;flex-direction:column;gap:4px}
+.silent-ui .note-list-actions-menu button{text-align:left;padding:8px;font:12px/1.4 var(--sans,sans-serif)}
+.note-preface{margin-bottom:24px}
+.theory mark[role=button]{background:var(--yellow);color:inherit;cursor:pointer;border-radius:2px}
+.theory::selection,.theory ::selection{background:var(--yellow)}
+.textLayer ::selection{background:#f7dc6180;color:transparent}
+.reading-highlight-actions{position:fixed;margin:0;padding:6px 12px;max-width:calc(100vw - 24px);border:1px solid var(--line);background:var(--bg);box-shadow:0 4px 20px #00000012;z-index:100}
+.reading-highlight-actions[open]{display:flex;gap:18px;flex-wrap:wrap}
+.silent-ui .reading-highlight-actions button{font-size:12px;white-space:nowrap}
+.pdf-highlights{position:absolute;inset:0;z-index:2;pointer-events:none}
+.silent-ui .pdf-highlights .pdf-highlight{position:absolute;pointer-events:auto;background:#f7dc6180;border:0;border-radius:2px;padding:0;margin:0;min-height:0;cursor:pointer;mix-blend-mode:multiply}
+.pdf-highlight:focus-visible{outline:2px solid var(--green);outline-offset:1px}
+.silent-ui .continuous-editor .note-options{top:16px;right:16px}
+.note-options-panel details summary{font-size:12px}
+.note-options-panel .note-tutor-entry{margin-top:12px}
+.silent-ui .minimal-note .note-markdown>h1:first-child{padding-right:36px;font-size:40px;font-weight:400}
+.silent-ui.global-focus .minimal-note .note-options{display:none}
+.silent-ui.global-focus .minimal-note .note-markdown>h1:first-child{padding-right:0}
+@media(max-width:700px){.note-options{top:30px;right:16px}.silent-ui .minimal-note .note-markdown>h1:first-child{font-size:32px}}
+.note-live-markdown .cm-editor{outline:none}
+.note-live-markdown .cm-scroller{font:inherit;line-height:1.8;overflow:visible}
+.note-live-markdown .cm-content{padding:0;caret-color:var(--ink);min-height:120px}
+.note-live-markdown .cm-line{padding:0}
+.note-live-markdown .cm-md-h1{font-size:40px;line-height:1.3;font-weight:400}
+.note-live-markdown .cm-content>.cm-md-h1:first-child{padding-right:36px}
+.global-focus .note-live-markdown .cm-content>.cm-md-h1:first-child{padding-right:0}
+.note-live-markdown .cm-md-h2{font-size:1.4em;line-height:1.3}
+.note-live-markdown .cm-md-h3{font-size:1.15em;line-height:1.3}
+.note-live-markdown .cm-md-h4,.note-live-markdown .cm-md-h5,.note-live-markdown .cm-md-h6{font-weight:600}
+.note-live-markdown .cm-md-em{font-style:italic}
+.note-live-markdown .cm-md-strong{font-weight:700}
+.note-live-markdown .cm-md-del{text-decoration:line-through}
+.note-live-markdown .cm-md-syntax{color:var(--muted);opacity:.55}
+.note-live-markdown .cm-md-link{color:var(--green);text-decoration:underline;text-underline-offset:3px}
+.note-live-markdown .cm-md-inline-code,.note-live-markdown .cm-md-code{font: .8em/1.8 ui-monospace,monospace}
+.note-live-markdown .cm-md-code{background:var(--panel,var(--bg));padding:0 12px}
+.note-live-markdown .cm-md-quote{border-left:2px solid var(--line);padding-left:18px;color:var(--muted)}
+.note-live-markdown .cm-md-list{padding-left:16px}
+.note-live-markdown .cm-md-table-source{font: .8em/1.8 ui-monospace,monospace}
+.note-live-markdown .cm-md-widget.note-markdown{min-height:0;font:inherit;padding:0}
+.note-live-markdown .cm-md-widget .note-table-scroll{margin:0}
+.note-live-markdown .cm-md-widget table{margin:0}
+.note-live-markdown .cm-selectionBackground{background:#a0b59340!important}
+.note-live-markdown .cm-cursor{border-left-color:var(--ink)}
+@media(max-width:700px){.note-live-markdown .cm-md-h1{font-size:32px}}
+.vim-field{width:100%;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:10px;font:15px/1.6 var(--sans,sans-serif)}
+.vim-field .cm-editor{outline:none}
+.vim-field .cm-scroller{font:inherit;line-height:1.6}
+.vim-field .cm-content{padding:0;min-height:calc(var(--field-lines,3)*1.6em)}
+.vim-field .cm-line{padding:0}
+.vim-source{position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;padding:0!important;opacity:0!important;pointer-events:none!important}
+.vim-field[hidden]{display:none!important}
+.note-cell-vim{padding:0;border:0;background:transparent;font:15px/24px ui-monospace,monospace}
+.note-raw-vim{border:0;padding:12px 0;background:transparent;font:17px/1.9 ui-monospace,monospace}
+.vim-field .cm-cursor{border-left-color:var(--ink)}
+.vim-field .cm-selectionBackground{background:#a0b59340!important}
+.note-live-markdown .cm-fat-cursor,.vim-field .cm-fat-cursor{background:#a0b59366}
+.note-live-markdown .cm-editor:not(.cm-focused) .cm-fat-cursor,.vim-field .cm-editor:not(.cm-focused) .cm-fat-cursor{background:none;outline-color:var(--green)}
+.vim-field .cm-panel,.note-live-markdown .cm-panel{background:var(--bg);color:var(--ink);font:13px/1.6 ui-monospace,monospace}
+.leader-cheatsheet{position:fixed;z-index:100;bottom:64px;left:50%;transform:translateX(-50%);width:min(680px,calc(100vw - 32px));max-height:calc(100dvh - 100px);overflow:auto;background:var(--bg);color:var(--ink);border:1px solid var(--line);box-shadow:0 8px 32px #00000012;padding:18px;font:13px/1.5 var(--sans,sans-serif)}
+.leader-cheatsheet-heading{display:flex;align-items:center;gap:12px;color:var(--muted);margin-bottom:12px}
+.leader-cheatsheet kbd{font:12px/1.5 ui-monospace,monospace;color:var(--green);background:transparent;border:0;box-shadow:none;padding:0}
+.leader-cheatsheet-keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 14px}
+.silent-ui .leader-cheatsheet-keys button{display:flex;align-items:baseline;gap:12px;text-align:left;border:0;background:transparent;padding:7px 4px;color:var(--ink);font:inherit;min-width:0}
+.leader-cheatsheet-keys button kbd{min-width:1ch}
+.leader-cheatsheet-keys button:hover,.leader-cheatsheet-keys button:focus-visible{background:var(--panel,var(--bg))}
+.leader-cheatsheet p{margin:12px 0 0;font-size:11px;color:var(--muted)}
+.global-focus .leader-cheatsheet{display:none}
+@media(max-width:700px){.leader-cheatsheet{bottom:24px;padding:14px}.leader-cheatsheet-keys{grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 10px}}

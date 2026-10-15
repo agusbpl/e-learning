@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "id": "glosa-primer-trazo",
+  "version": "1.0.2",
+  "title": "Primer trazo",
+  "description": "Aprendé Glosa usando Glosa. Prácticas separadas de tus pliegos.",
+  "sources": [],
+  "lessons": [
+    {
+      "id": "trazo-entrar",
+      "unit": "PRIMER TRAZO",
+      "title": "Un lugar para empezar",
+      "intro": "Glosa acompaña la lectura con notas y conversación. Esta guía usa las mismas lecciones y actividades que tus pliegos.",
+      "minutes": 4,
+      "priority": 1,
+      "prerequisites": [],
+      "blocks": [
+        {
+          "id": "trazo-entrar-b1",
+          "title": "Tu primer trazo",
+          "text": "Estás en Primer trazo, el tutorial de Glosa. Podés leer, probar movimientos y guardar una respuesta como en cualquier lección. Sus notas y prácticas quedan en un espacio separado de tus materiales. Volvé a esta guía desde GLOSA → Primer trazo.\n\nGlosa mantiene la pantalla tranquila: el índice, los modos y la conversación aparecen cuando los necesitás. Podés completar esta guía leyendo y probando sus pasos. El video de abajo es una demostración complementaria."
+        },
+        {
+          "id": "trazo-entrar-b2",
+          "title": "Margen y pliegos",
+          "text": "Margen es el directorio donde reunís tus espacios de estudio. Un pliego contiene cursos, fuentes, apuntes, historial y plan. Pulsá GLOSA para abrir Margen, elegir una carpeta o crear un pliego. Las carpetas compatibles aparecen al volver a abrir el selector.\n\nAbrir un pliego trabaja directamente sobre sus datos. Importar un ZIP o una carpeta de respaldo crea una copia independiente. El pliego local anterior conserva su contenido; no se borra al cambiar de espacio."
+        }
+      ],
+      "exercises": [
+        {
+          "id": "trazo-entrar-practica",
+          "type": "open",
+          "question": "¿Qué diferencia hay entre abrir un pliego existente e importar un respaldo? Explicá cuál elegirías para seguir trabajando en la misma carpeta.",
+          "rubric": [
+            "Distinguir apertura directa de creación de una copia.",
+            "Relacionar la elección con el lugar donde se guardarán los cambios."
+          ]
+        }
+      ],
+      "resources": [
+        {
+          "kind": "youtube",
+          "videoId": "cAqEVoiqudI",
+          "startSeconds": 0,
+          "title": "Glosa en movimiento",
+          "task": "Una demostración de lectura, movimientos, notas y conversación. Pulsá Play; podés pausarla para probar cada acción."
+        }
+      ]
+    },
+    {
+      "id": "trazo-mover",
+      "unit": "PRIMER TRAZO",
+      "title": "Moverte sin ruido",
+      "intro": "Aprendé unos pocos movimientos y dejá que el resto aparezca cuando lo necesitás.",
+      "minutes": 4,
+      "priority": 1,
+      "prerequisites": [],
+      "blocks": [
+        {
+          "id": "trazo-mover-b1",
+          "title": "Normal e insertar",
+          "text": "En NORMAL, j y k recorren o desplazan la lectura, y f muestra letras sobre los controles visibles. i entra a escribir en un campo; Esc vuelve a NORMAL. Estas son acciones propias de Glosa: no es un editor Vim completo.\n\ng m abre el selector de modos. g e lleva a Estudiar, g n a Notas, g c al Cuaderno y g p al Plan. g l abre el índice de lecciones; en Estudiar también podés usar /. En Notas, / abre la lista de apuntes. Los atajos se pulsan en secuencia, no al mismo tiempo."
+        },
+        {
+          "id": "trazo-mover-b2",
+          "title": "Elegir tu ritmo",
+          "text": "z activa Foco para aprovechar la pantalla; repetirlo restaura los controles. : abre comandos que podés buscar. ? abre la ayuda de teclado. Ctrl+Espacio seguido de h o l cambia de panel.\n\nProbá g m, recorré el selector con j/k y cerralo con Esc. Después abrí : y buscá Margen. Si preferís los controles habituales o una extensión como Vimium, elegí el perfil Vimium / estándar en Ajustes; Glosa dejará libres las letras."
+        }
+      ],
+      "exercises": [
+        {
+          "id": "trazo-mover-practica",
+          "type": "open",
+          "question": "Probá los modos y los comandos. ¿Qué recorrido usarías para ir a Notas, volver a Estudiar y abrir el índice?",
+          "rubric": [
+            "Proponer un recorrido ejecutable con los controles o movimientos documentados."
+          ]
+        }
+      ],
+      "resources": []
+    },
+    {
+      "id": "trazo-anotar",
+      "unit": "PRIMER TRAZO",
+      "title": "Leer y dejar una glosa",
+      "intro": "La anotación conserva la relación entre una duda y su fragmento.",
+      "minutes": 4,
+      "priority": 1,
+      "prerequisites": [],
+      "blocks": [
+        {
+          "id": "trazo-anotar-b1",
+          "title": "Una duda junto al texto",
+          "text": "Seleccioná una frase de la teoría y anotala; también podés usar v para seleccionar y a para abrir la anotación. Decidí si compartís esa duda con el tutor. Las notas personales quedan fuera del contexto automático del tutor, aunque forman parte de tu respaldo.\n\nEl Cuaderno reúne tus anotaciones y síntesis importantes atribuidas a mensajes tuyos. Una síntesis del tutor es ayuda, no prueba de comprensión independiente."
+        },
+        {
+          "id": "trazo-anotar-b2",
+          "title": "Tus apuntes",
+          "text": "En Notas podés crear un apunte independiente o adjuntar un PDF. g f abre el selector de documentos. Con el lector abierto, j/k recorre el PDF y [/] cambia de página. Ctrl+Espacio l pasa al apunte; i escribe y Esc vuelve al lector.\n\nLos apuntes por página usan encabezados #1, #2… y conservan su asociación con el PDF. El texto se guarda automáticamente; Ctrl+s también guarda. Al cambiar de pliego, Glosa espera el guardado pendiente. Las respuestas de las actividades requieren guardarse para entrar al historial."
+        }
+      ],
+      "exercises": [
+        {
+          "id": "trazo-anotar-practica",
+          "type": "open",
+          "question": "Dejá una anotación en un fragmento que te interese. ¿Qué conservarías privado y qué compartirías para que el tutor pueda ayudarte?",
+          "rubric": [
+            "Distinguir anotación privada de contexto compartido.",
+            "Explicar la elección según la ayuda que se busca."
+          ]
+        }
+      ],
+      "resources": []
+    },
+    {
+      "id": "trazo-conversar",
+      "unit": "PRIMER TRAZO",
+      "title": "Conversar y continuar",
+      "intro": "Usá el diálogo para aclarar relaciones y preparar el siguiente paso.",
+      "minutes": 4,
+      "priority": 1,
+      "prerequisites": [],
+      "blocks": [
+        {
+          "id": "trazo-conversar-b1",
+          "title": "Una conversación con contexto",
+          "text": "g t abre el tutor de la lección; g x permite revisar su contexto. En Notas, Preguntar al tutor usa la duda y el contexto pertinente del apunte. La consulta es opcional: podés escribir y estudiar sin un modelo conectado.\n\nConfigurá el proveedor y su clave en Ajustes. La clave se guarda en la instalación local de la PC para próximas sesiones, fuera de los respaldos de pliegos. Desconectar elimina la clave guardada. Al consultar, el contexto elegido se envía a ese proveedor. Revisalo antes de compartir material privado; la selección y el contexto utilizado quedan registrados."
+        },
+        {
+          "id": "trazo-conversar-b2",
+          "title": "El autor y la continuidad",
+          "text": "El tutor acompaña el estudio. El agente autor conectado al MCP prepara cursos o continuaciones a partir de fuentes y apuntes que autorizaste. Preparar continuación registra un encargo: un agente debe leerlo y trabajar sobre evidencia real. No se ejecuta un modelo por sí solo.\n\nAntes de cerrar un recorrido, guardá tus respuestas y exportá el pliego desde Margen para llevarte sus PDFs, notas e historial. El respaldo es una copia; no sincroniza automáticamente cambios entre dispositivos. Plan permite organizar tiempo y compromisos: este tutorial no agrega un examen ni acredita dominio por haberlo visitado."
+        }
+      ],
+      "exercises": [
+        {
+          "id": "trazo-conversar-practica",
+          "type": "open",
+          "question": "Imaginá que querés retomar una duda mañana con un agente. ¿Qué guardarías y qué revisarías antes de compartir el pliego?",
+          "rubric": [
+            "Incluir la duda y su contexto o fragmento de origen.",
+            "Considerar la selección de datos compartidos y la conservación del historial."
+          ]
+        }
+      ],
+      "resources": []
+    }
+  ]
+}

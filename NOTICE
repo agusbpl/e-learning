@@ -1,0 +1,18 @@
+Glosa
+
+The Glosa source code is distributed under the Apache License, Version 2.0.
+See LICENSE for its terms. Third-party components retain their own licenses
+and attribution notices. This file does not claim ownership of them.
+
+Vendored components currently present in the repository:
+
+- PDF.js: web/vendor/pdfjs/LICENSE; associated licenses and notices are in
+  web/vendor/pdfjs/cmaps/LICENSE, web/vendor/pdfjs/standard_fonts/LICENSE_*,
+  and web/vendor/pdfjs/wasm/LICENSE_*.
+- Marked: web/vendor/marked/LICENSE.md.
+- CodeMirror, Vim integration, Lezer and editor dependencies:
+  web/editor/THIRD_PARTY_LICENSES.txt (component versions, copyright notices
+  and MIT license texts). The built bundle is web/live-markdown.js.
+
+Review these files and any other vendored assets before redistribution. Course
+materials, PDFs, notes and user histories are not licensed by this NOTICE.

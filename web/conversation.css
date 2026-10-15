@@ -1,0 +1,113 @@
+/* Hoja: the conversation is a quiet column, with a composer at its foot. */
+.silent-ui.tutor-open .workspace > .tutor {
+  inset: 0;
+  transform: none;
+  width: 100%;
+  height: 100dvh;
+  max-height: none;
+  padding: 64px max(24px, calc((100vw - 760px) / 2)) 44px;
+  border: 0;
+  border-radius: 0;
+  background: var(--bg);
+  overflow: hidden;
+  gap: 0;
+}
+.silent-ui.tutor-open .tutor-head,
+.silent-ui.tutor-open .tutor-intro,
+.silent-ui.tutor-open #tutor-context-button,
+.silent-ui.tutor-open .tutor-bottom,
+.silent-ui.tutor-open #chat-hint,
+.silent-ui.tutor-open .message-label,
+.silent-ui.tutor-open #workspace-mode-button,
+.silent-ui.tutor-open #global-mode {
+  display: none;
+}
+.silent-ui.tutor-open #tutor-close {
+  position: fixed;
+  top: 18px;
+  right: 24px;
+  padding: 4px 8px;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--muted);
+}
+.silent-ui.tutor-open #tutor-chat {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  padding: 8px 8px 36px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  scrollbar-width: thin;
+}
+.silent-ui.tutor-open .message {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: 18px/1.75 var(--serif);
+  overflow-wrap: anywhere;
+}
+.silent-ui.tutor-open .message.student {
+  align-self: flex-end;
+  max-width: 85%;
+}
+.silent-ui.tutor-open .message.assistant {
+  align-self: flex-start;
+  max-width: 100%;
+  border: 0;
+}
+.silent-ui.tutor-open #chat-form {
+  position: relative;
+  flex: none;
+  margin: 0;
+  padding: 0 36px 0 0;
+  border: 0;
+  border-bottom: 1px solid #91a18b;
+}
+.silent-ui.tutor-open #chat-input {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  max-height: 160px;
+  padding: 12px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+  resize: none;
+  font: 16px/1.5 system-ui, sans-serif;
+}
+.silent-ui.tutor-open #chat-form:focus-within {
+  border-bottom-color: var(--green);
+}
+.silent-ui.tutor-open .chat-actions {
+  position: absolute;
+  right: 0;
+  bottom: 10px;
+  margin: 0;
+}
+.silent-ui.tutor-open #send-chat {
+  padding: 0 4px;
+  min-width: 28px;
+  border: 0;
+  background: transparent;
+  color: var(--green);
+  font-size: 25px;
+  line-height: 1;
+}
+@media (max-width: 700px) {
+  .silent-ui.tutor-open .workspace > .tutor {
+    padding: 50px 24px 24px;
+  }
+  .silent-ui.tutor-open .message {
+    font-size: 17px;
+  }
+  .silent-ui.tutor-open #tutor-close {
+    top: 12px;
+    right: 14px;
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "@codemirror/commands": "^6.11.1",
+    "@codemirror/lang-markdown": "^6.5.2",
+    "@codemirror/language": "^6.13.1",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.14",
+    "esbuild": "^0.28.2",
+    "@lezer/markdown": "^1.8.0",
+    "@replit/codemirror-vim": "^6.4.0"
+  },
+  "name": "glosa-note-editor",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild live.js --bundle --minify --format=iife --legal-comments=linked --outfile=../live-markdown.js"
+  }
+}
