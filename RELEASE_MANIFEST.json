@@ -28,8 +28,8 @@
       "bytes": 746
     },
     "CHANGELOG.md": {
-      "sha256": "81f938b8efd5390a85f3500ba8f2f304032168fef910b1e1110f4aa4ad740bd1",
-      "bytes": 1868
+      "sha256": "1f92baa8d1342f533054266025c41fc0058848345d39fd28b3678629e2032093",
+      "bytes": 1762
     },
     "CODE_OF_CONDUCT.md": {
       "sha256": "cdd11e40d1dda148d4e0add4367a833d5883ea2e866bd9981e912af2fdd33a9d",
@@ -84,8 +84,8 @@
       "bytes": 1549
     },
     "docs/auditoria-release.md": {
-      "sha256": "ee6beecebc0dd00272973692719c5564f6ce15bab9d1f0febbe56fa2306cd5a2",
-      "bytes": 15156
+      "sha256": "28680d0d41740bf4e822a32fb464d72b4af8a623010d84937a70aeb77d12c0df",
+      "bytes": 15929
     },
     "docs/contexto-tutor.md": {
       "sha256": "a4f36951bb4f286c7172df411d9268727e9e5242bdaf7d430e6c0a2ed02e7c0c",
@@ -120,8 +120,8 @@
       "bytes": 7251
     },
     "docs/release.md": {
-      "sha256": "9d3d5277691ad6adb220b8a7e5da3719b152b3b28295b401e558fb2041c47af3",
-      "bytes": 4275
+      "sha256": "fa6253c1ba2945fc23868ec436201c43bb92c79a4208ae47e6969c0bca421093",
+      "bytes": 5020
     },
     "docs/revision-tutorial.md": {
       "sha256": "b9a15df21a1735dc815f28f1b0d7561305211decc8017d0acd10f0aae48e5a40",

@@ -200,3 +200,17 @@ un caso que cierra el diálogo y selecciona inmediatamente el lector: falla
 antes de la corrección de foco. El cierre usa ahora la devolución síncrona
 nativa del navegador, y su evento diferido únicamente retira el diálogo. No
 se relajaron las comprobaciones de contenido, página o IDs.
+
+### Resultado final de CI
+
+La [corrida 38772511216](https://github.com/agusbpl/glosa/actions/runs/38772511216)
+terminó correctamente: 104 pruebas sin omisiones y MCP en Python 3.11 y 3.12,
+y los 15 recorridos Chromium, incluidas las regresiones de PDF y foco. El
+cierre posterior cambia solo documentación y el manifiesto, y se verifica
+su propio CI antes de crear el tag. No se realizaron llamadas a un modelo real.
+
+El checkout privado se adaptó a la nueva historia sin resetear el árbol ni
+borrar archivos. La metadata Git original quedó en el respaldo privado con
+el push deshabilitado; los archivos locales excluidos se conservan y quedan
+fuera del seguimiento. Las huellas SHA-256 de los 79 archivos privados
+registrados antes de la adaptación siguen iguales.

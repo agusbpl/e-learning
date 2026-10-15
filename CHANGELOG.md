@@ -1,8 +1,6 @@
 # Historial de cambios
 
-## 0.1.0 · candidata sin publicar
-
-Preparada el 2026-10-15. La fecha de publicación se fija al crear la release.
+## 0.1.0 · 2026-10-15
 
 - Preparación de la primera release abierta: documentación de instalación, privacidad, contribución, seguridad y licencia Apache-2.0.
 - Notas con Markdown durante la escritura, Foco, Vim y selección visual; ayuda de la tecla líder y modo PDF con celdas por página.
@@ -19,4 +17,4 @@ Preparada el 2026-10-15. La fecha de publicación se fija al crear la release.
 - Se corrigió el robo tardío del foco al cerrar el diálogo de renombrar: el evento de cierre ya no pisa una selección posterior del lector.
 - CI corrige el contexto de su directorio temporal y espera el guardado confirmado antes de leer el Markdown persistido.
 
-Resultados y límites en [la auditoría](docs/auditoria-release.md). La publicación queda pendiente de completar [la verificación de release](docs/release.md).
+Resultados y límites en [la auditoría](docs/auditoria-release.md). El procedimiento y las verificaciones están en [release.md](docs/release.md).

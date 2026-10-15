@@ -15,10 +15,13 @@ capturas y la historia anterior quedan en la instalación privada.
 - [x] Crear y verificar respaldo privado de la historia Git, el diff local y los archivos sin seguimiento antes de reemplazar la historia pública.
 - [x] Sustituir la rama pública por una historia inicial filtrada con identidad pública; comprobar ramas, tags y clones posteriores.
 - [x] Completar 104 pruebas Python sin omisiones, MCP y los 15 recorridos de navegador; repetir los recorridos desde un clon público limpio.
-- [ ] Completar CI sobre el commit publicado, incluyendo las correcciones surgidas en GitHub.
+- [x] Completar CI sobre el commit publicado, incluyendo las correcciones surgidas en GitHub: Python 3.11/3.12, MCP y 15 recorridos Chromium.
 - [x] Reportes privados de vulnerabilidades habilitados en GitHub.
 - [x] Revisar el despliegue local actual: sin proceso Tailscale, CLI, socket o unidad local de Serve/Funnel disponibles. No se habilitó acceso público.
-- [ ] Crear el tag `v0.1.0` y publicar notas y paquete correspondientes al commit verificado.
+
+La versión se identifica por el tag `v0.1.0`. Las notas, el paquete y sus
+checksums se distribuyen en [GitHub Releases](https://github.com/agusbpl/glosa/releases/tag/v0.1.0).
+El tag se crea únicamente después de verificar el commit final.
 
 Tailscale Serve real no pudo ejercerse porque este equipo no tiene la instalación
 administradora. La release funciona en loopback y documenta el acceso remoto como
@@ -62,3 +65,11 @@ anteriores y sus archivos coinciden con el manifiesto. La consulta directa
 del SHA anterior todavía responde en GitHub: la limpieza de la rama está
 comprobada, la purga de objetos del servidor no. Se preparó una solicitud
 privada para GitHub Support; no se envió automáticamente.
+
+La [corrida de CI que verificó las correcciones](https://github.com/agusbpl/glosa/actions/runs/38772511216)
+completó los tres trabajos correctamente. El cierre posterior modifica
+únicamente las notas de versión, el registro de revisión y sus hashes;
+se comprueba también el CI de ese commit antes de etiquetarlo.
+El checkout de trabajo se adaptó a la historia limpia sin borrar archivos
+locales. Se verificaron por SHA-256 79 archivos privados sin modificaciones;
+la metadata Git anterior y los respaldos permanecen en una carpeta privada.
