@@ -214,3 +214,19 @@ borrar archivos. La metadata Git original quedó en el respaldo privado con
 el push deshabilitado; los archivos locales excluidos se conservan y quedan
 fuera del seguimiento. Las huellas SHA-256 de los 79 archivos privados
 registrados antes de la adaptación siguen iguales.
+
+### Regresión del gestor de contexto detectada al cerrar la release
+
+La corrida del cierre documental, 38772894498, pasó Python/MCP y 14 de los
+15 recorridos, pero `browser_context.cjs` agotó el tiempo al navegar a Notas
+después de cerrar Contexto. La misma restauración de foco diferida seguía
+presente en `web/context.js` y podía borrar el prefijo `g` al recibir el foco
+un control anterior entre las dos teclas de `g n`.
+
+Se agregó una reproducción controlada: abrir desde un botón distinto, cerrar
+el diálogo y enfocar main inmediatamente, y comprobar que el evento close
+diferido no robe ese nuevo foco. La prueba falla con el código anterior.
+El gestor usa ahora la devolución síncrona nativa y únicamente retira el
+diálogo en close, igual que Renombrar. Se conserva la navegación por teclado
+y la comprobación de persistencia y privacidad del contexto. El tag queda
+condicionado al CI completo del commit que incluye esta corrección.

@@ -13,10 +13,11 @@ window.TutorContext=(()=>{
     if(!result.size)throw Error('Indicá al menos una página.');return [...result].sort((a,b)=>a-b);
   }
   async function open(target=studyTarget(),message=''){
-    const originalFocus=document.activeElement;
     const dialog=E('dialog',{class:'context-manager','aria-label':'Gestionar contexto del tutor'}),error=E('p',{class:'context-error',role:'alert'}),status=E('div',{class:'context-preview','aria-live':'polite'});
     dialog.append(E('div',{class:'eyebrow'},'LO QUE EL TUTOR RECIBE'),E('h2',{},'Contexto'),E('p',{class:'muted'},'Elegí el material para la próxima consulta. El mensaje que escribas y las reglas del tutor se envían siempre.'),E('p',{role:'status'},'Abriendo selección…'));
-    dialog.addEventListener('close',()=>{dialog.remove();if(originalFocus?.isConnected)originalFocus.focus({preventScroll:true});});document.body.append(dialog);dialog.showModal();
+    // Native close restores focus before returning; a queued restoration would
+    // steal a newer panel focus and clear an in-progress navigation prefix.
+    dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);dialog.showModal();
     try{
       const fresh=await api('/api/state');state.library=fresh.library;
       const initial=await api('/api/tutor-context',{target,message});if(!dialog.open)return;

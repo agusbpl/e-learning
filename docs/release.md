@@ -67,9 +67,10 @@ comprobada, la purga de objetos del servidor no. Se preparó una solicitud
 privada para GitHub Support; no se envió automáticamente.
 
 La [corrida de CI que verificó las correcciones](https://github.com/agusbpl/glosa/actions/runs/38772511216)
-completó los tres trabajos correctamente. El cierre posterior modifica
-únicamente las notas de versión, el registro de revisión y sus hashes;
-se comprueba también el CI de ese commit antes de etiquetarlo.
+completó los tres trabajos correctamente. La verificación del cierre documental detectó la misma devolución tardía de
+foco en el gestor de contexto. Se corrigió también y se añadió una prueba
+que falla antes y pasa después; el CI del commit final debe verificar esta
+corrección antes de etiquetarlo.
 El checkout de trabajo se adaptó a la historia limpia sin borrar archivos
 locales. Se verificaron por SHA-256 79 archivos privados sin modificaciones;
 la metadata Git anterior y los respaldos permanecen en una carpeta privada.

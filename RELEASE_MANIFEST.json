@@ -28,8 +28,8 @@
       "bytes": 746
     },
     "CHANGELOG.md": {
-      "sha256": "1f92baa8d1342f533054266025c41fc0058848345d39fd28b3678629e2032093",
-      "bytes": 1762
+      "sha256": "9365b1e9f2035503ccbeddb528e8bd45b9e79c8a4f6232c6ff174f0ffa35a38b",
+      "bytes": 1785
     },
     "CODE_OF_CONDUCT.md": {
       "sha256": "cdd11e40d1dda148d4e0add4367a833d5883ea2e866bd9981e912af2fdd33a9d",
@@ -84,8 +84,8 @@
       "bytes": 1549
     },
     "docs/auditoria-release.md": {
-      "sha256": "28680d0d41740bf4e822a32fb464d72b4af8a623010d84937a70aeb77d12c0df",
-      "bytes": 15929
+      "sha256": "f9f0806c4ba36e85401dffa30af92a51f9c9b495973c8aa667f22f5a231d44c8",
+      "bytes": 16890
     },
     "docs/contexto-tutor.md": {
       "sha256": "a4f36951bb4f286c7172df411d9268727e9e5242bdaf7d430e6c0a2ed02e7c0c",
@@ -120,8 +120,8 @@
       "bytes": 7251
     },
     "docs/release.md": {
-      "sha256": "fa6253c1ba2945fc23868ec436201c43bb92c79a4208ae47e6969c0bca421093",
-      "bytes": 5020
+      "sha256": "d477fe07bd03be0f3226c24addce73b9c982c28b1e8e3e4f724e53d816c654b6",
+      "bytes": 5121
     },
     "docs/revision-tutorial.md": {
       "sha256": "b9a15df21a1735dc815f28f1b0d7561305211decc8017d0acd10f0aae48e5a40",
@@ -220,8 +220,8 @@
       "bytes": 9148
     },
     "tests/browser_context.cjs": {
-      "sha256": "431a12399f23450b1e2e7a702c2b46dd3f31368f1351c8dafdd8f0a37767d29d",
-      "bytes": 9085
+      "sha256": "2cc2bca8fcd7472db0cbacd56a6466dbb2f47a3154a8d065f1c8f8be6fb42044",
+      "bytes": 9504
     },
     "tests/browser_headers.cjs": {
       "sha256": "9c2304338366bbf39635ecbef2df0de89c8ac0db592acfefe7288a1df1d18e65",
@@ -332,8 +332,8 @@
       "bytes": 48038
     },
     "web/context.js": {
-      "sha256": "a9490e4b0f65d6bda05fc126d93b411bbc1614005485ecb1e8e8a6246aa80c51",
-      "bytes": 14881
+      "sha256": "953d6e0ea0eb84775ad19f26f27e8fdde00c03f413bc04491e9ae6736e575658",
+      "bytes": 14915
     },
     "web/conversation.css": {
       "sha256": "8b6fecfddfa9d7e210242675e755aeb8d99bce5680b2b285ecd2da5d9de9f287",
