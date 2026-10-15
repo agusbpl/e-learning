@@ -15,7 +15,7 @@ jobs:
       matrix:
         python-version: ['3.11', '3.12']
     env:
-      LEARNING_DATA_DIR: ${{ runner.temp }}/glosa-ci-data
+      LEARNING_DATA_DIR: /tmp/glosa-ci-data
       OPENROUTER_API_KEY: ''
       FREELLMAPI_API_KEY: ''
       INTERN_API_KEY: ''
@@ -37,7 +37,7 @@ jobs:
   browser:
     runs-on: ubuntu-latest
     env:
-      LEARNING_DATA_DIR: ${{ runner.temp }}/glosa-ci-data
+      LEARNING_DATA_DIR: /tmp/glosa-ci-data
       OPENROUTER_API_KEY: ''
       FREELLMAPI_API_KEY: ''
       INTERN_API_KEY: ''
