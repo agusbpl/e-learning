@@ -35,8 +35,13 @@ window.StudyPlan=(()=>{
   function render(){
     if(!selected)selected=state.localDate;
     const recommendation=state.recommendations[cid];
-    const nodes=[E('div',{class:'eyebrow'},'TU CURSADA, A TU RITMO'),E('div',{class:'calendar-heading'},E('h1',{},'Plan'),E('div',{class:'calendar-views'},...Object.entries({today:'Hoy',week:'Semana',month:'Mes'}).map(([key,text])=>E('button',{class:'text-button'+(mode===key?' active':''),'aria-pressed':mode===key?'true':'false',onclick:()=>{mode=key;if(key==='today')selected=state.localDate;render();}},text)))),E('div',{class:'calendar-actions'},E('button',{class:'text-button',onclick:()=>edit()},'＋ Evento'),E('button',{class:'text-button',onclick:()=>{selected=state.localDate;render();}},'Volver a hoy'))];
-    if(mode==='today'){
+    const nodes=[E('div',{class:'eyebrow'},'TU CURSADA, A TU RITMO'),E('div',{class:'calendar-heading'},E('h1',{},'Plan'),E('div',{class:'calendar-views'},...Object.entries({today:'Hoy',week:'Semana',month:'Mes',parciales:'Parciales'}).map(([key,text])=>E('button',{class:'text-button'+(mode===key?' active':''),'aria-pressed':mode===key?'true':'false',onclick:()=>{mode=key;if(key==='today')selected=state.localDate;render();}},text)))),E('div',{class:'calendar-actions'},E('button',{class:'text-button',onclick:()=>edit()},'＋ Evento'),E('button',{class:'text-button',onclick:()=>{selected=state.localDate;render();}},'Volver a hoy'))];
+    if(mode==='parciales'){
+      const panel=E('section',{class:'plan-parciales'});
+      nodes.push(panel);
+      if(window.TutorModes?.mount)window.TutorModes.mount(panel,{state}).catch(err=>panel.replaceChildren(E('p',{class:'muted'},err.message)));
+      else panel.replaceChildren(E('p',{class:'muted'},'La vista global de parciales todavía no está disponible en esta instalación.'));
+    }else if(mode==='today'){
       const list=onDay(selected);
       nodes.push(E('h2',{},label(selected)),E('p',{class:'muted'},`${allowance(selected)} min de disponibilidad declarada. No representa una sesión programada.`),...list.map(eventButton));
       if(!list.length)nodes.push(E('p',{class:'muted'},'No hay eventos para este día.'));
