@@ -48,14 +48,31 @@
 .note-list-actions-menu{position:absolute;right:0;top:100%;min-width:175px;padding:8px;background:var(--bg);border:1px solid var(--line);box-shadow:0 6px 20px #0000000d;display:flex;flex-direction:column;gap:4px}
 .silent-ui .note-list-actions-menu button{text-align:left;padding:8px;font:12px/1.4 var(--sans,sans-serif)}
 .note-preface{margin-bottom:24px}
-.theory mark[role=button]{background:var(--yellow);color:inherit;cursor:pointer;border-radius:2px}
-.theory::selection,.theory ::selection{background:var(--yellow)}
+.theory mark[role=button]{background:var(--mark-yellow);color:inherit;cursor:pointer;border-radius:2px}
+.theory mark[role=button][data-color=green]{background:var(--mark-green)}
+.theory mark[role=button][data-color=blue]{background:var(--mark-blue)}
+.theory mark[role=button][data-color=pink]{background:var(--mark-pink)}
+.theory::selection,.theory ::selection{background:var(--mark-yellow)}
 .textLayer ::selection{background:#f7dc6180;color:transparent}
-.reading-highlight-actions{position:fixed;margin:0;padding:6px 12px;max-width:calc(100vw - 24px);border:1px solid var(--line);background:var(--bg);box-shadow:0 4px 20px #00000012;z-index:100}
-.reading-highlight-actions[open]{display:flex;gap:18px;flex-wrap:wrap}
+/* Barra compacta: ancho del contenido, anclada y siempre dentro del viewport. */
+.reading-highlight-actions{position:fixed;margin:0;padding:6px 8px;width:auto;max-width:min(560px,calc(100vw - 16px));border:1px solid var(--line);border-radius:8px;background:var(--paper,var(--bg));color:var(--ink);box-shadow:0 6px 24px #00000026;z-index:100}
+.reading-highlight-actions[open]{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .silent-ui .reading-highlight-actions button{font-size:12px;white-space:nowrap}
+.highlight-colors{display:inline-flex;align-items:center;gap:4px;padding-right:6px;margin-right:2px;border-right:1px solid var(--line)}
+.highlight-swatch{width:22px;height:22px;min-width:22px;padding:0;border-radius:50%;border:1px solid var(--line);cursor:pointer}
+.annotation-actions .highlight-swatch{width:18px;height:18px;min-width:18px}
+.highlight-swatch[data-color=yellow]{background:var(--mark-yellow)}
+.highlight-swatch[data-color=green]{background:var(--mark-green)}
+.highlight-swatch[data-color=blue]{background:var(--mark-blue)}
+.highlight-swatch[data-color=pink]{background:var(--mark-pink)}
+.highlight-swatch[aria-pressed=true]{outline:2px solid var(--ink);outline-offset:1px}
+.reading-highlight-actions .danger{color:#9a3b2f}
+html[data-theme=dark] body .reading-highlight-actions .danger{color:#f0a79b}
 .pdf-highlights{position:absolute;inset:0;z-index:2;pointer-events:none}
-.silent-ui .pdf-highlights .pdf-highlight{position:absolute;pointer-events:auto;background:#f7dc6180;border:0;border-radius:2px;padding:0;margin:0;min-height:0;cursor:pointer;mix-blend-mode:multiply}
+.silent-ui .pdf-highlights .pdf-highlight{position:absolute;pointer-events:auto;background:var(--pdf-yellow);border:0;border-radius:2px;padding:0;margin:0;min-height:0;cursor:pointer;mix-blend-mode:multiply}
+.silent-ui .pdf-highlights .pdf-highlight[data-color=green]{background:var(--pdf-green)}
+.silent-ui .pdf-highlights .pdf-highlight[data-color=blue]{background:var(--pdf-blue)}
+.silent-ui .pdf-highlights .pdf-highlight[data-color=pink]{background:var(--pdf-pink)}
 .pdf-highlight:focus-visible{outline:2px solid var(--green);outline-offset:1px}
 .silent-ui .continuous-editor .note-options{top:16px;right:16px}
 .note-options-panel details summary{font-size:12px}

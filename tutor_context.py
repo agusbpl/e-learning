@@ -28,7 +28,9 @@ def defaults(state, target):
         course = next((c for c in state['courses'] if c['id'] == target['courseId']), None)
         if not course or not any(l['id'] == target['lessonId'] for l in course['lessons']):
             raise ValueError('Lección inexistente.')
-        ids = [e['id'] for e in state['events'] if e['kind'] == 'annotation' and e['courseId'] == course['id'] and e['data'].get('courseVersion', course['version']) == course['version'] and e['data'].get('shareWithTutor', True)]
+        # A highlight the student retired (data.removed) is kept in the exportable
+        # history but never enters the automatic tutor context.
+        ids = [e['id'] for e in state['events'] if e['kind'] == 'annotation' and e['courseId'] == course['id'] and e['data'].get('courseVersion', course['version']) == course['version'] and e['data'].get('shareWithTutor', True) and not e['data'].get('removed')]
     else:
         if not any(n['id'] == target['noteId'] for n in state['library']['notes']):
             raise ValueError('Nota inexistente.')
@@ -182,12 +184,19 @@ def build(lib, state, target, selection=None, message='', base_note=None):
                 if ev['kind']=='assessment':payload['latestAssessmentsByLesson'][ev['lessonId']]=sanitized_event(ev)['data']
         annotation_ids=set(selection['annotationIds'])
         resolved={e['data'].get('annotationId') for e in history if e['kind']=='annotation_resolved'}
+        retired=set()
         for ev in history:
             if ev['kind']=='annotation' and ev['id'] in annotation_ids:
+                # Removed highlights stay in the full record but are not offered to
+                # the tutor, even if an older explicit selection still names them.
+                if ev['data'].get('removed'):
+                    retired.add(ev['id'])
+                    continue
                 payload['annotations'].append({'id':ev['id'],**sanitized_event(ev)})
                 manifest['items'].append({'kind':'annotation','id':ev['id'],'revision':ev['data'].get('annotationRevision',0),'title':ev['data'].get('comment','')[:100]})
                 if ev['id'] not in resolved:payload['openDoubts'].append(ev)
-        if annotation_ids-{e['id'] for e in payload['annotations']}:manifest['warnings'].append('Hay anotaciones elegidas que fueron borradas o pertenecen a otra versión o materia.')
+        if annotation_ids-{e['id'] for e in payload['annotations']}-retired:manifest['warnings'].append('Hay anotaciones elegidas que fueron borradas o pertenecen a otra versión o materia.')
+        if retired:manifest['warnings'].append('Algunas anotaciones elegidas fueron quitadas del resaltado y no se enviaron. Su historial completo sigue en tu registro.')
     elif base_note is not None:
         payload['noteContext']={k:v for k,v in base_note.items() if k not in ('studentText','quote','sourcePages','sourceWarning')}
         note=next(n for n in state['library']['notes'] if n['id']==target['noteId'])

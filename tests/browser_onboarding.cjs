@@ -8,7 +8,9 @@ const {spawn}=require('child_process');
  const listener=net.createServer();await new Promise(resolve=>listener.listen(0,'127.0.0.1',resolve));const port=listener.address().port;await new Promise(resolve=>listener.close(resolve));
  const base=`http://localhost:${port}`;
  const code=`import json,server\nserver.init_db()\nserver.KEY='temporary-test-key'\nserver.openrouter=lambda *args,**kwargs: {'choices':[{'message':{'content':json.dumps({'reply':'Una glosa conserva una duda junto a su texto.','status':'pending','evidence':[],'gaps':[],'reason':'Conversación de prueba.','nextAction':'reinforce'})},'finish_reason':'stop'}]}\nserver.ThreadingHTTPServer(('127.0.0.1',server.PORT),server.Handler).serve_forever()\n`;
- const service=spawn('python3',['-c',code],{cwd:root,env:{...process.env,LEARNING_DATA_DIR:data,LEARNING_PORT:String(port),GLOSA_MARGEN_DIR:'',OPENROUTER_API_KEY:'',FREELLMAPI_API_KEY:'',INTERN_API_KEY:''},stdio:['ignore','ignore','pipe']});
+ // HOME is temporary and GLOSA_MARGEN_DIR is empty, so the visible Margen default
+ // lives inside the fixture and `set_margen` still works. Never the real ~/Margen.
+ const service=spawn('python3',['-c',code],{cwd:root,env:{...process.env,HOME:temporary,LEARNING_DATA_DIR:data,LEARNING_PORT:String(port),GLOSA_MARGEN_DIR:'',OPENROUTER_API_KEY:'',FREELLMAPI_API_KEY:'',INTERN_API_KEY:''},stdio:['ignore','ignore','pipe']});
  let browser,stderr='';service.stderr.on('data',chunk=>stderr+=chunk);
  const api=async(path,body,room='local')=>{const response=await fetch(base+path,{headers:{'Content-Type':'application/json','X-Glosa-Room':room},...(body?{method:'POST',body:JSON.stringify(body)}:{})});const result=await response.json();assert(response.ok,JSON.stringify(result));return result;};
  try{

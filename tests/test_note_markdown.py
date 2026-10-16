@@ -3,6 +3,7 @@ import json
 import unittest
 from pathlib import Path
 
+import note_files
 from library import Library, note_markdown
 
 
@@ -32,7 +33,11 @@ class NoteMarkdownTests(unittest.TestCase):
         self.assertEqual(self.lib.save_note(updated), updated)
         self.assertEqual(self.lib.snapshot()['noteVersions'], [original])
         self.assertEqual(note_markdown(updated, []), content + '\n')
-        self.assertEqual((self.data / 'notes' / (updated['id'] + '.md')).read_text(), content + '\n')
+        # El original es un archivo visible en Apuntes; el cuerpo se conserva exacto.
+        original_file = self.lib.note_file(updated['id'])
+        info = note_files.read_note_file(original_file)
+        self.assertEqual(info['glosa_id'], updated['id'])
+        self.assertEqual(info['content'], content)
         backup = self.lib.snapshot()
         self.assertEqual(self.lib.validate_backup(backup), backup)
 

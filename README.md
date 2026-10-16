@@ -10,7 +10,7 @@ cd glosa
 ./start.sh
 ```
 
-Abrí <http://127.0.0.1:8765>. Necesitás Python 3.11 o posterior. La distribución pública se prepara sin claves, respuestas, apuntes ni PDFs personales mediante la [lista de release](docs/release.md). Podés crear un pliego vacío, importar un curso propio o usar Primer trazo para conocer la interfaz.
+Abrí <http://127.0.0.1:8765>. Necesitás Python 3.11 o posterior. La distribución pública se prepara sin claves, respuestas, apuntes ni PDFs personales mediante la [lista de release](docs/release.md). Podés crear una bóveda vacía, importar un curso propio o usar Primer trazo para conocer la interfaz.
 
 El arranque y las pruebas se verificaron en Linux con Bash y Chromium. Otros sistemas y navegadores todavía requieren verificación.
 
@@ -25,9 +25,15 @@ Para pruebas y estructura del proyecto, consultá [desarrollo](docs/desarrollo.m
 
 ## Uso y datos
 
-En **Margen** se organizan los pliegos con cursos, lectura, notas y conversación. Cada pliego puede exportarse como ZIP con PDFs e historial. Revisá el contenido antes de compartirlo; los borradores aún presentes solo en el navegador pueden quedar fuera de la exportación.
+En **Margen** vivís tu bóveda global: una carpeta visible de esta computadora que reúne **pliegos** (subcarpetas por materia) con cursos, lectura, notas, PDFs y conversación, sin mezclarse entre sí. Los **apuntes** son archivos Markdown originales editables con cualquier editor; Glosa conserva en SQLite el historial, las revisiones y los conflictos de una edición externa. Cada pliego puede exportarse como ZIP con sus PDFs e historial. Revisá el contenido antes de compartir un respaldo; los borradores aún presentes solo en el navegador pueden quedar fuera de la exportación. Detalles en [bóvedas](docs/bovedas.md) y [almacenamiento](docs/almacenamiento.md).
 
-El tutor es opcional. Al usarlo, el contexto elegido se envía al proveedor configurado. Las credenciales permanecen en la instalación local de la PC, fuera de los respaldos de pliegos. Las condiciones y costos dependen del proveedor. Leé [privacidad](docs/privacidad.md).
+En **Notas**, las [herramientas de estudio](docs/herramientas-estudio.md) agregan referencias entre apuntes, fichas de concepto, propiedades de materia, unidad, fecha de parcial y repaso, y un registro de errores. Esa metadata se guarda dentro del apunte y no crea cursos ni evaluaciones. Los resaltados de PDF se guardan con su color y pueden quitarse del resaltado sin perder el historial.
+
+La apariencia se elige en Ajustes: tema claro, oscuro o automático, y un color de acento. En el lector, los resaltados usan cuatro colores fijos (amarillo, verde, azul y rosa) y siguen legibles en tema oscuro y en pantallas pequeñas.
+
+El tutor es opcional. Al usarlo, el contexto elegido se envía al proveedor configurado. Las credenciales permanecen en la instalación local de la PC, fuera de los respaldos de bóvedas. Las condiciones y costos dependen del proveedor. El tutor trabaja con modos **Flexible**, **Estricto** y **Extremo**: en automático la política local decide con fechas y evidencia reales y nunca debilita la puerta de evidencia ni declara dominio con una ayuda propia. En Plan, la pestaña **Parciales** muestra el plan global de todas las materias del Margen con prioridad explicada. Leé [privacidad](docs/privacidad.md) y [modos del tutor](docs/modos-tutor.md).
+
+Hay dos integraciones MCP separadas y opcionales: el [tutor de apuntes](docs/mcp-tutor.md), que responde preguntas sobre notas compartidas, y la [autoría de cursos y lecciones](docs/mcp-autor.md), que ayuda a preparar materiales. Ninguna acredita dominio por sí sola ni reemplaza la revisión humana.
 
 Los cursos y las evaluaciones requieren revisión humana de fuentes y rúbricas. La [regla de evaluación rigurosa](docs/evaluacion-rigurosa.md) describe los criterios del proyecto; las comprobaciones automáticas no acreditan calidad pedagógica por sí solas.
 

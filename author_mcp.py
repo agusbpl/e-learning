@@ -8,9 +8,26 @@ import server
 import continuation
 import calendar_store
 import rooms
+import tutor_modes
+from contextlib import contextmanager
 from pathlib import Path
 
 SELECTED_ROOM = "local"
+
+
+@contextmanager
+def _scoped(scope):
+    """Abre un scope del Margen con la API existente; al salir la restaura."""
+    token = server.ACTIVE_WORKSPACE.set(scope)
+    try:
+        yield
+    finally:
+        server.ACTIVE_WORKSPACE.reset(token)
+
+
+def _all_scopes():
+    """Pliegos del Margen elegido (sin el tutorial) con targets por roomId."""
+    return tutor_modes.scopes(server)
 
 HANDOFF_INSTRUCTIONS = ' Para un encargo explícito Preparar continuación, consultá pending_continuations y continuation_brief, paginá toda la evidencia y usá apply_continuation para dejar el curso actualizado directamente. Esa activación requiere el encargo, versión esperada y justificación. Fuera de esos encargos seguí guardando borradores para revisión.'
 
@@ -96,7 +113,8 @@ def author_brief(folder: str = '', course_id: str = '') -> dict:
             'example': (server.ROOT/'courses/tutorial.json').read_text(),
             'existingCourse': json.loads(row['body']) if row else None,
             'courseCalendar': [ev for ev in server.snapshot()['calendarEvents'] if course_id and ev['courseId']==course_id],
-            'currentStudyPlan': settings, 'planScope': 'Este es el plan actual. Confirmá materia, temario, objetivo y fechas del encargo nuevo antes de aplicar ese plan a otra materia.'}
+            'currentStudyPlan': settings, 'planScope': 'Este es el plan actual. Confirmá materia, temario, objetivo y fechas del encargo nuevo antes de aplicar ese plan a otra materia.',
+            'tutorMode': tutor_modes.mode_brief(server, consume_notice=False)}
 
 
 @mcp.tool(annotations=READ)
@@ -225,6 +243,85 @@ def apply_continuation(request_id: str, course: dict, expected_version: str, rat
     checked=check_course(course)
     if not checked['valid']:raise ValueError('Corregí los problemas de calidad detectados antes de activar la continuación.')
     return continuation.activate(server, request_id, course, expected_version, rationale)
+
+
+@mcp.tool(annotations=READ)
+@validation_errors
+def global_courses_overview() -> dict:
+    """Materias, lecciones y estado de evidencia de TODOS los pliegos del Margen elegido (sin el tutorial), con targets roomId|courseId para organizar temarios y fechas."""
+    overview = []
+    for target in _all_scopes():
+        try:
+            with _scoped(target['scope']):
+                state = server.snapshot()
+        except Exception as exc:  # pliego ilegible: se declara, no se inventa
+            overview.append({'roomId': target['id'], 'roomTitle': target['title'], 'courses': [], 'error': str(exc)})
+            continue
+        courses = []
+        for course in state['courses']:
+            status = {}
+            for event in state['events']:
+                if event.get('courseId') != course['id'] or event['data'].get('courseVersion', course['version']) != course['version']:
+                    continue
+                if event['kind'] == 'assessment':
+                    status[event['lessonId']] = event['data'].get('status', 'pending')
+            courses.append({'id': course['id'], 'title': course['title'], 'version': course['version'],
+                            'lessons': [{'id': lesson['id'], 'title': lesson['title'], 'priority': lesson['priority'],
+                                         'minutes': lesson['minutes'], 'status': status.get(lesson['id'], 'unseen')}
+                                        for lesson in course['lessons']]})
+        overview.append({'roomId': target['id'], 'roomTitle': target['title'], 'courses': courses,
+                         'notesCount': len(state.get('library', {}).get('notes', []))})
+    try:
+        margen_path = rooms.margen(server.DATA, create=False)['path']
+    except (ValueError, KeyError, OSError):
+        margen_path = ''
+    return {'margen': margen_path, 'pliegos': overview,
+            'scope': 'Solo lectura. No mezcla historiales ni copia datos: cada pliego conserva su base e IDs.'}
+
+
+@mcp.tool(annotations=READ)
+@validation_errors
+def all_room_events() -> dict:
+    """Calendario de TODOS los pliegos del Margen con targets compuestos; sin inventar horarios ni fechas."""
+    events = []
+    for target in _all_scopes():
+        try:
+            with _scoped(target['scope']):
+                state = server.snapshot()
+        except Exception:
+            continue
+        for event in state['calendarEvents']:
+            events.append({**event, 'roomId': target['id'], 'roomTitle': target['title']})
+    events.sort(key=lambda event: (event['date'], event['roomId'], event['courseId']))
+    return {'events': events, 'scope': 'Fechas registradas por el alumno o el calendario; no se infieren.'}
+
+
+@mcp.tool(annotations=READ)
+@validation_errors
+def exam_topics_overview() -> dict:
+    """Temarios propuestos/confirmados por parcial en todo el Margen, con revisión para editar sin pisar cambios."""
+    return {'topics': tutor_modes.read_exam_topics(server)}
+
+
+@mcp.tool(annotations=WRITE)
+@validation_errors
+def propose_exam_topics(room_id: str, course_id: str, event_id: str, lesson_ids: list, note_ids: list = None,
+                        rationale: str = '') -> dict:
+    """Propone temario de un parcial desde materiales reales del pliego (lecciones y apuntes existentes). No inventa fechas ni alcance; el alumno confirma desde la UI o el MCP de tutor."""
+    if note_ids is None:
+        note_ids = []
+    current = tutor_modes.read_exam_topics(server, room_id).get('|'.join((room_id, course_id, event_id)), {})
+    return tutor_modes.save_exam_topics(server, room_id, course_id, event_id, lesson_ids, note_ids=note_ids,
+                                        status='proposed', proposed_by='author-mcp', source_note=rationale,
+                                        expected_revision=current.get('revision', 0))
+
+
+@mcp.tool(annotations=READ)
+@validation_errors
+def global_plan_overview() -> dict:
+    """Plan global determinista del Margen (parciales, temario confirmado, pendientes y prioridad explicada) para organizar materias y fechas desde la autoría."""
+    return {'plan': tutor_modes.build_global_plan(server),
+            'scope': 'Solo lectura. La incertidumbre (temario sin confirmar, minutos sin declarar) queda declarada, nunca inventada.'}
 
 
 if __name__ == '__main__':

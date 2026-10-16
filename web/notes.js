@@ -1,6 +1,6 @@
 'use strict';
 window.ClassNotes=(()=>{
-  let currentId=null, current=null, pristineId=null, saveTimer=null, serial=Promise.resolve(), saving=false, generation=0;
+  let currentId=null, current=null, pristineId=null, baseline=null, saveTimer=null, serial=Promise.resolve(), saving=false, generation=0;
   let documentLoad=null, documentGeneration=0;
   let cursorTimer=null,resizeTimer=null,readerObserver=null;
   let liveEditor=null,prefaceEditor=null;
@@ -10,7 +10,7 @@ window.ClassNotes=(()=>{
   function questionContext(anchor=null){if(!anchor)followNoteCursor(activeWritingInput(),false);const scope=anchor?(anchor.scope||'page'):document.activeElement.closest?.('.note-preface')?'general':writingScope();return {noteId:current.id,anchorId:anchor?.id||null,scope,page:anchor?.page??(scope==='page'?(current.page||1):null)};}
   function conversationItem(q){
     const context=q.context,label=context.scope==='page'?'Página PDF '+context.page:'Apunte general / independiente';
-    return E('details',{class:'note-tutor-entry'},E('summary',{},label+' · '+dateLabel(q.createdAt)),E('p',{class:'muted'},'Ayuda recibida · no acredita comprensión independiente'),E('p',{class:'note-tutor-question'},q.message),q.reply?tutorContent(q.reply):E('p',{},q.error||'Consulta pendiente o interrumpida. Podés preguntar de nuevo.'),q.truncated?E('p',{class:'muted'},'La respuesta llegó incompleta. Podés pedirle que continúe.'):null,q.tutorContext&&window.TutorContext?TutorContext.used(q.tutorContext):null);
+    return E('details',{class:'note-tutor-entry'},E('summary',{},label+' · '+dateLabel(q.createdAt)),E('p',{class:'muted'},'Ayuda recibida · no acredita comprensión independiente'),E('p',{class:'note-tutor-question'},q.message),q.reply?tutorContent(q.reply):E('p',{},q.error||(q.channel==='mcp'?'Consulta pendiente para el canal MCP externo.':'Consulta pendiente o interrumpida. Podés preguntar de nuevo.')),q.truncated?E('p',{class:'muted'},'La respuesta llegó incompleta. Podés pedirle que continúe.'):null,q.tutorContext&&window.TutorContext?TutorContext.used(q.tutorContext):null);
   }
   function renderTutorHistory(){
     const target=document.getElementById('note-tutor-history');if(!target||!current)return;
@@ -26,10 +26,19 @@ window.ClassNotes=(()=>{
     document.body.append(dialog);dialog.showModal();
   }
   async function sendQuestion(context,message,output,button){
-    if(button.disabled)return;button.disabled=true;output.replaceChildren(E('p',{role:'status'},'Guardando y consultando al tutor…'));
+    if(button.disabled)return;button.disabled=true;
+    const channel=window.GlosaTutorChannel?.current?.()||'api';
+    output.replaceChildren(E('p',{role:'status'},channel==='mcp'?'Guardando la consulta para el canal MCP externo…':'Guardando y consultando al tutor…'));
     try{
       if(current?.id===context.noteId){if(current.id===pristineId)changes();await flush();}
       const note=data().notes.find(n=>n.id===context.noteId);if(!note)throw Error('No se encontró el apunte.');
+      if(channel==='mcp'){
+        // Sin clave ni costo: la consulta queda pendiente para el MCP de tutor.
+        const pending=await api('/api/note-tutor',{...context,noteRevision:note.revision,requestId:crypto.randomUUID(),message,channel:'mcp',contextRevision:window.TutorContext?.revision({kind:'note',noteId:context.noteId})});
+        data().noteTutor??=[];if(!data().noteTutor.some(q=>q.id===pending.id))data().noteTutor.push(pending);
+        output.replaceChildren(E('div',{class:'eyebrow'},'MCP EXTERNO · CONSULTA PENDIENTE'),E('p',{class:'note-tutor-question'},pending.message),E('p',{class:'muted'},'Un cliente con el MCP de tutor puede responderla. Usá «Actualizar conversación» cuando lo haya hecho.'));
+        return;
+      }
       const result=await api('/api/note-tutor',{...context,noteRevision:note.revision,requestId:crypto.randomUUID(),message,contextRevision:window.TutorContext?.revision({kind:'note',noteId:context.noteId})});
       data().noteTutor??=[];if(!data().noteTutor.some(q=>q.id===result.id))data().noteTutor.push(result);
       output.replaceChildren(E('div',{class:'eyebrow'},'TUTOR · '+(result.context.documentTitle?result.context.documentTitle+' · PDF '+result.context.page:'APUNTE GENERAL')),E('p',{class:'note-tutor-question'},result.message),tutorContent(result.reply),result.truncated?E('p',{class:'muted'},'La respuesta llegó incompleta. Podés pedirle que continúe.'):null,result.tutorContext&&window.TutorContext?TutorContext.used(result.tutorContext):null);
@@ -44,7 +53,8 @@ window.ClassNotes=(()=>{
     context??=questionContext();const originalFocus=document.activeElement;
     const question=E('textarea',{required:'required',maxlength:20000,rows:4,'aria-label':'Pregunta sobre el apunte',placeholder:'¿Qué parte querés aclarar?'});question.value=initial;
     const output=E('div',{class:'note-tutor-output','aria-live':'polite'}),ask=E('button',{type:'submit',class:'primary','data-ask-tutor':'true'},'Preguntar al tutor');
-    const dialog=E('dialog',{class:'note-tutor-dialog'},E('form',{onsubmit:e=>{e.preventDefault();sendQuestion(context,question.value,output,ask);}},E('div',{class:'eyebrow'},context.scope==='page'?'APUNTE · PÁGINA PDF '+context.page:'APUNTE GENERAL'),E('h2',{},'Aclarar esta duda'),E('p',{class:'muted'},'Se envía este texto y su contexto al tutor. Compartir el apunte con el agente autor es una elección aparte.'),question,E('div',{class:'dialog-actions'},E('button',{type:'button',class:'quiet',onclick:()=>dialog.close()},'Cerrar · Esc'),ask),output));
+    const refreshTutor=E('button',{type:'button',class:'text-button',onclick:async()=>{try{const fresh=await api('/api/state');data().noteTutor=fresh.library.noteTutor||[];state.tutorConnected=fresh.tutorConnected;renderTutorHistory();output.replaceChildren(E('p',{class:'muted'},'Conversación actualizada.'));}catch(error){notify(error.message);}}},'Actualizar conversación');
+    const dialog=E('dialog',{class:'note-tutor-dialog'},E('form',{onsubmit:e=>{e.preventDefault();sendQuestion(context,question.value,output,ask);}},E('div',{class:'eyebrow'},context.scope==='page'?'APUNTE · PÁGINA PDF '+context.page:'APUNTE GENERAL'),E('h2',{},'Aclarar esta duda'),E('p',{class:'muted'},'Se envía este texto y su contexto al tutor. Compartir el apunte con el agente autor es una elección aparte.'),question,E('div',{class:'dialog-actions'},refreshTutor,E('button',{type:'button',class:'quiet',onclick:()=>dialog.close()},'Cerrar · Esc'),ask),output));
     dialog.querySelector('form').insertBefore(E('button',{type:'button',class:'text-button',onclick:async()=>{try{if(current?.id===context.noteId){if(current.id===pristineId)changes();await flush();}await TutorContext.open({kind:'note',...context},question.value);}catch(e){notify(e.message);}}},'Contexto'),question);
     dialog.addEventListener('close',()=>{const restore=document.activeElement===document.body||dialog.contains(document.activeElement);dialog.remove();if(restore&&originalFocus?.isConnected)originalFocus.focus({preventScroll:true});});document.body.append(dialog);dialog.showModal();question.focus();
     if(sendImmediately&&initial.trim())dialog.querySelector('form').requestSubmit(ask);
@@ -179,23 +189,66 @@ window.ClassNotes=(()=>{
   function closeList(){document.body.classList.remove('notes-list-open');const el=document.querySelector('.notes-sidebar');if(el)el.inert=true;document.getElementById('notes-list-button')?.setAttribute('aria-expanded','false');}
   function openList(){document.body.classList.add('notes-list-open');const el=document.querySelector('.notes-sidebar');if(el)el.inert=false;document.getElementById('notes-list-button')?.setAttribute('aria-expanded','true');document.getElementById('class-note-search')?.focus();}
   function status(text){const el=document.getElementById('note-save-status');if(el)el.textContent=text;const error=document.getElementById('note-save-error');if(error){error.hidden=!text.startsWith('Sin guardar');error.textContent=error.hidden?'':text;}}
-  function dirty(){return current&&current.id!==pristineId&&JSON.stringify(current)!==JSON.stringify(data()?.notes.find(n=>n.id===current.id));}
+  function dirty(){return current&&current.id!==pristineId&&JSON.stringify(current)!==JSON.stringify(baseline);}
   function remember(){if(current){GlosaRoom.storage.setItem('class-note-draft:'+current.id,JSON.stringify(current));GlosaRoom.storage.setItem('class-note-active-draft',current.id);}}
   function changes(){if(current){pristineId=null;remember();status('Borrador local · guardando…');clearTimeout(saveTimer);saveTimer=setTimeout(()=>flush().catch(e=>notify(e.message)),850);}}
   function flush(){clearTimeout(saveTimer);if(!current||current.id===pristineId)return serial;if(current.markdownDraft&&continuous())storeWriting(current.markdownDraft.text);if(current.markdownDraft)return Promise.reject(Error('Hay un número de página repetido o fuera del PDF. Tu borrador está conservado.'));const id=current.id;
     serial=serial.catch(()=>{}).then(async()=>{if(!current||current.id!==id)return;if(current.markdownDraft)throw Error('Hay un número de página repetido o fuera del PDF. Tu borrador está conservado.');const submitted=JSON.parse(JSON.stringify(current));saving=true;
-      try{const result=await api('/api/notes',submitted);const changed=JSON.stringify(current)!==JSON.stringify(submitted);current.revision=result.revision;current.updatedAt=result.updatedAt;current.createdAt=result.createdAt;
+      try{const result=await api('/api/notes',submitted);const changed=JSON.stringify(current)!==JSON.stringify(submitted);baseline=JSON.parse(JSON.stringify(result));current.revision=result.revision;current.updatedAt=result.updatedAt;current.createdAt=result.createdAt;
         const i=data().notes.findIndex(n=>n.id===id);if(i>=0)data().notes[i]=result;else data().notes.push(result);
         if(changed){remember();changes();}else{current=result;GlosaRoom.storage.removeItem('class-note-draft:'+id);if(GlosaRoom.storage.getItem('class-note-active-draft')===id)GlosaRoom.storage.removeItem('class-note-active-draft');status('Guardado en esta computadora');renderList();}
-      }catch(e){remember();status('Sin guardar en el servidor · borrador local conservado');throw e;}finally{saving=false;}
+      }catch(e){remember();status('Sin guardar en el servidor · borrador local conservado');
+        // Conflicto o error: traer la versión vigente del archivo para la lista,
+        // sin tocar el borrador local (que ya quedó en `current` y en storage).
+        api('/api/state').then(fresh=>{if(fresh?.library){state.library=fresh.library;if(view==='notes')renderList();}}).catch(()=>{});
+        throw e;}finally{saving=false;}
     });return serial;
   }
-  function blank(){currentId=crypto.randomUUID();pristineId=currentId;current={id:currentId,title:'Apunte sin título',folder:folder||'',content:'# \n\n',contentFormat:'markdown',shared:false,documentId:null,page:null,writingScope:'general',pageNotes:{},anchors:[]};}
+  // Adaptador para StudyTools: persiste la metadata de estudio (`study`) por el
+  // mismo camino real de guardado, sin envolver `api`. Fuerza el guardado aunque
+  // el apunte sea nuevo y todavía no tenga texto, para que una propiedad elegida
+  // no quede solo en memoria.
+  async function applyStudy(id,study){
+    const note=noteById(id);if(!note)throw Error('Guardá el apunte antes de agregar propiedades de estudio.');
+    const next=JSON.parse(JSON.stringify(study||{}));
+    if(current?.id===id){
+      current.study=next;pristineId=null;remember();
+      await flush();
+      const saved=noteById(id);
+      return saved?.study||next;
+    }
+    const updated=JSON.parse(JSON.stringify(note));updated.study=next;
+    const result=await api('/api/notes',updated),at=data().notes.findIndex(n=>n.id===id);
+    if(at<0)data().notes.push(result);else data().notes[at]=result;
+    renderList();
+    return result.study||next;
+  }
+  function blank(){currentId=crypto.randomUUID();pristineId=currentId;baseline=null;current={id:currentId,title:'Apunte sin título',folder:folder||'',content:'# \n\n',contentFormat:'markdown',shared:false,documentId:null,page:null,writingScope:'general',pageNotes:{},anchors:[]};}
   function activeNote(){
     const draftId=currentId||GlosaRoom.storage.getItem('class-note-active-draft'),found=data().notes.find(n=>n.id===draftId);
     let restored=found?JSON.parse(JSON.stringify(found)):null;
     const draft=draftId&&GlosaRoom.storage.getItem('class-note-draft:'+draftId);if(draft){try{const parsed=JSON.parse(draft);if(parsed.id===draftId)restored=parsed;}catch{}}
-    if(!restored){blank();return;}current=restored;currentId=current.id;pristineId=null;
+    if(!restored){blank();return;}current=restored;currentId=current.id;pristineId=null;baseline=found?JSON.parse(JSON.stringify(found)):null;
+  }
+  // Refresco de edición externa: al recuperar el foco o la pestaña se relee el
+  // estado (que reconcilia los .md). Si no hay cambios locales se recarga el
+  // apunte activo; si los hay, se conserva el borrador y se avisa del conflicto.
+  async function refreshFromServer(){
+    if(view!=='notes')return;let fresh;try{fresh=await api('/api/state');}catch{return;}
+    if(!fresh?.library)return;state.library=fresh.library;
+    if(!current)return;
+    const serverNote=data().notes.find(n=>n.id===current.id);
+    if(!serverNote){renderList();return;}
+    if(!dirty()){
+      // Sin ediciones locales: el archivo manda. Si cambió afuera, se recarga.
+      if(JSON.stringify(serverNote)!==JSON.stringify(baseline)){baseline=JSON.parse(JSON.stringify(serverNote));current=JSON.parse(JSON.stringify(serverNote));pristineId=null;GlosaRoom.storage.removeItem('class-note-draft:'+current.id);render();}
+      else renderList();
+    }else{
+      // Con borrador local: no se pisa. Si además cambió afuera, se avisa el conflicto.
+      renderList();
+      if(JSON.stringify(serverNote)!==JSON.stringify(baseline)){const el=document.getElementById('note-save-error');if(el){el.hidden=false;el.textContent='El archivo «'+current.title+'» cambió fuera de Glosa. Tu borrador sigue en esta ventana; al guardar se te pedirá recargar antes de pisarlo.';}}
+    }
+    const warnings=data().noteWarnings||[];if(warnings.length)notify('Apuntes: '+warnings[0]);
   }
   async function select(id){await flush();rememberTextNote();closeList();currentId=id;current=null;activeNote();rememberTextNote();render();document.getElementById('main').focus({preventScroll:true});}
   async function create(){await flush();closeList();blank();render();const input=edit();input?.focus();if(liveEditor){liveEditor.setSelection(2);liveEditor.enterInsert();}else input?.setSelectionRange(2,2);}
@@ -235,7 +288,7 @@ window.ClassNotes=(()=>{
       try{
         await flush();const updated=JSON.parse(JSON.stringify(noteById(id)));if(kind!=='folder')setTitle(title.value.trim(),updated);if(kind!=='rename')updated.folder=folderInput.value.trim();if(kind==='properties')updated.shared=share.checked;
         const result=await api('/api/notes',updated),at=data().notes.findIndex(n=>n.id===id);if(at<0)data().notes.push(result);else data().notes[at]=result;
-        if(current?.id===id){current=result;pristineId=null;GlosaRoom.storage.removeItem('class-note-draft:'+id);if(GlosaRoom.storage.getItem('class-note-active-draft')===id)GlosaRoom.storage.removeItem('class-note-active-draft');}
+        if(current?.id===id){current=result;pristineId=null;baseline=JSON.parse(JSON.stringify(result));GlosaRoom.storage.removeItem('class-note-draft:'+id);if(GlosaRoom.storage.getItem('class-note-active-draft')===id)GlosaRoom.storage.removeItem('class-note-active-draft');}
         dialog.close();
         // Metadata changes keep the mounted reader and its scroll/zoom position.
         const input=document.getElementById('class-note-content');if(input)input.value=writingText();
@@ -343,6 +396,8 @@ window.ClassNotes=(()=>{
         const options=E('details',{id:'note-options',class:'note-options'},E('summary',{'aria-label':'Opciones del apunte'},'⋯'),E('div',{class:'note-options-panel'},writingControls,ask,meta,source,footer,history,anchors));
         options.addEventListener('click',e=>{if(e.target.closest('button'))options.open=false;});
         editor.append(options,writing,E('p',{id:'note-save-error',class:'muted',role:'status',hidden:'hidden'}));
+        const fileWarnings=data().noteWarnings||[];
+        if(fileWarnings.length)editor.append(E('p',{class:'muted note-file-warnings',role:'status'},'Revisá Apuntes: '+fileWarnings.join(' ')));
       }
     }
     const layout=E('div',{class:'class-notes-layout notes-mode-'+mode()+(current?.documentId&&mode()!=='page'?' with-document':'')},sidebar);
@@ -379,13 +434,16 @@ window.ClassNotes=(()=>{
       if(width<=0||height<=0||x>=1||y>=1)continue;const shape={x,y,width,height},key=Object.values(shape).map(n=>n.toFixed(6)).join(':');unique.set(key,shape);
     }return [...unique.values()].slice(0,1000);
   }
+  function setAnchorColor(index,color){const anchor=current?.anchors[index];if(!anchor)return;anchor.color=color;changes();for(const mark of document.querySelectorAll('.pdf-highlight[data-anchor-id="'+CSS.escape(anchor.id)+'"]'))mark.dataset.color=color;notify('Color del resaltado actualizado.');}
+  function removeAnchor(index){const anchor=current?.anchors[index];if(!anchor)return;const scroller=document.getElementById('pdf-scroll'),position=scroller?{top:scroller.scrollTop,left:scroller.scrollLeft}:null;current.anchors.splice(index,1);changes();flush().then(()=>{for(const mark of document.querySelectorAll('.pdf-highlight[data-anchor-id="'+CSS.escape(anchor.id)+'"]'))mark.remove();renderAnchors();if(scroller&&position){scroller.scrollTop=position.top;scroller.scrollLeft=position.left;}if(document.activeElement===document.body)document.querySelector('.source-reader')?.focus({preventScroll:true});notify('Resaltado quitado. La versión anterior queda en el historial del apunte.');}).catch(e=>notify(e.message));}
   function drawPdfHighlights(){
     const container=document.getElementById('pdf-page-canvas'),layer=container?.querySelector('.textLayer');if(!layer||!current)return;
     container.querySelector('.pdf-highlights')?.remove();const overlay=E('div',{class:'pdf-highlights'});
     for(const anchor of current.anchors.filter(a=>a.documentId===current.documentId&&a.page===pageNumber&&a.quote)){
       const range=anchor.selector?pdfRange(layer,anchor.selector.start,anchor.selector.end):null;
       const rects=range?.toString()===anchor.quote?pdfRects(range,container):anchor.rects||[];
-      for(const rect of rects){const mark=E('button',{type:'button',class:'pdf-highlight','data-anchor-id':anchor.id,'aria-label':'Resaltado: '+anchor.quote.slice(0,120),style:`left:${rect.x*100}%;top:${rect.y*100}%;width:${rect.width*100}%;height:${rect.height*100}%`,onclick:()=>showReadingActions(mark,()=>annotate(true,current.anchors.findIndex(a=>a.id===anchor.id)),async()=>{await flush();openTutor('Explicame el fragmento resaltado.',questionContext(anchor),true);},!!anchor.comment)});overlay.append(mark);}
+      const index=current.anchors.findIndex(a=>a.id===anchor.id);
+      for(const rect of rects){const mark=E('button',{type:'button',class:'pdf-highlight','data-anchor-id':anchor.id,'data-color':anchor.color||'yellow','aria-label':'Resaltado: '+anchor.quote.slice(0,120),style:`left:${rect.x*100}%;top:${rect.y*100}%;width:${rect.width*100}%;height:${rect.height*100}%`,onclick:()=>showReadingActions(mark,{note:()=>annotate(true,index),tutor:async()=>{await flush();openTutor('Explicame el fragmento resaltado.',questionContext(anchor),true);},hasNote:!!anchor.comment,color:anchor.color||'yellow',onColor:color=>setAnchorColor(index,color),onDelete:()=>removeAnchor(index)})});overlay.append(mark);}
     }container.append(overlay);
   }
   function highlightSelection(){
@@ -393,7 +451,7 @@ window.ClassNotes=(()=>{
     const doc=data().documents.find(d=>d.id===current.documentId),container=layer.parentElement,rects=pdfRects(chosen.range,container);if(!rects.length)return;
     const duplicate=current.anchors.some(a=>a.documentId===doc.id&&a.page===pageNumber&&a.selector?.start===chosen.start&&a.selector?.end===chosen.end);
     window.getSelection().removeAllRanges();window.WorkspaceKeys?.clearVisual();if(duplicate)return;
-    current.anchors.push({id:crypto.randomUUID(),scope:'page',documentId:doc.id,sha256:doc.sha256,page:pageNumber,quote:chosen.quote,comment:'',selector:{start:chosen.start,end:chosen.end},rects,createdAt:new Date().toISOString()});changes();renderAnchors();
+    current.anchors.push({id:crypto.randomUUID(),scope:'page',documentId:doc.id,sha256:doc.sha256,page:pageNumber,quote:chosen.quote,comment:'',color:'yellow',selector:{start:chosen.start,end:chosen.end},rects,createdAt:new Date().toISOString()});changes();renderAnchors();
   }
   function reader(){return E('section',{class:'source-reader'},E('input',{id:'pdf-page',type:'hidden',value:current.page||1}),E('div',{id:'pdf-scroll',tabindex:0,'aria-label':'Lectura del PDF'},E('div',{id:'pdf-loading',class:'muted'},'Abriendo documento…'),E('div',{id:'pdf-page-canvas'})),E('div',{class:'pdf-position','aria-live':'polite'},E('span',{},data().documents.find(d=>d.id===current.documentId)?.title||'PDF'),E('span',{id:'pdf-page-count'},'…')));}
   function pdfError(error){if(error?.name==='RenderingCancelledException')return;const out=document.getElementById('pdf-loading');if(out){out.hidden=false;out.textContent='No se pudo abrir el PDF: '+error.message;}else notify(error.message);}
@@ -473,6 +531,8 @@ window.ClassNotes=(()=>{
     for(const d of data().courseDrafts){const item=E('article',{class:'prepared-course'},E('h3',{},d.course.title),E('p',{},d.rationale),E('p',{class:'muted'},d.course.lessons.length+' lecciones · versión '+d.course.version),E('details',{},E('summary',{},'Revisar contenido'),E('pre',{},JSON.stringify(d.course,null,2))),E('a',{href:'/api/course-drafts/'+encodeURIComponent(d.id),download:'curso.json',class:'text-button'},'↓ Descargar JSON'),E('button',{class:'primary',onclick:async e=>{e.target.disabled=true;try{await flush();await api('/api/course',d.course);dialog.close();await reload();notify('Curso incorporado. Podés elegirlo en Estudiar.');}catch(err){notify(err.message);e.target.disabled=false;}}},'Incorporar este curso'));dialog.append(item);}
     dialog.append(E('button',{class:'quiet',onclick:()=>dialog.close()},'Cerrar'));dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);dialog.showModal();}
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&dirty()){remember();flush().catch(()=>{});}});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshFromServer();});
+  window.addEventListener('focus',()=>{refreshFromServer();});
   document.addEventListener('selectionchange',()=>{const input=VimEditors.sourceFor(document.activeElement);if(input?.matches('#class-note-content,.note-cell-content'))scheduleCursorFollow(input);});
   document.addEventListener('pointerdown',e=>{const options=document.getElementById('note-options');if(options?.open&&!options.contains(e.target))options.open=false;});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){const options=document.getElementById('note-options');if(options?.open){options.open=false;options.querySelector('summary').focus({preventScroll:true});}}});
@@ -481,5 +541,5 @@ window.ClassNotes=(()=>{
     clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{if(view==='notes'&&pdf&&mode()!=='page')paint({preserveScroll:true}).catch(pdfError);},150);
   });
   window.addEventListener('beforeunload',()=>{if(current&&dirty()){remember();navigator.sendBeacon('/api/notes',new Blob([JSON.stringify(current)],{type:'application/json'}));}});
-  return {render,flush,create,mode,closePdf,openList,closeList,highlightSelection,annotate,askCurrent,openTutor,edit,editMarkdown,showRecords,input:activeWritingInput,followCursor:()=>followNoteCursor(activeWritingInput(),false),newPageCell,moveCell,contextTarget:()=>({kind:'note',...questionContext()}),openPdf,readStep,zoomBy,rename,properties,deleteNote,changePage,exportNote,upload,startResize,endResize,resizeSplit,resetSplit,leave:()=>{liveEditor?.destroy();liveEditor=null;prefaceEditor?.destroy();prefaceEditor=null;readerObserver?.disconnect();clearTimeout(resizeTimer);document.body.classList.remove('resizing-pointer');clearTimeout(cursorTimer);current=null;currentId=null;pristineId=null;closeList();generation++;renderTask?.cancel();document.querySelector('.workspace').classList.remove('notes-view');}};
+  return {render,flush,select,current:()=>current,currentId:()=>currentId,applyStudy,refresh:refreshFromServer,create,mode,closePdf,openList,closeList,highlightSelection,annotate,askCurrent,openTutor,edit,editMarkdown,showRecords,refreshTutorHistory:renderTutorHistory,sendQuestion,input:activeWritingInput,followCursor:()=>followNoteCursor(activeWritingInput(),false),newPageCell,moveCell,contextTarget:()=>({kind:'note',...questionContext()}),openPdf,readStep,zoomBy,rename,properties,deleteNote,changePage,exportNote,upload,startResize,endResize,resizeSplit,resetSplit,leave:()=>{liveEditor?.destroy();liveEditor=null;prefaceEditor?.destroy();prefaceEditor=null;readerObserver?.disconnect();clearTimeout(resizeTimer);document.body.classList.remove('resizing-pointer');clearTimeout(cursorTimer);current=null;currentId=null;pristineId=null;baseline=null;closeList();generation++;renderTask?.cancel();document.querySelector('.workspace').classList.remove('notes-view');}};
 })();

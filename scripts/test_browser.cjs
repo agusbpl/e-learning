@@ -18,20 +18,26 @@ if (setup.error || setup.status !== 0) process.exit(setup.status || 1);
 const failed = [];
 for (const name of files) {
   process.stdout.write(`\n=== ${name} ===\n`);
-  const result = spawnSync(process.execPath, [join(fixtureRoot, 'tests', name)], {
-    cwd: fixtureRoot,
-    env: {
-      ...process.env,
-      OPENROUTER_API_KEY: '',
-      FREELLMAPI_API_KEY: '',
-      INTERN_API_KEY: '',
-      GLOSA_MARGEN_DIR: '',
-    },
-    stdio: 'inherit',
-    timeout: 180000,
-  });
-  if (result.error) console.error(result.error);
-  if (result.status !== 0 || result.error) failed.push(name);
+  const homeDir = mkdtempSync(join(tmpdir(), 'glosa-browser-home-'));
+  try {
+    const result = spawnSync(process.execPath, [join(fixtureRoot, 'tests', name)], {
+      cwd: fixtureRoot,
+      env: {
+        ...process.env,
+        HOME: homeDir,
+        OPENROUTER_API_KEY: '',
+        FREELLMAPI_API_KEY: '',
+        INTERN_API_KEY: '',
+        GLOSA_MARGEN_DIR: '',
+      },
+      stdio: 'inherit',
+      timeout: 180000,
+    });
+    if (result.error) console.error(result.error);
+    if (result.status !== 0 || result.error) failed.push(name);
+  } finally {
+    rmSync(homeDir, {recursive: true, force: true});
+  }
 }
 if (failed.length) {
   console.error(`\nFailed ${failed.length}/${files.length}: ${failed.join(', ')}`);

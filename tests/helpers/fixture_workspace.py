@@ -49,8 +49,36 @@ def fixture_course(pages=2):
     return tutorial
 
 
+def isolate_environment(destination):
+    """C-7: fixtures never fall back to the real ~/Margen or a real data dir.
+
+    Both variables are set (only if unset or empty) to temporaries under the
+    fixture and the resolved paths are checked, so a stray
+    `GLOSA_MARGEN_DIR=~/Margen` fails loudly instead of creating fake data in the
+    student's own vault. An empty value is treated as unset: Path("") would
+    otherwise resolve to the process cwd, which CI runners keep under HOME.
+    """
+    destination = Path(destination)
+    real_home = Path.home().resolve()
+
+    def resolve_env(name, fallback):
+        value = os.environ.get(name)
+        if not value:
+            value = str(fallback)
+            os.environ[name] = value
+        return Path(value).expanduser().resolve()
+
+    data = resolve_env('LEARNING_DATA_DIR', destination.parent / 'data')
+    margen = resolve_env('GLOSA_MARGEN_DIR', destination.parent / 'margen')
+    if margen == real_home / 'Margen' or data == real_home or real_home in margen.parents:
+        raise RuntimeError('El fixture apunta a carpetas reales del usuario (' + str(margen) + '); abortado.')
+    margen.mkdir(parents=True, exist_ok=True)
+    return data, margen
+
+
 def build(destination, browser=False):
     destination = Path(destination)
+    isolate_environment(destination)
     destination.mkdir(parents=True, exist_ok=True)
     (destination / 'courses').mkdir(exist_ok=True)
     (destination / 'sources').mkdir(exist_ok=True)
@@ -59,7 +87,7 @@ def build(destination, browser=False):
     for source in REPO.glob('*.py'):
         shutil.copy2(source, destination / source.name)
     (destination / 'scripts').mkdir(exist_ok=True)
-    for script in ('extract_document.py', 'room_backup.py', 'validate_course.py'):
+    for script in ('extract_document.py', 'room_backup.py', 'validate_course.py', 'migrate_vaults.py'):
         shutil.copy2(REPO / 'scripts' / script, destination / 'scripts' / script)
     (destination / 'web').symlink_to(REPO / 'web', target_is_directory=True)
     (destination / 'docs').symlink_to(REPO / 'docs', target_is_directory=True)

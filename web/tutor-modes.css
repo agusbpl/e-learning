@@ -1,0 +1,29 @@
+/* Modos del tutor y plan global del Margen. Solo presentación; los cálculos
+   viven en tutor_modes.py. Sin dependencias externas. */
+.tutor-modes-panel { display: flex; flex-direction: column; gap: .9rem; }
+.tutor-modes-effective { margin: 0; }
+.tutor-modes-notice, .tutor-modes-warning, .tutor-modes-emergency, .tutor-modes-postponed {
+  border-left: 3px solid currentColor; padding: .5rem .75rem; margin: .4rem 0; border-radius: 2px;
+}
+.tutor-modes-notice { background: color-mix(in srgb, currentColor 8%, transparent); }
+.tutor-modes-warning { background: color-mix(in srgb, currentColor 10%, transparent); }
+.tutor-modes-emergency { font-weight: 600; }
+.tutor-modes-postponed { opacity: .85; }
+.tutor-modes-preference { display: flex; flex-direction: column; gap: .35rem; }
+.tutor-modes-preference label { display: flex; align-items: center; gap: .4rem; }
+.tutor-modes-actions { display: flex; gap: .5rem; }
+.tutor-modes-why ul, .tutor-modes-reasons, .tutor-modes-uncertainty {
+  margin: .2rem 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: .15rem;
+}
+.tutor-modes-reasons { opacity: .9; }
+.tutor-modes-uncertainty { opacity: .8; font-style: italic; }
+.tutor-modes-row {
+  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  border-radius: 3px; padding: .6rem .75rem; display: flex; flex-direction: column; gap: .25rem;
+}
+.tutor-modes-row[data-kind='exam'] { border-left: 3px solid currentColor; }
+.tutor-modes-row header { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem; }
+.tutor-modes-row h4 { margin: 0; flex: 1 1 12rem; }
+.tutor-modes-row-actions { display: flex; gap: .25rem; }
+.tutor-modes-priority { margin: 0; font-variant-numeric: tabular-nums; }
+.tutor-modes-row-actions .text-button[disabled] { opacity: .35; cursor: default; }

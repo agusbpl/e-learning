@@ -54,6 +54,102 @@ def write_json(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
 
 
+def safe_relative(rel):
+    """True when `rel` is a plain relative POSIX path with no traversal."""
+    if not isinstance(rel, str) or not rel or rel.startswith('/') or '\\' in rel:
+        return False
+    parts = PurePosixPath(rel).parts
+    return bool(parts) and '..' not in parts and not any(part.startswith('.') for part in parts)
+
+
+# Artefactos ocultos que SÍ forman parte portátil de los apuntes: el sidecar de
+# identidad (viaja el ID aunque cambie el inodo) y las carpetas de recuperación.
+# Ningún otro archivo oculto se empaqueta ni se restaura: así no entran claves ni
+# archivos ajenos que empiecen con punto.
+KNOWN_HIDDEN_FILES = frozenset({'.glosa-identidad.json'})
+KNOWN_HIDDEN_DIRS = frozenset({'.glosa-conflictos', '.glosa-eliminados'})
+
+
+def safe_original_relative(rel):
+    """`safe_relative` para `apuntes/originales`, admitiendo solo lo conocido.
+
+    Permite el sidecar de identidad y las carpetas `.glosa-conflictos/` y
+    `.glosa-eliminados/` (recuperación), y rechaza cualquier otro componente con
+    punto inicial.
+    """
+    if not isinstance(rel, str) or not rel or rel.startswith('/') or '\\' in rel:
+        return False
+    parts = PurePosixPath(rel).parts
+    if not parts or '..' in parts:
+        return False
+    for index, part in enumerate(parts):
+        if not part.startswith('.'):
+            continue
+        if part in KNOWN_HIDDEN_FILES and index == len(parts)-1:
+            continue
+        if part in KNOWN_HIDDEN_DIRS:
+            continue
+        return False
+    return True
+
+
+def visible_apuntes(data):
+    """Visible originals folder for a data directory, mirroring Library.notes_root().
+
+    In a vault (`data=…/learning` with `pliego.json` next to it) originals live
+    in `<vault>/Apuntes`; the not-yet-moved local library uses `<data>/Apuntes`.
+    """
+    data = Path(data)
+    if data.name == 'learning' and (data.parent/'pliego.json').is_file():
+        return data.parent/'Apuntes'
+    return data/'Apuntes'
+
+
+def stage_note_originals(stage, data):
+    """Copy the current on-disk note originals into the bundle, byte for byte.
+
+    `Apuntes` is authoritative for notes edited outside Glosa, so it is copied
+    exactly as it is (never regenerated). The legacy `<data>/notes` mirrors are
+    kept too, under their own prefix, so an edit that predates the file format
+    is not silently discarded. A name appearing twice with different content is
+    preserved as a `.conflicto-<hash>` copy instead of being overwritten.
+
+    For the visible originals the portable identity sidecar and the recovery
+    folders (`.glosa-conflictos/`, `.glosa-eliminados/`) are included too, so a
+    restore can reattach each raw `.md` to its note instead of duplicating it.
+    """
+    sources = [('apuntes/originales', visible_apuntes(data))]
+    legacy = Path(data)/'notes'
+    if legacy.is_dir():
+        sources.append(('apuntes/espejos-legacy', legacy))
+    staged = {}
+    for prefix, folder in sources:
+        if not folder.is_dir() or folder.is_symlink():
+            continue
+        portable = prefix == 'apuntes/originales'
+        for source in sorted(folder.rglob('*')):
+            if source.is_symlink() or not source.is_file():
+                continue
+            rel = source.relative_to(folder).as_posix()
+            if not (safe_original_relative(rel) if portable else safe_relative(rel)):
+                continue
+            name = prefix+'/'+rel
+            content = source.read_bytes()
+            digest_value = hashlib.sha256(content).hexdigest()
+            if name in staged:
+                if staged[name] == digest_value:
+                    continue
+                stem, _, ext = name.rpartition('.')
+                name = stem+'.conflicto-'+digest_value[:8]+('.'+ext if ext else '')
+                if name in staged:
+                    continue
+            staged[name] = digest_value
+            target = Path(stage)/name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(content)
+    return len(staged)
+
+
 def asset_path(doc):
     filename, doc_id = doc['filename'], doc['id']
     if not re.fullmatch(r'[A-Za-z0-9_.-]{1,100}', doc_id):
@@ -113,11 +209,17 @@ def export_room(output, data, root=ROOT):
             path = stage/'apuntes'/(str(index)+'.md')
             path.parent.mkdir(exist_ok=True)
             path.write_text(note_markdown(note, state['library']['documents']), encoding='utf-8')
+        originals = stage_note_originals(stage, data)
         (stage/'README.md').write_text('''# Pliego · Glosa
 
 Respaldo privado completo. `snapshot.json` conserva cursos, notas, versiones,
-respuestas, conversaciones, contexto, calendario y preferencias. `root/` y `data/`
-incluyen PDFs y texto extraído. `apuntes/` y `diario.md` son vistas legibles.
+respuestas, conversaciones, contexto, calendario, preferencias y el payload de
+modos del tutor (`tutorModes`). `root/` y `data/` incluyen PDFs y texto extraído.
+`apuntes/originales/` copia tal cual los apuntes Markdown del disco (incluida
+cualquier edición externa), junto con el sidecar portable `.glosa-identidad.json`
+y las carpetas de recuperación `.glosa-conflictos/` y `.glosa-eliminados/`, para
+volver a atar cada `.md` a su ID sin duplicarlo; `apuntes/espejos-legacy/`
+conserva espejos previos y `apuntes/` y `diario.md` son vistas legibles.
 No contiene claves de API. Tampoco borradores que solo estén en el navegador.
 
 ## Abrir en otra computadora
@@ -167,7 +269,8 @@ público del código.
             if pending.exists():
                 shutil.rmtree(pending)
     return {'courses': len(state['courses']), 'documents': len(state['library']['documents']),
-            'notes': len(state['library']['notes']), 'events': len(state['events'])}
+            'notes': len(state['library']['notes']), 'events': len(state['events']),
+            'originals': originals}
 
 
 def verify_bundle(bundle):
@@ -190,6 +293,7 @@ def verify_bundle(bundle):
     if not isinstance(files, dict) or 'snapshot.json' not in files:
         raise ValueError('Manifiesto incompleto.')
     allowed = re.compile(r'(snapshot\.json|diario\.md|README\.md|apuntes/[0-9]+\.md|'
+                         r'apuntes/originales/.+|apuntes/espejos-legacy/.+|'
                          r'root/sources/[^/]+\.pdf|root/\.md_cache/[A-Za-z0-9_.-]+\.json|'
                          r'data/documents/[A-Za-z0-9_.-]+\.(pdf|json))')
     for name, item in files.items():
@@ -234,26 +338,104 @@ def restore_room(bundle, data, root=ROOT):
         # Empty root avoids seeding an old course or importing unrelated local PDFs.
         empty_root = Path(temp)/'root'
         empty_root.mkdir()
-        with workspace(empty_root, stage) as server:
-            server.init_db()
-            server.restore_snapshot(state)
-            restored = server.snapshot()
-        for key in ('courses', 'events', 'annotationRevisions', 'library', 'calendarEvents', 'settings'):
-            if restored[key] != state[key]:
-                raise ValueError('La restauración no conserva exactamente '+key)
         for name in files:
             if name.startswith('data/'):
                 destination = stage/name[5:]
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(bundle/name, destination)
-        from library import note_markdown
-        (stage/'notes').mkdir(exist_ok=True)
-        for note in state['library']['notes']:
-            # Existing validators accept IDs more broadly; never use them as paths.
-            if not re.fullmatch(r'[A-Za-z0-9_.-]{1,100}', note['id']) or note['id'] in ('.', '..'):
-                raise ValueError('ID de apunte inválido para su archivo Markdown.')
-            (stage/'notes'/(note['id']+'.md')).write_text(
-                note_markdown(note, state['library']['documents']), encoding='utf-8')
+        with workspace(empty_root, stage) as server:
+            server.init_db()
+            server.restore_snapshot(state)
+            restored = server.snapshot()
+        for key in ('courses', 'events', 'annotationRevisions', 'library', 'calendarEvents', 'settings', 'tutorModes'):
+            if restored[key] != state[key]:
+                raise ValueError('La restauración no conserva exactamente '+key)
+        import note_files as note_files_module
+        from library import IDENTITY_FILE, Library
+        library = Library(stage/'learning.sqlite3', stage, empty_root)
+        notes_root = library.notes_root()
+        # Idempotente: completa apuntes de respaldos previos sin original en disco.
+        library.migrate_notes_to_files()
+        originals = 'apuntes/originales/'
+        # Identidad portable que viaja en el respaldo: un apunte crudo `Uno.md`
+        # lleva su ID en el sidecar. La restauración ya exportó cada nota a su
+        # `.md`; para no dejar dos archivos del mismo apunte, retiramos ese
+        # generado (dentro del stage temporal) y el original lo reemplaza por
+        # identidad al reconciliar.
+        portable = {}
+        sidecar_name = originals+IDENTITY_FILE
+        if sidecar_name in files:
+            try:
+                payload = json.loads((bundle/sidecar_name).read_text(encoding='utf-8'))
+            except (OSError, UnicodeError, ValueError):
+                payload = None
+            entries = payload.get('files') if isinstance(payload, dict) else None
+            if isinstance(entries, dict):
+                for key, value in entries.items():
+                    if not isinstance(value, dict) or not isinstance(value.get('id'), str):
+                        continue
+                    rel = value.get('rel') if isinstance(value.get('rel'), str) else key
+                    if isinstance(rel, str) and safe_relative(rel):
+                        portable[rel] = value['id']
+        bundled = {}
+        for name in files:
+            if not name.startswith(originals):
+                continue
+            rel = name[len(originals):]
+            if not safe_relative(rel):
+                continue
+            note_id = portable.get(rel)
+            if note_id is None:
+                try:
+                    info = note_files_module.read_note_file(bundle/name)
+                except (note_files_module.NoteFileError, OSError):
+                    info = None
+                if info is not None:
+                    note_id = info['glosa_id']
+            if note_id:
+                bundled.setdefault(note_id, rel)
+        for note_id, rel in bundled.items():
+            current = library.note_file(note_id)
+            if current is None or not current.is_file():
+                continue
+            if current.relative_to(notes_root).as_posix() == rel:
+                continue
+            try:
+                info = note_files_module.read_note_file(current)
+            except note_files_module.NoteFileError:
+                continue
+            if info['glosa_id'] == note_id:
+                current.unlink()
+        # Superponer los originales empaquetados tal cual (incluido el sidecar de
+        # identidad y las carpetas de recuperación): una edición externa al disco
+        # siempre gana y nunca se regenera desde SQLite.
+        for name in files:
+            if not name.startswith(originals):
+                continue
+            rel = name[len(originals):]
+            if not safe_original_relative(rel):
+                raise ValueError('Ruta de apunte original inválida en el respaldo.')
+            destination = notes_root/rel
+            if any(p.is_symlink() for p in [destination, *destination.parents]):
+                raise ValueError('Destino con enlaces simbólicos: '+rel)
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(bundle/name, destination)
+        # Reconciliar una vez: reencuentra por identidad los originales crudos y
+        # deja que el disco mande sobre SQLite. No quedan duplicados ni apuntes
+        # sin archivo.
+        library.reconcile_notes()
+        # Espejos previos (solo render): se conservan inertes, fuera de la
+        # raíz de apuntes, para no adoptarlos como notas nuevas.
+        mirrors = 'apuntes/espejos-legacy/'
+        for name in files:
+            if not name.startswith(mirrors):
+                continue
+            rel = name[len(mirrors):]
+            if not safe_relative(rel):
+                raise ValueError('Ruta de apunte anterior inválida en el respaldo.')
+            destination = stage/'notes-legacy'/rel
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(bundle/name, destination)
         for name in files:
             if name.startswith('root/'):
                 destination = root/name[5:]

@@ -5,6 +5,7 @@ import json
 import io
 import os
 from pathlib import Path
+import shutil
 import tempfile
 import subprocess
 import threading
@@ -38,10 +39,15 @@ class LearningTests(unittest.TestCase):
         cls.http.shutdown();cls.http.server_close();cls.tmp.cleanup()
         server.DB,server.DATA,server.PORT,server.ROOT=cls.old_db,cls.old_data,cls.old_port,cls.old_root
     def setUp(self):
+        # Los apuntes ahora viven como archivos Markdown originales: además de
+        # limpiar las filas hay que retirar los archivos del test anterior, o el
+        # índice los reincorpora (son la fuente de verdad).
+        for folder in ('Apuntes', 'notes'):
+            shutil.rmtree(server.DATA/folder, ignore_errors=True)
         with server.connect() as c:
             c.execute('DELETE FROM events')
             c.execute('DELETE FROM courses')
-            for table in ('documents','notes','note_versions','course_drafts','annotation_revisions','note_tutor','tutor_contexts','calendar_events'): c.execute('DELETE FROM '+table)
+            for table in ('documents','notes','note_versions','course_drafts','annotation_revisions','note_tutor','tutor_contexts','calendar_events','note_files','note_files_meta'): c.execute('DELETE FROM '+table)
             c.execute('UPDATE config SET body=? WHERE id=1',(json.dumps(server.BASE_SETTINGS),))
         server.init_db()
         documents=server.DATA/'documents'
@@ -781,13 +787,18 @@ print(json.dumps([
         pages={doc['id']:{'1':'PÁGINA UNO — duda','2':'PÁGINA DOS — explicación'}}
         general={'id':'general-comment','scope':'general','documentId':None,'page':None,'sha256':None,'quote':'','comment':'Comentario independiente'}
         note=self.note(documentId=doc['id'],page=1,writingScope='page',pageNotes=pages,anchors=[general],shared=True)
-        file=server.DATA/'notes'/(note['id']+'.md')
+        file=server.library().note_file(note['id'])
         self.assertTrue(file.is_file())
         self.assertEqual(file.stat().st_mode & 0o777,0o600)
+        # El texto de cada página es visible y editable en el cuerpo Markdown.
         rendered=file.read_text(encoding='utf-8')
-        self.assertIn('#1\n\nPÁGINA UNO — duda',rendered)
-        self.assertIn('#2\n\nPÁGINA DOS — explicación',rendered)
-        with urlopen(self.base+'/api/notes/'+note['id']+'/markdown') as response:self.assertEqual(response.read().decode(),rendered)
+        self.assertIn('<!-- glosa:page id="'+doc['id']+'" page="1" -->',rendered)
+        self.assertIn('PÁGINA UNO — duda',rendered)
+        self.assertIn('<!-- glosa:page id="'+doc['id']+'" page="2" -->',rendered)
+        self.assertIn('PÁGINA DOS — explicación',rendered)
+        with urlopen(self.base+'/api/notes/'+note['id']+'/markdown') as response:exported_markdown=response.read().decode()
+        self.assertIn('PÁGINA UNO — duda',exported_markdown)
+        self.assertIn('PÁGINA DOS — explicación',exported_markdown)
         self.assertEqual(self.get('/api/author-context')['notes'][0]['pageNotes'],pages)
         exported=self.get('/api/export.json')
         markdown=server.markdown_export(exported)
@@ -801,10 +812,14 @@ print(json.dumps([
         doc=next(d for d in self.get('/api/state')['library']['documents'] if d['pages']>=2)
         note=self.note(documentId=doc['id'],page=2,writingScope='page',pageNotes={doc['id']:{'2':'Texto de la segunda página'}})
         self.assertEqual(note['pageNotes'][doc['id']],{'1':'','2':'Texto de la segunda página'})
-        text=(server.DATA/'notes'/(note['id']+'.md')).read_text(encoding='utf-8')
-        self.assertIn('#1\n',text)
-        self.assertIn('#2\n\nTexto de la segunda página',text)
-        self.assertNotIn('# pag',text)
+        text=server.library().note_file(note['id']).read_text(encoding='utf-8')
+        # La página 1 existe aunque esté vacía: el delimitador es estable.
+        self.assertIn('<!-- glosa:page id="'+doc['id']+'" page="1" -->',text)
+        self.assertIn('<!-- glosa:page id="'+doc['id']+'" page="2" -->',text)
+        self.assertIn('Texto de la segunda página',text)
+        markdown=server.note_markdown(note,[d for d in self.get('/api/state')['library']['documents'] if d['id']==doc['id']])
+        self.assertIn('#1\n',markdown)
+        self.assertIn('#2\n\nTexto de la segunda página',markdown)
         self.post('/api/notes',{**note,'shared':False})
         self.assertEqual(self.get('/api/author-context')['notes'],[])
 

@@ -213,3 +213,82 @@ body.resizing-pointer{cursor:col-resize;user-select:none}
 .silent-ui #rooms-button{color:var(--ink);padding:0;border:0;background:none;cursor:pointer}
 #rooms-dialog{width:min(550px,calc(100vw - 32px))}#room-list{display:flex;flex-direction:column;gap:12px}.room-choice{text-align:left;padding:12px 0;border-bottom:1px solid var(--line)}
 .pliego-actions{display:flex;gap:18px;flex-wrap:wrap;margin:20px 0}.pliego-create{display:flex;align-items:center;gap:12px;margin:20px 0}.pliego-create input{min-width:0;flex:1;padding:9px;border:1px solid var(--line);border-radius:5px;background:var(--paper)}#room-list{display:flex;flex-direction:column;align-items:flex-start;gap:8px}#rooms-dialog{max-height:85vh;overflow:auto}.video-frame{display:block;background:#ebe9e4}#tutor-dock[hidden]{display:none}
+
+/* Apariencia: tema (claro/oscuro/automático) y color de acento elegidos en Ajustes.
+   Se guardan en este navegador; valen para todos los pliegos. */
+body{--mark-yellow:#fff0b6;--mark-green:#cfe8c4;--mark-blue:#cfe0f5;--mark-pink:#f7d6e2;--pdf-yellow:#f7dc6180;--pdf-green:#8fd08a80;--pdf-blue:#8fb8e880;--pdf-pink:#e79bbb80}
+html[data-accent=forest] body{--green:#424a40;--accent-ink:#424a40;--accent-solid:#424a40;--pale:#f1f1eb}
+html[data-accent=ocean] body{--green:#2f5a70;--accent-ink:#2f5a70;--accent-solid:#2f5a70;--pale:#eaf1f4}
+html[data-accent=violet] body{--green:#5a4a78;--accent-ink:#5a4a78;--accent-solid:#5a4a78;--pale:#f0edf5}
+html[data-accent=amber] body{--green:#7a5a1f;--accent-ink:#7a5a1f;--accent-solid:#7a5a1f;--pale:#f6f0e2}
+html[data-accent=graphite] body{--green:#4a4d52;--accent-ink:#4a4d52;--accent-solid:#4a4d52;--pale:#eeeef0}
+html[data-theme=dark] body{--bg:#15181b;--paper:#1f2327;--ink:#e9e7e2;--muted:#a7aca3;--line:#31363c;--pale:#22282a;--yellow:#3b3420;--panel:#22282a;color-scheme:dark;--mark-yellow:rgba(240,214,90,.30);--mark-green:rgba(120,200,130,.30);--mark-blue:rgba(120,170,240,.32);--mark-pink:rgba(240,150,190,.30)}
+html[data-theme=dark][data-accent=forest] body{--green:#a6cbb0;--accent-ink:#a6cbb0;--accent-solid:#37604a;--pale:#202a22}
+html[data-theme=dark][data-accent=ocean] body{--green:#93c0d6;--accent-ink:#93c0d6;--accent-solid:#2c5771;--pale:#1d2830}
+html[data-theme=dark][data-accent=violet] body{--green:#bcabd6;--accent-ink:#bcabd6;--accent-solid:#4a3f6b;--pale:#262334}
+html[data-theme=dark][data-accent=amber] body{--green:#d9bd82;--accent-ink:#d9bd82;--accent-solid:#6a5220;--pale:#2c271b}
+html[data-theme=dark][data-accent=graphite] body{--green:#b9bdc3;--accent-ink:#b9bdc3;--accent-solid:#43464b;--pale:#24262a}
+/* Superficies claras predefinidas que no usan variables. */
+html[data-theme=dark] body .tutor{background:#1a1e21}
+html[data-theme=dark] body .message.assistant{background:#1f2327;border-color:var(--line)}
+html[data-theme=dark] body .message.student{background:#252b25}
+html[data-theme=dark] body .chat-empty{background:#1b1f22;border-color:var(--line)}
+html[data-theme=dark] body .notes-sidebar{background:#1a1e21}
+html[data-theme=dark] body .source-reader{background:#1a1e21}
+html[data-theme=dark] body .simulation{background:#1c211c;border-color:var(--line)}
+html[data-theme=dark] body .flow-cell{background:#1f2327;border-color:var(--line)}
+html[data-theme=dark] body .choice-option:has(input:checked){border-color:var(--green)}
+html[data-theme=dark] body .source-warning{background:#332b1b;border-left-color:#b59a57;color:var(--ink)}
+html[data-theme=dark] body .note-inline{background:#2a2519;border-left-color:#d1b95f}
+html[data-theme=dark] body .notebook-item blockquote{background:#3b3420}
+html[data-theme=dark] body #notice{background:#e9e7e2;color:#15181b}
+html[data-theme=dark] body dialog input:not([type=checkbox]),html[data-theme=dark] body dialog select,html[data-theme=dark] body dialog textarea{background:#1f2327;color:var(--ink)}
+html[data-theme=dark] body .workspace-mode-button{color:var(--ink)}
+html[data-theme=dark] body #mode-dialog .nav.active{background:#2a2f34}
+html[data-theme=dark] body .class-note-link.active{background:#29332a;color:var(--accent-ink)}
+html[data-theme=dark] body .source-list a{border-bottom-color:var(--line)}
+html[data-theme=dark] body .recommendation{border-color:var(--line)}
+html[data-theme=dark] body .calendar-grid,html[data-theme=dark] body .calendar-day{border-color:var(--line)}
+html[data-theme=dark] body .calendar-weekday{color:var(--muted)}
+html[data-theme=dark] body .calendar-day.is-today .calendar-date{color:var(--accent-ink);border-bottom-color:var(--accent-ink)}
+html[data-theme=dark] body .calendar-views .active{border-bottom-color:var(--accent-ink)}
+html[data-theme=dark] body .calendar-event[data-kind=exam]{color:#d8b48c}
+html[data-theme=dark] body .calendar-event[data-kind=deadline]{color:#d8b09a}
+html[data-theme=dark] body .video-frame{background:#101214}
+html[data-theme=dark] body #mode-settings small{color:var(--muted)}
+html[data-theme=dark] body .context-error{color:#f0a79b}
+/* Botones sólidos y marcas que combinan acento con texto blanco. */
+html[data-theme=dark] body .primary{background:var(--accent-solid);border-color:var(--accent-solid);color:#fff}
+html[data-theme=dark] body .brand-icon{background:var(--accent-solid)}
+html[data-theme=dark] body .progress-fill,html[data-theme=dark] body .chart-bar{background:var(--accent-solid)}
+html[data-theme=dark] body .local-dot{background:var(--accent-solid)}
+html[data-theme=dark] body .context-choice input[type=checkbox]{accent-color:var(--accent-ink)}
+/* Textos flotantes: contraste garantizado en ambos temas. */
+.silent-ui .mode-indicator,.silent-ui .environment-context,.silent-ui .dock-shortcut{color:var(--muted)}
+html[data-theme=dark] body .key-hint{background:#f6dc74;color:#18221c;border-color:#3b4426}
+/* Conversar junto a Estudiar: mismo fondo opaco y texto legible. */
+.silent-ui #tutor-dock{left:170px;bottom:16px;padding:6px 10px;border:1px solid var(--line);border-radius:4px;background:var(--paper,#fbfaf7);color:var(--ink);font:11px monospace;letter-spacing:.12em;gap:10px}
+.silent-ui #tutor-dock .eyebrow{font:inherit;letter-spacing:inherit;color:var(--ink)}
+.silent-ui #tutor-dock .dock-shortcut{font:11px monospace;color:var(--muted)}
+.silent-ui #tutor-dock:hover,.silent-ui #tutor-dock:focus-visible{border-color:var(--green)}
+.silent-ui #tutor-dock[aria-expanded=true]{background:var(--pale);border-color:var(--green)}
+@media(max-width:700px){.silent-ui #tutor-dock{left:125px;bottom:10px;padding:5px 8px;font:10px monospace}.silent-ui #tutor-dock .eyebrow{font:inherit}.silent-ui #tutor-dock .dock-shortcut{display:none}}
+/* Ajustes de apariencia: accesibles con teclado, no dependen solo del color. */
+.appearance-options{border:1px solid var(--line);border-radius:8px;padding:12px 15px;margin:15px 0}
+.appearance-options legend{font:10px system-ui;letter-spacing:1.65px;font-weight:650;color:var(--muted);padding:0 6px}
+.appearance-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin:10px 0}
+.appearance-label{font-size:12px;color:var(--muted);min-width:105px}
+.appearance-choices{display:flex;flex-wrap:wrap;gap:10px 16px}
+.appearance-choice{display:inline-flex;align-items:center;gap:6px;font-size:12px;cursor:pointer}
+#settings-dialog .appearance-choice input[type=radio]{display:inline-block;width:auto;margin:0;padding:0;accent-color:var(--green)}
+.accent-swatch{width:14px;height:14px;border-radius:50%;border:1px solid var(--line);display:inline-block;flex-shrink:0}
+.accent-swatch[data-accent=forest]{background:#424a40}
+.accent-swatch[data-accent=ocean]{background:#2f5a70}
+.accent-swatch[data-accent=violet]{background:#5a4a78}
+.accent-swatch[data-accent=amber]{background:#7a5a1f}
+.accent-swatch[data-accent=graphite]{background:#4a4d52}
+html[data-theme=dark] body .accent-swatch[data-accent=forest]{background:#a6cbb0}
+html[data-theme=dark] body .accent-swatch[data-accent=ocean]{background:#93c0d6}
+html[data-theme=dark] body .accent-swatch[data-accent=violet]{background:#bcabd6}
+html[data-theme=dark] body .accent-swatch[data-accent=amber]{background:#d9bd82}
+html[data-theme=dark] body .accent-swatch[data-accent=graphite]{background:#b9bdc3}

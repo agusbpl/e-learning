@@ -1,0 +1,330 @@
+/* Study Tools — herramientas de estudio integradas a los apuntes reales.
+   Panel compacto y plegable: sin avisos permanentes. */
+
+.study-tools-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  margin: 18px 0 8px;
+  font-size: 13px;
+}
+
+.study-tools-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 12px 18px;
+  cursor: pointer;
+  list-style: none;
+  background: var(--paper);
+  border-radius: 8px;
+}
+
+.study-tools-summary::-webkit-details-marker { display: none; }
+
+.study-tools-summary::before {
+  content: "▸";
+  color: var(--muted);
+  font-size: 11px;
+  transition: transform 0.15s ease;
+}
+
+.study-tools-panel[open] > .study-tools-summary::before { transform: rotate(90deg); }
+
+.study-tools-summary-title {
+  font-family: var(--serif);
+  font-size: 14px;
+}
+
+.study-tools-summary-hint {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.study-tools-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 8px 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.study-tools-tab {
+  border: 0;
+  background: none;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.study-tools-tab:hover { color: var(--ink); }
+
+.study-tools-tab.active {
+  color: var(--green);
+  border-bottom-color: var(--green);
+  font-weight: 600;
+}
+
+.study-tools-tab:focus-visible,
+.study-tools-summary:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: -2px;
+}
+
+.study-tools-content { padding: 16px 18px 18px; }
+
+.study-subsection { margin-bottom: 16px; }
+
+.study-subsection h3,
+.study-tools-content h3 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--muted);
+}
+
+.study-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.study-list-item {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+}
+
+.study-list-item:hover { border-color: var(--green); }
+
+.study-link {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: left;
+  font-weight: 500;
+  color: var(--green);
+  overflow-wrap: anywhere;
+}
+
+.study-link-missing { color: var(--muted); }
+
+.study-meta { color: var(--muted); font-size: 11px; }
+
+.study-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: 10px;
+  background: var(--pale);
+  color: var(--green);
+  white-space: nowrap;
+}
+
+.study-badge.practice { background: var(--yellow); color: #6b5d00; }
+
+.study-snippet {
+  flex-basis: 100%;
+  color: var(--muted);
+  font-size: 11px;
+  font-style: italic;
+}
+
+.study-mention { align-items: baseline; }
+
+/* Propiedades */
+.study-properties { display: grid; gap: 12px; }
+
+.study-property-row {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+
+.study-property-row > label {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.study-property-row input[type="text"],
+.study-property-row input[type="date"],
+.study-property-row select,
+.study-property-row textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 7px 9px;
+  font: inherit;
+  font-size: 13px;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.study-property-row input:focus,
+.study-property-row select:focus,
+.study-property-row textarea:focus {
+  outline: 2px solid var(--green);
+  outline-offset: 1px;
+}
+
+.study-property-row textarea { resize: vertical; min-height: 52px; }
+
+.study-property-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.study-property-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--green);
+}
+
+.study-hint { grid-column: 2; margin: 0; color: var(--muted); font-size: 11px; }
+
+.study-note {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+/* Ficha */
+.study-inline-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.study-inline-form input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 7px 9px;
+  font-size: 13px;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.study-card-preview {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px;
+  background: var(--paper);
+}
+
+.study-card-preview .card-section { margin-bottom: 8px; }
+.study-card-preview .card-section:last-child { margin-bottom: 0; }
+
+.study-card-preview .card-section-label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 3px;
+}
+
+.study-card-preview .card-section-content { color: var(--muted); font-style: italic; }
+
+/* Errores */
+.study-error-form {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 14px;
+  background: var(--paper);
+  display: grid;
+  gap: 10px;
+}
+
+.study-form-actions { display: flex; gap: 10px; margin-top: 4px; }
+
+.study-error-list { display: flex; flex-direction: column; gap: 8px; }
+
+.study-error-entry {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: var(--paper);
+}
+
+.study-error-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.study-error-concept { font-weight: 600; color: var(--ink); }
+
+.study-error-entry p { margin: 4px 0; }
+
+.study-error-correction {
+  padding: 7px 10px;
+  background: var(--bg);
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Filtros */
+.study-filters { display: grid; gap: 12px; }
+
+.study-filter-results {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.study-filter-result {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  margin-bottom: 6px;
+}
+
+.study-filter-result:hover { border-color: var(--green); }
+
+/* Indicadores en la lista de apuntes */
+.note-study-badges { display: flex; gap: 4px; margin-top: 4px; }
+
+.note-study-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: var(--pale);
+  color: var(--green);
+}
+
+.note-study-badge.practice { background: var(--yellow); color: #6b5d00; }
+
+/* En modo foco el apunte y la lectura ocupan toda la pantalla: el panel de
+   herramientas se oculta para no agregar desplazamiento ni competir con la lectura. */
+.global-focus #study-tools-panel { display: none; }
+
+@media (max-width: 700px) {
+  .study-property-row { grid-template-columns: 1fr; gap: 4px; }
+  .study-hint { grid-column: 1; }
+  .study-tools-tabs { overflow-x: auto; }
+}

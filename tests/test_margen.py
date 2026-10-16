@@ -1,5 +1,6 @@
 """Folder discovery and tutorial isolation using temporary workspaces only."""
 import json
+import os
 from pathlib import Path
 import shutil
 import sys
@@ -20,8 +21,17 @@ class MargenTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.data = Path(self.temp.name)/'data'
         self.data.mkdir()
-        self.env = patch.dict('os.environ', {'GLOSA_MARGEN_DIR': ''})
+        # Never touch the real HOME: the default Margen must live in the fixture.
+        self.home = Path(self.temp.name)/'home'
+        self.home.mkdir()
+        self.env = patch.dict('os.environ', {'HOME': str(self.home)})
         self.env.start(); self.addCleanup(self.env.stop)
+        self.old_margen = os.environ.pop('GLOSA_MARGEN_DIR', None)
+        self.addCleanup(self._restore_margen)
+
+    def _restore_margen(self):
+        if self.old_margen is not None:
+            os.environ['GLOSA_MARGEN_DIR'] = self.old_margen
 
     def test_tutorial_is_separate_and_has_no_fabricated_history(self):
         with workspace(ROOT, self.data):
@@ -94,6 +104,84 @@ class MargenTests(unittest.TestCase):
         with patch.dict('os.environ', {'GLOSA_MARGEN_DIR': str(self.data)}):
             self.assertEqual(rooms.margen(self.data)['source'], 'environment')
             with self.assertRaises(ValueError):rooms.set_margen(self.data, str(self.data))
+
+    def test_default_margen_is_visible_and_creates_home_folder(self):
+        location = rooms.margen(self.data)
+        self.assertEqual(location['source'], 'default')
+        self.assertEqual(location['path'], str((self.home/'Margen').resolve()))
+        self.assertTrue((self.home/'Margen').is_dir())
+
+    def test_create_uses_human_folder_and_unique_names(self):
+        first = rooms.create(self.data, ROOT, 'Análisis Numérico')
+        self.assertEqual(Path(first['path']).name, 'Análisis Numérico')
+        self.assertTrue(first['id'].startswith('pliego-'))
+        second = rooms.create(self.data, ROOT, 'Análisis Numérico')
+        self.assertEqual(Path(second['path']).name, 'Análisis Numérico (2)')
+        self.assertNotEqual(first['id'], second['id'])
+        # A title is data: it can never escape the Margen through the folder name.
+        self.assertNotIn('/', rooms.safe_folder_name('../../etc/passwd'))
+        self.assertNotIn('..', rooms.safe_folder_name('..'))
+
+    def test_local_alias_marker_redirects_and_stales_on_change(self):
+        source_db = self.data/'learning.sqlite3'
+        source_db.write_bytes(b'sqlite-original')
+        vault = self.home/'Margen'/'Biblioteca local'
+        (vault/'assets').mkdir(parents=True)
+        (vault/'learning').mkdir()
+        (vault/'learning/learning.sqlite3').write_bytes(b'sqlite-copy')
+        (vault/'pliego.json').write_text(json.dumps(
+            {'format': 'glosa-pliego', 'version': 1, 'id': 'local', 'title': 'Biblioteca local'}))
+        stat = source_db.stat()
+        (self.data/rooms.LOCAL_ALIAS_FILE).write_text(json.dumps(
+            {'format': 'glosa-local-alias', 'version': 1, 'id': 'local', 'title': 'Biblioteca local',
+             'path': str(vault), 'original': {'bytes': stat.st_size, 'mtimeNs': stat.st_mtime_ns}}))
+        scope = rooms.local_scope(self.data)
+        self.assertIsNotNone(scope)
+        self.assertEqual(scope['id'], 'local')
+        self.assertEqual(scope['data'], vault/'learning')
+        self.assertEqual(scope['root'], vault/'assets')
+        self.assertEqual(rooms.room(self.data, ROOT, 'local')['data'], vault/'learning')
+        # The original active database changed after the copy: never activate a stale alias.
+        source_db.write_bytes(b'sqlite-original-changed-later')
+        warnings = []
+        self.assertIsNone(rooms.local_scope(self.data, warnings))
+        self.assertTrue(any('cambió' in warning for warning in warnings))
+
+    def test_invalid_local_alias_marker_never_falls_back_silently(self):
+        source_db = self.data/'learning.sqlite3'
+        source_db.write_bytes(b'sqlite-original')
+        # Without a marker, 'local' legitimately uses the application data dir.
+        self.assertEqual(rooms.room(self.data, ROOT, 'local')['data'], self.data)
+        # Marker present but pointing to a vanished/invalid vault.
+        (self.data/rooms.LOCAL_ALIAS_FILE).write_text(json.dumps(
+            {'format': 'glosa-local-alias', 'version': 1, 'id': 'local', 'title': 'Biblioteca local',
+             'path': str(self.home/'Margen'/'desaparecida'), 'original': {'bytes': 1, 'mtimeNs': 1}}))
+        warnings = []
+        self.assertIsNone(rooms.local_scope(self.data, warnings))
+        self.assertTrue(warnings)
+        with self.assertRaises(ValueError):
+            rooms.room(self.data, ROOT, 'local')
+        # El error recuperable conserva ambas copias: la base original no se tocó.
+        self.assertEqual(source_db.read_bytes(), b'sqlite-original')
+        # El listado sigue usable e incluye la entrada local.
+        self.assertIn('local', [item['id'] for item in rooms.list_rooms(self.data, ROOT)])
+
+    def test_duplicate_ids_expose_both_paths(self):
+        item = rooms.create(self.data, ROOT, 'Original')
+        folder = rooms.room(self.data, ROOT, item['id'])['data'].parent
+        shutil.copytree(folder, folder.parent/'copy')
+        listing = rooms.inventory(self.data, ROOT, details=False)
+        self.assertEqual(len(listing['duplicates'].get(item['id'], [])), 2)
+
+    def test_inventory_scans_legacy_margen_folder(self):
+        legacy = self.data/'margen'/'Vieja'
+        (legacy/'assets').mkdir(parents=True)
+        (legacy/'learning').mkdir()
+        (legacy/'learning/learning.sqlite3').write_bytes(b'')
+        (legacy/'pliego.json').write_text(json.dumps(
+            {'format': 'glosa-pliego', 'version': 1, 'id': 'pliego-vieja', 'title': 'Vieja'}))
+        listing = rooms.inventory(self.data, ROOT, details=False)
+        self.assertEqual([item['id'] for item in listing['pliegos']], ['pliego-vieja'])
 
 
 if __name__ == '__main__':unittest.main()

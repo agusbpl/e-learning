@@ -4,6 +4,26 @@ import json
 import uuid
 
 KINDS={'theory','practice','deadline','exam','study'}
+COMMITMENT_KINDS=('exam','deadline')
+
+
+def commitments(events):
+    """Compromisos con fecha (parcial/entrega) ordenados; solo datos registrados, sin inventar."""
+    out=[e for e in (events or []) if isinstance(e,dict) and e.get('kind') in COMMITMENT_KINDS and isinstance(e.get('date'),str) and e['date']]
+    return sorted(out,key=lambda e:(e['date'],e.get('courseId',''),str(e.get('id',''))))
+
+
+def study_dates(notes):
+    """Fechas de parcial declaradas por el alumno en apuntes; solo YYYY-MM-DD válidas, nunca inferidas."""
+    out=[]
+    for note in notes or []:
+        study=note.get('study') if isinstance(note,dict) else None
+        if not isinstance(study,dict) or not study.get('parcialDate'):continue
+        try:
+            if date.fromisoformat(study['parcialDate']).isoformat()!=study['parcialDate']:continue
+        except (ValueError,TypeError):continue
+        out.append({'noteId':note.get('id'),'title':note.get('title',''),'materia':study.get('materia',''),'date':study['parcialDate']})
+    return sorted(out,key=lambda item:(item['date'],str(item['noteId'])))
 
 
 def validate(event):

@@ -20,6 +20,7 @@ import remote_access
 import assessment_rules
 from tutor_output import unpack_reply
 import tutor_context
+import tutor_modes
 import calendar_store
 import llm_providers
 from notebook_rules import important_notes
@@ -46,24 +47,70 @@ except ValueError as exc:
     print(str(exc), file=sys.stderr)
 LOCAL_ZONE = ZoneInfo('America/Argentina/Buenos_Aires')
 BASE_SETTINGS = {'examDate': datetime.now(LOCAL_ZONE).date().isoformat(), 'weekdayMinutes': 0, 'weekendMinutes': 0, 'dailyOverrides': {}, 'provider': 'openrouter', 'model': 'openrouter/free', 'keyboardProfile':'modal', 'focusMode':False}
+# Colors a reading highlight may adopt. Coordinated with web/app.js; additive and
+# rejected when unknown so the stored palette stays stable across versions.
+HIGHLIGHT_COLORS = ('yellow', 'green', 'blue', 'pink')
 
 def now():
     return datetime.now(timezone.utc).isoformat()
 
 ACTIVE_WORKSPACE = ContextVar("glosa_workspace", default=None)
 
+def local_alias():
+    """Scope de la biblioteca local cuando ya vive en una bóveda visible.
+
+    Devuelve None si no hay marcador de traslado: la carpeta de datos original
+    sigue siendo la autoridad para 'local'. Si el marcador existe pero dejó de
+    ser válido, `rooms.room` levanta un error recuperable que se propaga: nunca
+    se abre en silencio la base vieja, que podría ser una copia distinta de la
+    que el alumno cree abierta. Si la instalación retiró la biblioteca local
+    (`local-retired.json`), el espacio por defecto es el tutorial: no se recrea
+    ni se abre la base local vieja.
+    """
+    if rooms.local_retired(DATA):
+        return rooms.room(DATA, ROOT, rooms.LOCAL_ID)
+    scope = rooms.local_scope(DATA)
+    if scope is not None:
+        return scope
+    if (Path(DATA) / rooms.LOCAL_ALIAS_FILE).exists():
+        return rooms.room(DATA, ROOT, rooms.LOCAL_ID)  # raises ValueError with the reason
+    return None
+
+def _scope_db(scope):
+    """Ruta de la base para un scope resuelto.
+
+    La biblioteca local aún no trasladada sigue usando los globales históricos
+    DB/DATA/ROOT (varias pruebas e instalaciones los fijan por separado); un
+    alias local válido o un pliego llevan su propia base `learning.sqlite3`.
+    """
+    if scope.get('kind') == 'local-alias':
+        return Path(scope['data']) / 'learning.sqlite3'
+    if scope.get('id') == 'local' and not scope.get('kind'):
+        return DB
+    return Path(scope['data']) / 'learning.sqlite3'
+
 def active_workspace():
-    return ACTIVE_WORKSPACE.get() or {"data": DATA, "root": ROOT, "id": "local"}
+    scope = ACTIVE_WORKSPACE.get()
+    if scope is not None:
+        return scope
+    alias = local_alias()
+    return alias if alias is not None else {"data": DATA, "root": ROOT, "id": "local"}
 
 def connect():
     scope = ACTIVE_WORKSPACE.get()
-    c = sqlite3.connect(scope["data"] / "learning.sqlite3" if scope else DB, timeout=20)
+    if scope is None:
+        scope = local_alias()
+    c = sqlite3.connect(_scope_db(scope) if scope is not None else DB, timeout=20)
     c.row_factory = sqlite3.Row
     return c
 
 def library():
-    scope = ACTIVE_WORKSPACE.get()
-    return Library(scope["data"] / "learning.sqlite3", scope["data"], scope["root"]) if scope else Library(DB, DATA, ROOT)
+    scope = ACTIVE_WORKSPACE.get() or local_alias()
+    if scope is None or (scope.get('id') == 'local' and not scope.get('kind')):
+        return Library(DB, DATA, ROOT)
+    # `notes_root` explícito es opcional: Library.notes_root() ya resuelve
+    # `<bóveda>/Apuntes` cuando data=…/learning tiene pliego.json al lado.
+    return Library(Path(scope['data']) / 'learning.sqlite3', scope['data'], scope['root'], notes_dir=scope.get('notes_root'))
 
 def init_db():
     tutorial = active_workspace().get('kind') == 'tutorial'
@@ -203,10 +250,17 @@ def snapshot():
     state['library'] = library().snapshot()
     with connect() as c:
         state['calendarEvents']=[json.loads(r['body']) for r in c.execute('SELECT body FROM calendar_events ORDER BY rowid')]
+    # Payload de modos del Margen (preferencia, aviso pendiente, temarios y
+    # ediciones). NO calcula plan ni modo: build_global_plan() llama a
+    # snapshot(), así que evaluar la política acá sería recursivo.
+    state['tutorModes'] = tutor_modes.export_payload(sys.modules[__name__])
     return state
 
 def restore_snapshot(body):
     if body.get('schemaVersion')!=1 or not isinstance(body.get('courses'),list) or not isinstance(body.get('events'),list): raise ValueError('Respaldo no compatible.')
+    tutor_payload = body.get('tutorModes')
+    if tutor_payload is not None and (not isinstance(tutor_payload, dict) or tutor_payload.get('format') != tutor_modes.FORMAT):
+        raise ValueError('Payload de modos inválido.')
     for c in body['courses']: validate_course(c)
     for ev in body['events']:
         if not all(isinstance(ev.get(k),str) for k in ('id','timestamp','kind','courseId','lessonId')) or not isinstance(ev.get('data'),dict): raise ValueError('Evento de respaldo inválido.')
@@ -255,6 +309,10 @@ def restore_snapshot(body):
             settings = {k:restored.get(k,BASE_SETTINGS[k]) for k in BASE_SETTINGS}
             settings.update(llm_providers.validate_settings(restored))
             c.execute('UPDATE config SET body=? WHERE id=1',(json.dumps(settings),))
+    # Modos del Margen: restaura preferencia, aviso, temarios y ediciones con el
+    # contrato real de tutor_modes (valida `format` antes de escribir).
+    if tutor_payload is not None:
+        tutor_modes.import_payload(sys.modules[__name__], tutor_payload)
 
 def remaining_minutes(settings, today=None, events=None):
     today = today or datetime.now(LOCAL_ZONE).date()
@@ -426,10 +484,21 @@ def tutor(cid, lid, message, exercise_id=None, context_revision=None):
     context=assembled['payload']
     if selection['includePlan']:context['minutesAvailable']=remaining_minutes(state['settings'],events=state['events'])
     context['exerciseId']=exercise_id
+    # Política de modo ANTES de generar: las instrucciones del modo efectivo
+    # preceden al prompt base para que el modelo las aplique. La puerta de
+    # evidencia (assessment_rules.evidence_gate) no se debilita en ningún modo.
+    self_module = sys.modules[__name__]
+    mode_decision = tutor_modes.effective_mode(
+        tutor_modes.read_preference(self_module), tutor_modes.plan_context(self_module),
+        last_mode=tutor_modes.read_state(self_module).get('lastEffectiveMode'))
+    mode_meta = tutor_modes.mode_requirements(mode_decision['effectiveMode'])
+    system_prompt = TUTOR_POLICY + '\n' + tutor_modes.mode_prompt(mode_decision['effectiveMode'])
     trace={k:assembled[k] for k in ('selection','manifest','contextHash')} | {'revision':revision,'target':target}
     trace['contextHash']=hashlib.sha256(json.dumps(context,sort_keys=True,ensure_ascii=False).encode()).hexdigest()
     trace['provider']=state['settings'].get('provider','openrouter')
-    data = tutor_completion(state['settings'], [{'role':'system','content':TUTOR_POLICY},{'role':'user','content':json.dumps(context,ensure_ascii=False)}], structured=True)
+    trace['effectiveMode']=mode_decision['effectiveMode']
+    trace['policyVersion']=tutor_modes.POLICY_VERSION
+    data = tutor_completion(state['settings'], [{'role':'system','content':system_prompt},{'role':'user','content':json.dumps(context,ensure_ascii=False)}], structured=True)
     raw = data.get('choices',[{}])[0].get('message',{}).get('content','')
     if not isinstance(raw,str) or not raw: raise ValueError('El tutor no devolvió texto. Podés reintentar; tu respuesta sigue guardada.')
     reply, parsed, damaged = unpack_reply(raw, structured=True)
@@ -456,6 +525,7 @@ def tutor(cid, lid, message, exercise_id=None, context_revision=None):
     except (ValueError, TypeError):
         result={'reply':reply,'rawResponse':raw,'model':data.get('model',model),'structured':False,'truncated':truncated or damaged,'exerciseId':exercise_id,'courseVersion':course['version'],'status':'pending', 'evidence':[], 'gaps':[], 'reason':'No se recibió una evaluación completa; se conserva la conversación sin acreditar dominio.', 'nextAction':'reinforce'}
         result['tutorContext']=trace
+        result['tutorMode']=mode_meta
         if not selection['includeLesson']:result['reason']='Consulta sin la lección ni su rúbrica: se conserva la conversación sin cambiar la evaluación de dominio.'
         event('tutor_reply',cid,lid,result)
         return result
@@ -465,6 +535,7 @@ def tutor(cid, lid, message, exercise_id=None, context_revision=None):
     assessment['rawResponse'] = raw
     assessment['usage'] = data.get('usage',{})
     assessment['tutorContext']=trace
+    assessment['tutorMode']=mode_meta
     # Conservatively require answers to every exercise before marking a lesson independent.
     answered = {e['data'].get('exerciseId') for e in history if e['lessonId']==lid and e['kind']=='answer' and e['data'].get('courseVersion')==course['version']}
     if assessment['status']=='independent' and not {e['id'] for e in lesson['exercises']} <= answered:
@@ -517,9 +588,19 @@ def manage_tutor_context(body):
 def note_tutor(body):
     request_id=body.get('requestId')
     message=body.get('message')
+    channel=body.get('channel','api')
+    if channel not in ('api','mcp'): raise ValueError('Canal de consulta inválido.')
     if not isinstance(request_id,str) or not re.fullmatch(r'[A-Za-z0-9_.-]{1,100}',request_id): raise ValueError('ID de consulta inválido.')
     if not isinstance(message,str) or not message.strip() or len(message)>20000: raise ValueError('Escribí una duda de hasta 20.000 caracteres.')
     lib=library(); state=snapshot()
+    # Modo del Margen ANTES de responder: instructions preceden al prompt de
+    # lectura. El tutor de apuntes explica, no acredita dominio, en ningún modo.
+    self_module = sys.modules[__name__]
+    mode_decision = tutor_modes.effective_mode(
+        tutor_modes.read_preference(self_module), tutor_modes.plan_context(self_module),
+        last_mode=tutor_modes.read_state(self_module).get('lastEffectiveMode'))
+    mode_meta = tutor_modes.mode_requirements(mode_decision['effectiveMode'])
+    note_system_prompt = NOTE_TUTOR_POLICY + '\n' + tutor_modes.mode_prompt(mode_decision['effectiveMode'])
     note=next((n for n in state['library']['notes'] if n['id']==body.get('noteId')),None)
     if not note: raise ValueError('Nota inexistente.')
     # Repeated clicks must not consume another free request or change its context.
@@ -529,6 +610,7 @@ def note_tutor(body):
         old=json.loads(row['body'])
         if old['noteId']!=note['id'] or old['message']!=message or old['request']!=body: raise ValueError('Ese ID ya corresponde a otra consulta.')
         if old['status']=='answered': return old
+        if old['status']=='pending' and old.get('channel')=='mcp': return old
         raise ValueError(old.get('error') or 'La consulta ya está en curso o quedó interrumpida. Reintentá con una nueva consulta.')
     if body.get('noteRevision')!=note['revision']: raise ValueError('El apunte cambió. Guardalo de nuevo antes de preguntar.')
     anchor_id=body.get('anchorId')
@@ -544,11 +626,16 @@ def note_tutor(body):
     student_text=anchor.get('comment','') if anchor else (note.get('pageNotes',{}).get(doc_id,{}).get(str(page),'') if scope=='page' else note['content'])
     pages=lib.pages(doc_id,page) if doc else {'pages':[]}
     context={'noteTitle':note['title'],'noteRevision':note['revision'],'anchorId':anchor_id,'scope':scope,'documentId':doc_id,'documentTitle':doc['title'] if doc else None,'sha256':doc['sha256'] if doc else None,'page':page,'studentText':student_text[:20000],'quote':anchor.get('quote','') if anchor else '', 'sourcePages':[{'page':p['page'],'text':p['text'][:16000]} for p in pages['pages']], 'sourceWarning':pages.get('warning','')}
-    record={'id':request_id,'noteId':note['id'],'createdAt':now(),'message':message,'context':context,'request':body,'status':'pending','reply':'','helpProvided':True}
+    record={'id':request_id,'noteId':note['id'],'createdAt':now(),'message':message,'context':context,'request':body,'status':'pending','reply':'','helpProvided':True,'channel':channel,'tutorMode':mode_meta}
     with connect() as conn:
         conn.execute('BEGIN IMMEDIATE')
         if conn.execute('SELECT 1 FROM note_tutor WHERE id=?',(request_id,)).fetchone(): raise ValueError('La consulta ya está en curso.')
         conn.execute('INSERT INTO note_tutor VALUES(?,?)',(request_id,json.dumps(record,ensure_ascii=False)))
+    if channel=='mcp':
+        # Canal externo: no se consulta ningún proveedor. La consulta queda
+        # pendiente para que un cliente con el MCP de tutor la responda con su
+        # propio modelo. El registro vive en library.noteTutor, como la API.
+        return record
     try:
         model=state['settings']['model']
         validate_tutor_model(state['settings'])
@@ -561,7 +648,7 @@ def note_tutor(body):
         payload=assembled['payload'];payload['context']=payload.pop('noteContext')
         record['tutorContext']['contextHash']=hashlib.sha256(json.dumps(payload,sort_keys=True,ensure_ascii=False).encode()).hexdigest()
         record['tutorContext']['provider']=state['settings'].get('provider','openrouter')
-        response=tutor_completion(state['settings'],[{'role':'system','content':NOTE_TUTOR_POLICY},{'role':'user','content':json.dumps(payload,ensure_ascii=False)}])
+        response=tutor_completion(state['settings'],[{'role':'system','content':note_system_prompt},{'role':'user','content':json.dumps(payload,ensure_ascii=False)}])
         raw=response.get('choices',[{}])[0].get('message',{}).get('content','')
         if not isinstance(raw,str) or not raw.strip(): raise ValueError('El tutor no devolvió texto. Podés reintentar.')
         reply,_,damaged=unpack_reply(raw)
@@ -605,17 +692,61 @@ def in_room(fn):
     def scoped(self):
         if not self.allowed():
             return self.send({'error': 'Origen no permitido.'}, 403)
+        self.room_redirect = None
         try:
             room_id = self.headers.get('X-Glosa-Room') or parse.parse_qs(parse.urlparse(self.path).query).get('room', ['local'])[0]
             scope = rooms.room(DATA, ROOT, room_id)
         except (ValueError, KeyError):
             return self.send({'error': 'Pliego no disponible. Abrí Margen para elegir otro.'}, 400)
-        token = ACTIVE_WORKSPACE.set(None if room_id == "local" else scope)
+        # Canal de redirección: una selección 'local' obsoleta (biblioteca
+        # retirada) pasa al tutorial para que el cliente normalice su id.
+        self.room_redirect = scope['id'] if room_id == rooms.LOCAL_ID and scope['id'] != rooms.LOCAL_ID else None
+        token = ACTIVE_WORKSPACE.set(scope)
         try:
             return fn(self)
         finally:
             ACTIVE_WORKSPACE.reset(token)
     return scoped
+
+def tutor_modes_api(body):
+    """Acciones del contrato de modos (modes-integration.md); política en tutor_modes.
+
+    `server` es este mismo módulo: se usa `sys.modules[__name__]` para no crear
+    una segunda copia de server/ContextVar cuando el proceso corre como `__main__`.
+    """
+    server = sys.modules[__name__]
+    action = (body or {}).get('action') or 'overview'
+    if action == 'overview':
+        # El panel (web/tutor-modes.js mount) muestra los parciales y reordena la
+        # prioridad con `payload.plan.exams`/`plan.rooms`; sin `plan` no hay filas
+        # ni targets que editar. Devuelve el mismo `build_global_plan` que la
+        # acción `plan`, con compromisos reales del Margen seleccionado.
+        evaluated = tutor_modes.evaluate_mode(server)
+        return {'policyVersion': tutor_modes.POLICY_VERSION,
+                'preference': tutor_modes.read_preference(server), 'effective': evaluated,
+                'plan': tutor_modes.build_global_plan(server)}
+    if action == 'plan':
+        return {'policyVersion': tutor_modes.POLICY_VERSION, 'plan': tutor_modes.build_global_plan(server)}
+    if action == 'setPreference':
+        preference = tutor_modes.save_preference(server, {'choice': body.get('choice'), 'mode': body.get('mode') or None})
+        return {'policyVersion': tutor_modes.POLICY_VERSION, 'preference': preference,
+                'effective': tutor_modes.evaluate_mode(server)}
+    if action == 'setPlanEdits':
+        tutor_modes.save_plan_edits(server, body.get('edits'))
+        return {'policyVersion': tutor_modes.POLICY_VERSION, 'edited': True,
+                'plan': tutor_modes.build_global_plan(server)}
+    if action == 'confirmTopic':
+        room_id, course_id, event_id = body.get('roomId'), body.get('courseId'), body.get('eventId')
+        current = tutor_modes.read_exam_topics(server, room_id).get('|'.join((room_id, course_id, event_id)), {})
+        topics = tutor_modes.save_exam_topics(server, room_id, course_id, event_id,
+                                              current.get('lessonIds', []), note_ids=current.get('noteIds', []),
+                                              status='confirmed', proposed_by=current.get('proposedBy', 'author-mcp'),
+                                              confirmed_by='student', source_note=current.get('sourceNote', ''),
+                                              expected_revision=body.get('expectedRevision', 0))
+        return {'policyVersion': tutor_modes.POLICY_VERSION, 'topics': topics}
+    if action == 'ackNotice':
+        return {'policyVersion': tutor_modes.POLICY_VERSION, **tutor_modes.acknowledge_notice(server)}
+    raise ValueError('Acción de tutor-modes desconocida.')
 
 class Handler(BaseHTTPRequestHandler):
     def log_message(self,*args): pass
@@ -628,6 +759,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header('Referrer-Policy','no-referrer')
         self.send_header('Content-Security-Policy',"default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; frame-src https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'")
         if filename: self.send_header('Content-Disposition','attachment; filename="'+filename+'"')
+        if getattr(self, 'room_redirect', None): self.send_header('X-Glosa-Room-Redirect', self.room_redirect)
         for name, value in (extra_headers or {}).items(): self.send_header(name, value)
         self.send_header('Content-Length',str(len(body)))
         self.end_headers()
@@ -720,6 +852,10 @@ class Handler(BaseHTTPRequestHandler):
             files['/markdown.js']=('web/markdown.js','text/javascript; charset=utf-8')
             files['/vendor/marked/marked.umd.js']=('web/vendor/marked/marked.umd.js','text/javascript; charset=utf-8')
             files['/conversation.css']=('web/conversation.css','text/css; charset=utf-8')
+            files['/study-tools.css']=('web/study-tools.css','text/css; charset=utf-8')
+            files['/study-tools.js']=('web/study-tools.js','text/javascript; charset=utf-8')
+            files['/tutor-modes.css']=('web/tutor-modes.css','text/css; charset=utf-8')
+            files['/tutor-modes.js']=('web/tutor-modes.js','text/javascript; charset=utf-8')
             if path in files:
                 f,typ=files[path]; return self.send((ROOT/f).read_bytes(),content_type=typ)
             return self.send({'error':'No encontrado.'},404)
@@ -737,6 +873,7 @@ class Handler(BaseHTTPRequestHandler):
             if not isinstance(body, dict): raise ValueError('Se requiere un objeto JSON.')
             if path=='/api/margen': return self.send(rooms.set_margen(DATA,body.get('folder')))
             if path=='/api/rooms/create': return self.send(rooms.create(DATA,ROOT,body.get('title')))
+            if path=='/api/rooms/rename': return self.send(rooms.rename(DATA,ROOT,body.get('id'),body.get('title')))
             if path=='/api/rooms/import':
                 if 'base64' in body:
                     item=rooms.import_zip(body['base64'],DATA,ROOT,body.get('title',''))
@@ -756,13 +893,28 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send(settings)
             if path=='/api/annotation':
                 action=body.get('action')
-                if action not in ('edit','delete'): raise ValueError('Acción de anotación inválida.')
+                if action not in ('edit','delete','recolor','remove'): raise ValueError('Acción de anotación inválida.')
                 with connect() as c:
                     c.execute('BEGIN IMMEDIATE')
                     row=c.execute("SELECT * FROM events WHERE id=? AND kind='annotation'",(body.get('id'),)).fetchone()
                     if not row: raise ValueError('Anotación inexistente.')
                     original=unpack(row);old=original['data'];revision=old.get('annotationRevision',0)
                     if body.get('expectedRevision')!=revision: raise ValueError('La anotación cambió en otra ventana. Recargá antes de modificarla.')
+                    if action=='recolor':
+                        # A highlight changes color without losing its quote, comment or history.
+                        color=body.get('color')
+                        if color not in HIGHLIGHT_COLORS: raise ValueError('Color de resaltado inválido.')
+                        c.execute('INSERT INTO annotation_revisions VALUES(?,?,?)',(body['id'],revision,json.dumps(original,ensure_ascii=False)))
+                        updated={**old,'color':color,'annotationRevision':revision+1,'editedAt':now()}
+                        c.execute('UPDATE events SET body=? WHERE id=?',(json.dumps(updated,ensure_ascii=False),body['id']))
+                        return self.send({'ok':True,'revision':revision+1})
+                    if action=='remove':
+                        # Soft removal: the event and its revisions stay, marked as removed
+                        # so the reading view can hide it while the history remains complete.
+                        c.execute('INSERT INTO annotation_revisions VALUES(?,?,?)',(body['id'],revision,json.dumps(original,ensure_ascii=False)))
+                        updated={**old,'removed':True,'annotationRevision':revision+1,'removedAt':now()}
+                        c.execute('UPDATE events SET body=? WHERE id=?',(json.dumps(updated,ensure_ascii=False),body['id']))
+                        return self.send({'ok':True,'revision':revision+1})
                     if action=='delete':
                         c.execute('DELETE FROM events WHERE id=?',(body['id'],))
                         c.execute('DELETE FROM annotation_revisions WHERE id=?',(body['id'],))
@@ -782,6 +934,7 @@ class Handler(BaseHTTPRequestHandler):
             if path=='/api/course-drafts': return self.send(library().save_draft(body.get('course'),body.get('rationale'),validate_course))
             if path=='/api/document-pages': return self.send(library().pages(body.get('documentId'),body.get('start',1),body.get('end')))
             if path=='/api/tutor-context': return self.send(manage_tutor_context(body))
+            if path=='/api/tutor-modes': return self.send(tutor_modes_api(body))
             if path=='/api/calendar':
                 if body.get('action')=='delete':return self.send(calendar_store.delete(sys.modules[__name__],body.get('id'),body.get('expectedRevision')))
                 return self.send(calendar_store.save(sys.modules[__name__],body.get('event',{}),body.get('expectedRevision',0)))
