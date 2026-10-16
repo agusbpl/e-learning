@@ -4,6 +4,11 @@ const {join, resolve} = require('node:path');
 const {spawnSync} = require('node:child_process');
 const {tmpdir} = require('node:os');
 
+// Resolve Chromium executable path BEFORE changing HOME per scenario.
+// Uses override if set, otherwise falls back to playwright's resolution.
+const PLAYWRIGHT_CHROMIUM_EXECUTABLE =
+  process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || require('playwright').chromium.executablePath();
+
 const root = resolve(__dirname, '..');
 const requested = process.argv.slice(2);
 const files = readdirSync(join(root, 'tests'))
@@ -25,6 +30,7 @@ for (const name of files) {
       env: {
         ...process.env,
         HOME: homeDir,
+        PLAYWRIGHT_CHROMIUM_EXECUTABLE,
         OPENROUTER_API_KEY: '',
         FREELLMAPI_API_KEY: '',
         INTERN_API_KEY: '',

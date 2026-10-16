@@ -236,8 +236,8 @@
       "bytes": 285
     },
     "scripts/test_browser.cjs": {
-      "sha256": "104ab6a344fc3e58d75da035671c4784f2bc75c3de8a0bb3209598ebcdfbe147",
-      "bytes": 1888
+      "sha256": "8c32b82b93acd6c82529df1e89d1838839b525a40d0bbd1cbdcb37c45bbcb680",
+      "bytes": 2210
     },
     "scripts/validate_course.py": {
       "sha256": "4ae152622e20dec241c26432106139eb4e5c21f34df35d2315dbdcd5267fb64c",
