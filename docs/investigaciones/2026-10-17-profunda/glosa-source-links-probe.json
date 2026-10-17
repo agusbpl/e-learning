@@ -1,0 +1,23 @@
+{
+  "source": "web/app.js",
+  "function": "safeSourceUrl",
+  "scope": "Función real extraída del repo y ejecutada aislada en Node; sin datos personales ni servidor.",
+  "rows": [
+    {
+      "url": "/sources/a.pdf",
+      "result": "/sources/a.pdf#page=3"
+    },
+    {
+      "url": "/documents/doc-1",
+      "result": null
+    },
+    {
+      "url": "https://example.org/a.pdf",
+      "result": "https://example.org/a.pdf#page=3"
+    },
+    {
+      "url": "javascript:alert(1)",
+      "result": null
+    }
+  ]
+}

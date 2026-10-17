@@ -81,7 +81,7 @@ const GlosaRoom = (() => {
     eyebrow.textContent='TU MARGEN';
     heading.textContent='Margen';
     intro.className='boveda-lead muted';
-    intro.textContent='Tu Margen es una carpeta visible de esta computadora con tus materias adentro. Cada pliego es una subcarpeta con sus cursos, PDFs, apuntes, historial y conversación con el tutor. Crear, abrir o cambiar de pliego no borra nada: cada uno guarda su propio historial con los mismos IDs.';
+    intro.textContent='Tu Margen es una carpeta visible de esta computadora con tus materias adentro. Cada pliego es una subcarpeta con sus cursos, PDFs, apuntes, historial y conversación con el tutor. Pedile a tu agente: «Usá el MCP de autoría para crear un pliego con /ruta/a/mis/materiales». El pliego completo aparece acá, listo para estudiar. Crear, abrir o cambiar de pliego no borra nada: cada uno guarda su propio historial con los mismos IDs.';
     margenDetails.querySelector('summary').textContent='Dónde está tu Margen · Carpeta';
     margenDetails.querySelector('p.muted').textContent='Tu Margen contiene un pliego por subcarpeta, con nombres que ves en el explorador de archivos. Cambiar la carpeta no mueve archivos: solo le dice a Glosa dónde buscarlos.';
     const margenInfo=document.createElement('p');margenInfo.id='boveda-margen-info';margenInfo.className='muted';
@@ -101,7 +101,7 @@ const GlosaRoom = (() => {
     const createSection=section('Crear un pliego nuevo','Crea una subcarpeta nueva dentro del Margen con una base vacía. Se abre al terminar y los pliegos existentes no cambian.',[create]);
     const backupSection=section('Copias detectadas en el Margen','Subcarpetas que parecen respaldos de Glosa. Importarlas crea un pliego nuevo con una copia; nunca sincronizan ni sobrescriben.',[backups]);
     backupSection.id='boveda-backups';
-    dialog.replaceChildren(eyebrow,heading,intro,current,listSection,createSection,margenDetails,backupSection,importDetails,status,download,actions);
+    dialog.replaceChildren(eyebrow,heading,intro,current,AuthorPrompt.mount(),listSection,createSection,margenDetails,backupSection,importDetails,status,download,actions);
   };
   async function renameVault(item,status){
     const chosen=prompt('Nuevo nombre del pliego «'+item.title+'».\nTambién se renombra su carpeta en el Margen; el ID y el historial no cambian.',item.title);

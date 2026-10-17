@@ -20,6 +20,21 @@ sys.path.insert(0,str(Path(__file__).resolve().parent/'helpers'))
 from fixture_workspace import build
 
 class LearningTests(unittest.TestCase):
+    def test_author_folder_chooser_and_prompt_asset(self):
+        directory=server.DATA/'materiales-para-encargo'
+        directory.mkdir(exist_ok=True)
+        (directory/'Unidad 1').mkdir(exist_ok=True)
+        (directory/'examen.md').write_text('No leer contenido desde el selector')
+        from urllib.parse import quote
+        result=self.get('/api/author-folders?path='+quote(str(directory)))
+        self.assertEqual(result['path'],str(directory))
+        self.assertEqual([entry['name'] for entry in result['directories']],['Unidad 1'])
+        self.assertEqual(result['authorCommand'],str(server.ROOT/'start-author.sh'))
+        self.assertNotIn('content',result)
+        self.assertEqual(self.get('/api/state')['events'],[])
+        with urlopen(self.base+'/author-prompt.js') as response:
+            self.assertIn('Usá el MCP de Glosa para crear un pliego',response.read().decode())
+
     @classmethod
     def setUpClass(cls):
         cls.tmp=tempfile.TemporaryDirectory(prefix='learning-tests-')

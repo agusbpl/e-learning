@@ -1055,7 +1055,7 @@ class Library:
         draft={'id':str(uuid.uuid4()),'createdAt':timestamp(),'course':course,'rationale':rationale,'status':'draft'}
         with self.connect() as conn:
             conn.execute('INSERT INTO course_drafts VALUES(?,?)',(draft['id'],json.dumps(draft,ensure_ascii=False)))
-        return {'id':draft['id'],'title':course['title'],'status':'draft','message':'Disponible para revisar e importar en Notas → Cursos preparados.'}
+        return {'id':draft['id'],'title':course['title'],'status':'draft','message':'Borrador legado conservado. Para una entrega nueva, creá un pliego completo con create_study_pliego y abrilo desde GLOSA → Margen.'}
 
     def draft(self, draft_id):
         with self.connect() as conn:

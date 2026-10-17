@@ -361,7 +361,7 @@ window.ClassNotes=(()=>{
     sidebar.prepend(E('button',{class:'text-button panel-close',onclick:closeList},'Cerrar · Esc'));
     const search=E('input',{id:'class-note-search',type:'search',placeholder:'Buscar en tus notas…','aria-label':'Buscar notas',oninput:e=>{query=e.target.value;renderList();}});search.value=query;
     const folders=E('select',{'aria-label':'Filtrar carpeta',onchange:e=>{folder=e.target.value;renderList();}},E('option',{value:''},'Todas las carpetas'),...[...new Set(data().notes.map(n=>n.folder).filter(Boolean))].sort().map(f=>E('option',{value:f},f)));folders.value=folder;
-    sidebar.append(search,folders,E('div',{id:'class-note-list'}),E('div',{class:'notes-nav-bottom'},E('button',{class:'text-button',onclick:()=>preparedCourses().catch(e=>notify(e.message))},`Cursos preparados (${data().courseDrafts.length})`),E('button',{class:'text-button',onclick:()=>document.getElementById('export-dialog').showModal()},'↓ Exportar notas e historial')));
+    sidebar.append(search,folders,E('div',{id:'class-note-list'}),E('div',{class:'notes-nav-bottom'},E('button',{class:'text-button',onclick:()=>document.getElementById('export-dialog').showModal()},'↓ Exportar notas e historial')));
     const editor=E('section',{class:'note-editor'});
     {
       const folderInput=E('input',{id:'class-note-folder',placeholder:'Materia / carpeta','aria-label':'Carpeta de la nota',oninput:e=>{current.folder=e.target.value;changes();}});folderInput.value=current.folder;
@@ -527,9 +527,7 @@ window.ClassNotes=(()=>{
     if(!id)return;
     try{if(id===pristineId)changes();await flush();const note=noteById(id);if(!note)return;const link=E('a',{href:GlosaRoom.url('/api/notes/'+encodeURIComponent(note.id)+'/markdown'),download:note.title.replace(/[^\p{L}\p{N} _-]/gu,'').slice(0,100)+'.md'});document.body.append(link);link.click();link.remove();}catch(e){notify(e.message);}
   }
-  async function preparedCourses(){await flush();const fresh=await api('/api/state');data().courseDrafts=fresh.library.courseDrafts;const dialog=E('dialog',{class:'prepared-courses'},E('h2',{},'Cursos preparados por el agente'),E('p',{class:'muted'},'Revisá la propuesta antes de incorporarla. El tutor por API no interviene en esta creación.'));if(!data().courseDrafts.length)dialog.append(E('p',{},'Todavía no hay borradores. El MCP de autoría puede guardar uno aquí.'));
-    for(const d of data().courseDrafts){const item=E('article',{class:'prepared-course'},E('h3',{},d.course.title),E('p',{},d.rationale),E('p',{class:'muted'},d.course.lessons.length+' lecciones · versión '+d.course.version),E('details',{},E('summary',{},'Revisar contenido'),E('pre',{},JSON.stringify(d.course,null,2))),E('a',{href:'/api/course-drafts/'+encodeURIComponent(d.id),download:'curso.json',class:'text-button'},'↓ Descargar JSON'),E('button',{class:'primary',onclick:async e=>{e.target.disabled=true;try{await flush();await api('/api/course',d.course);dialog.close();await reload();notify('Curso incorporado. Podés elegirlo en Estudiar.');}catch(err){notify(err.message);e.target.disabled=false;}}},'Incorporar este curso'));dialog.append(item);}
-    dialog.append(E('button',{class:'quiet',onclick:()=>dialog.close()},'Cerrar'));dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);dialog.showModal();}
+
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&dirty()){remember();flush().catch(()=>{});}});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshFromServer();});
   window.addEventListener('focus',()=>{refreshFromServer();});

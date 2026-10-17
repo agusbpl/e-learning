@@ -47,6 +47,16 @@ Cada pliego es una subcarpeta del Margen con esta forma:
   pliego visible del Margen (ver más abajo). **Primer trazo** (el tutorial) es
   una demostración aparte que no toca tus cursos ni tu historial.
 
+## Autoría directa desde una carpeta
+
+El encargo «Usá el MCP de autoría para crear un pliego con /ruta/» produce un
+**directorio completo** dentro del Margen configurado. El agente consulta
+`source_folder_brief`, redacta el contenido y llama `create_study_pliego`.
+El pliego aparece en GLOSA → Margen con su curso activo, fuentes, ruta, actividades
+y calendario indicado. No se entrega un ZIP ni se importa desde Notas.
+La carpeta se publica solo cuando está completa; no sobrescribe otros pliegos.
+La importación/exportación de respaldos queda como función separada de traslado.
+
 ## Qué hace la interfaz de Margen
 
 Al pulsar GLOSA (o `g o`) se abre el diálogo de Margen, que muestra:

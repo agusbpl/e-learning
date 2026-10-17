@@ -1,0 +1,869 @@
+{
+ "target": "/usr/lib/obsidian/obsidian.asar (renderer app.js) — bundle Electron",
+ "target_sha256": "146ef8470d8cbb4a6db209bdc19bf2bad13350444186c0fd93c31087b142b92f",
+ "appjs_sha256": "958ce57fe22f87fdf121546e46dfccd9c8ee971ce3fd8f801d60d4ece39a2df9",
+ "corpus_declaracion": "corpus derivado reducido: funciones reales extraídas por AST de obsidian_app.js (90 máx.); no es la aplicación completa",
+ "corpus_funciones": 90,
+ "evidencia_rea_referencias": {
+  "analisis_corpus_reducido": "REA:ev_87d26e1f9bf43cc1bbd70d9cefeeab65951eb808a887f49bf4ed92a3b789a3bc",
+  "traces": {
+   "loadEmbed": "REA:ev_2f06611ab5c75108619373f555d2762e7d0db94af0d47f41cd5e979864aaad7d",
+   "updateSearch": "REA:ev_92a9b970950b93ed5ee104510033408c5c143b3b5ce712c839675fe7ce140a21",
+   "startHover": "REA:ev_278724314d1b54e7f642e094846db186de0c3f5637efd1de8f474f8f88d18e26",
+   "findCurrentOutlineItem": "REA:ev_557076052e4cc16babbab7c2459728481777a0a01ca0f57a6dd1340cc1fb6e87"
+  },
+  "vista_modulo": {
+   "loadEmbed": "REA:ev_2a62d6db13b66dc06f389fee59f4dcceac34bab72d3cc44f440318fc25696f3f"
+  },
+  "rea_previo": {
+   "obsidian_asar_parcial": "REA:ev_666da72795dc1cd5730926fb3d660c498b45759f4917064530c93b5c01a9dceb",
+   "app_asar_shell": "REA:ev_59d450728ffd97f380c2653460c60b1f4b34d7abd0fe0eb85e9975121aa0d053"
+  }
+ },
+ "convencion_origen": "REA = relación/trace de REA sobre corpus derivado; otra = extracción/i18n/inventario previo o herramienta no-REA; inferencia = propuesta no observada en target",
+ "funcionalidades": [
+  {
+   "id": "F01",
+   "nombre": "Preview emergente al pasar el mouse (hover preview)",
+   "observado_en_target": "REA analizó startHover/activateHover/showPreview/onHoverLink: startHover contiene literales -1 y 1; activateHover crea Promise.then; showPreview contiene literal false; onNodeHover/onLinkHover presentes. Trace de 'module=001_e.prototype.startHover.js' resolvió el módulo y su export default.",
+   "origen_evidencia": "REA",
+   "evidence_ids": [
+    "REA:ev_87d26e1f9bf43cc1bbd70d9cefeeab65951eb808a887f49bf4ed92a3b789a3bc",
+    "REA:ev_278724314d1b54e7f642e094846db186de0c3f5637efd1de8f474f8f88d18e26"
+   ],
+   "rutas_rangos": {
+    "funcion": "e.prototype.startHover",
+    "appjs": {
+     "appjs_bytes": [
+      526155,
+      526647
+     ],
+     "asar_bytes": [
+      1290302,
+      1290794
+     ],
+     "file": "001_e.prototype.startHover.js"
+    },
+    "funcion2": "e.prototype.activateHover",
+    "appjs2": {
+     "appjs_bytes": [
+      526674,
+      527032
+     ],
+     "asar_bytes": [
+      1290821,
+      1291179
+     ],
+     "file": "002_e.prototype.activateHover.js"
+    },
+    "funcion3": "t.prototype.showPreview",
+    "appjs3": {
+     "appjs_bytes": [
+      2630253,
+      2630533
+     ],
+     "asar_bytes": [
+      3394400,
+      3394680
+     ],
+     "file": "057_t.prototype.showPreview.js"
+    }
+   },
+   "estado_glosa": "parcial",
+   "adaptacion": "Glosa ya tiene preview de nota al hover (web/app.js) pero limitado a enlaces; unificar el preview con el render de apuntes.",
+   "prioridad": "media",
+   "riesgo": "bajo",
+   "aceptacion": "Al pasar el mouse sobre un enlace interno aparece un panel con el contenido; el panel se cierra al salir; sin errores con destino inexistente."
+  },
+  {
+   "id": "F02",
+   "nombre": "Wikilinks [[Título]]",
+   "observado_en_target": "REA trazó el literal \"[[\" dentro de t.prototype.triggerWikilink (nodo literal con rango exacto en el corpus). Relaciones de reads/reads-property en getLinkpathDest/getLinkSuggestions/triggerWikilink.",
+   "origen_evidencia": "REA",
+   "evidence_ids": [
+    "REA:ev_87d26e1f9bf43cc1bbd70d9cefeeab65951eb808a887f49bf4ed92a3b789a3bc"
+   ],
+   "rutas_rangos": {
+    "funcion": "t.prototype.triggerWikilink",
+    "appjs": {
+     "appjs_bytes": [
+      2571072,
+      2571337
+     ],
+     "asar_bytes": [
+      3335219,
+      3335484
+     ],
+     "file": "055_t.prototype.triggerWikilink.js"
+    },
+    "funcion2": "t.prototype.getLinkSuggestions",
+    "appjs2": {
+     "appjs_bytes": [
+      1754224,
+      1754751
+     ],
+     "asar_bytes": [
+      2518371,
+      2518898
+     ],
+     "file": "014_t.prototype.getLinkSuggestions.js"
+    }
+   },
+   "estado_glosa": "existe",
+   "adaptacion": "Glosa extrae [[...]] (study-tools.js extractWikilinks) y resuelve por título exacto; la evidencia REA confirma el disparador sintáctico, no aporta cambio.",
+   "prioridad": "baja",
+   "riesgo": "bajo",
+   "aceptacion": "Los [[wikilinks]] siguen resolviendo a la nota por título normalizado; enlace inexistente avisa."
+  },
+  {
+   "id": "F03",
+   "nombre": "Embeds/transclusión ![[]] y carga de embed",
+   "observado_en_target": "REA trazó literal \"![[\" en triggerWikilink (rango exacto). loadEmbed (trace ev_2f0661) escribe propiedades label/height/width y construye Promise.new; createAndEmbedBase/renderEmbed/getEmbeds presentes. El trace resolvió el módulo y su export default (evidencia estática, no ejecución).",
+   "origen_evidencia": "REA",
+   "evidence_ids": [
+    "REA:ev_87d26e1f9bf43cc1bbd70d9cefeeab65951eb808a887f49bf4ed92a3b789a3bc",
+    "REA:ev_2f06611ab5c75108619373f555d2762e7d0db94af0d47f41cd5e979864aaad7d"
+   ],
+   "rutas_rangos": {
+    "funcion": "t.prototype.loadEmbed",
+    "appjs": {
+     "appjs_bytes": [
+      2432083,
+      2434163
+     ],
+     "asar_bytes": [
+      3196230,
+      3198310
+     ],
+     "file": "047_t.prototype.loadEmbed.js"
+    },
+    "funcion2": "e.prototype.createAndEmbedBase",
+    "appjs2": {
+     "appjs_bytes": [
+      3236831,
+      3237385
+     ],
+     "asar_bytes": [
+      4000978,
+      4001532
+     ],
+     "file": "075_e.prototype.createAndEmbedBase.js"
+    },
+    "funcion3": "t.prototype.renderEmbed",
+    "appjs3": {
+     "appjs_bytes": [
+      3477298,
+      3478000
+     ],
+     "asar_bytes": [
+      4241445,
+      4242147
+     ],
+     "file": "077_t.prototype.renderEmbed.js"
+    },
+    "funcion4": "t.prototype.getEmbeds",
+    "appjs4": {
+     "appjs_bytes": [
+      2213235,
+      2213498
+     ],
+     "asar_bytes": [
+      2977382,
+      2977645
+     ],
+     "file": "042_t.prototype.getEmbeds.js"
+    }
+   },
+   "estado_glosa": "parcial",
+   "adaptacion": "Glosa lista wikilinks pero no transcluye. Añadir render de ![[Título]] con límite de profundidad reutilizando NoteMarkdown.render.",
+   "prioridad": "media-alta",
+   "riesgo": "medio-alto",
+   "aceptacion": "![[X]] muestra el contenido de X en solo lectura; destino inexistente avisa; profundidad acotada evita bucles."
+  },
+  {
+   "id": "F04",
+   "nombre": "Callouts > [!tipo]",
+   "observado_en_target": "REA analizó insertCallout (escribe la propiedad 'line') y t.callout; el corpus incluye la función de inserción de callout con rango exacto y relaciones de lectura/escritura.",
+   "origen_evidencia": "REA",
+   "evidence_ids": [
+    "REA:ev_87d26e1f9bf43cc1bbd70d9cefeeab65951eb808a887f49bf4ed92a3b789a3bc"
+   ],
+   "rutas_rangos": {
+    "funcion": "e.prototype.insertCallout",
+    "appjs": {
+     "appjs_bytes": [
+      1728844,
+      1729477
+     ],
+     "asar_bytes": [
+      2492991,
+      2493624
+     ],
+     "file": "013_e.prototype.insertCallout.js"
+    },
+    "funcion2": "t.callout",
+    "appjs2": {
+     "appjs_bytes": [
+      771985,
+      772331
+     ],
+     "asar_bytes": [
+      1536132,
+      1536478
+     ],
+     "file": "003_t.callout.js"
+    }
+   },
+   "estado_glosa": "nuevo",
+   "adaptacion": "Agregar caso 'callout' al renderer (web/markdown.js) y CSS; limitar a bloques que empiecen con [!.",
+   "prioridad": "alta",
+   "riesgo": "bajo-medio",
+   "aceptacion": "> [!contraejemplo] produce callout etiquetado; > cita normal sigue siendo blockquote."
+  },
+  {
+   "id": "F05",
+   "nombre": "Búsqueda con contexto y operadores",
+   "observado_en_target": "REA trazó updateSearch (call-site, reads-property), applySearchFilter (reads), getSearchCursor (4 calls, argument-to-parameter, returns-to-call) y literales ('0'). El trace de 'module=048_e.prototype.updateSearch.js' resolvió el módulo y su export default.",
+   "origen_evidencia": "REA",
+   "evidence_ids": [
+    "REA:ev_87d26e1f9bf43cc1bbd70d9cefeeab65951eb808a887f49bf4ed92a3b789a3bc",
+    "REA:ev_92a9b970950b93ed5ee104510033408c5c143b3b5ce712c839675fe7ce140a21"
+   ],
+   "rutas_rangos": {
+    "funcion": "e.prototype.updateSearch",
+    "appjs": {
+     "appjs_bytes": [
+      2439711,
+      2440945
+     ],
+     "asar_bytes": [
+      3203858,
+      3205092
+     ],
+     "file": "048_e.prototype.updateSearch.js"
+    },
+    "funcion2": "e.prototype.applySearchFilter",
+    "appjs2": {
+     "appjs_bytes": [
+      1495619,
+      1495994
+     ],
+     "asar_bytes": [
+      2259766,
+      2260141
+     ],
+     "file": "007_e.prototype.applySearchFilter.js"
+    },
+    "funcion3": "e.prototype.getSearchCursor",
+    "appjs3": {
+     "appjs_bytes": [
+      2114205,
+      2115318
+     ],
+     "asar_bytes": [
+      2878352,
+      2879465
+     ],
+     "file": "038_e.prototype.getSearchCursor.js"
+    }
+   },
+   "estado_glosa": "parcial",
+   "adaptacion": "Hoy es includes() de subcadena (web/notes.js); extender con operadores y vistas de resultado reutilizando snippet() de study-tools.js.",
+   "prioridad": "alta",
+   "riesgo": "medio",
+   "aceptacion": "Un término devuelve una fila por aparición con encabezado y contexto; término ausente muestra 'sin resultados'."
+  },
+  {
+   "id": "F06",
+   "nombre": "Autocompletado de enlaces (suggest de archivos/encabezados/bloques)",
+   "observado_en_target": "REA analizó getFileSuggestions, getHeadingSuggestions, getGlobalHeadingSuggestions, getBlockSuggestions, getGlobalBlockSuggestions, getSuggestionsAsync, selectSuggestion (schedules-timer setTimeout), renderSuggestion/renderSuggestions. Relaciones de defines/captures/reads-property por función con rangos exactos.",
+   "origen_evidencia": "REA",
+   "evidence_ids": [
+    "REA:ev_87d26e1f9bf43cc1bbd70d9cefeeab65951eb808a887f49bf4ed92a3b789a3bc"
+   ],
+   "rutas_rangos": {
+    "f1": {
+     "appjs_bytes": [
+      1830001,
+      1831198
+     ],
+     "asar_bytes": [
+      2594148,
+      2595345
+     ],
+     "file": "030_e.prototype.getFileSuggestions.js"
+    },
+    "f2": {
+     "appjs_bytes": [
+      1826083,
+      1827278
+     ],
+     "asar_bytes": [
+      2590230,
+      2591425
+     ],
+     "file": "026_e.prototype.getHeadingSuggestions.js"
+    },
+    "f3": {
+     "appjs_bytes": [
+      1828172,
+      1828488
+     ],
+     "asar_bytes": [
+      2592319,
+      2592635
+     ],
+     "file": "028_e.prototype.getBlockSuggestions.js"
+    },
+    "f4": {
+     "appjs_bytes": [
+      1833075,
+      1834041
+     ],
+     "asar_bytes": [
+      2597222,
+      2598188
+     ],
+     "file": "031_t.prototype.selectSuggestion.js"
+    },
+    "f5": {
+     "appjs_bytes": [
+      1302033,
+      1302301
+     ],
+     "asar_bytes": [
+      2066180,
+      2066448
+     ],
+     "file": "004_e.prototype.renderSuggestions.js"
+    }
+   },
+   "estado_glosa": "nuevo",
+   "adaptacion": "Glosa no tiene autocompletado al escribir [[; agregar lista de sugerencias de apuntes y encabezados.",
+   "prioridad": "media",
+   "riesgo": "medio",
+   "aceptacion": "Al escribir [[ aparece lista filtrable de apuntes y encabezados; seleccionar inserta el enlace."
+  },
+  {
+   "id": "F07",
+   "nombre": "Metadatos de archivo (frontmatter / propiedades)",
+   "observado_en_target": "REA: computeFileMetadataAsync escribe properties metadata/size/mtime/label/hash y AGENDA y CANCELA un setTimeout (debounce); computeMetadataAsync, rebuildProperties, fromFrontMatter, processFrontMatter, onMetadataChanged, getProperties presentes con rangos exactos.",
+   "origen_evidencia": "REA",
+   "evidence_ids": [
+    "REA:ev_87d26e1f9bf43cc1bbd70d9cefeeab65951eb808a887f49bf4ed92a3b789a3bc"
+   ],
+   "rutas_rangos": {
+    "funcion": "t.prototype.computeFileMetadataAsync",
+    "appjs": {
+     "appjs_bytes": [
+      1765882,
+      1768094
+     ],
+     "asar_bytes": [
+      2530029,
+      2532241
+     ],
+     "file": "017_t.prototype.computeFileMetadataAsync.js"
+    },
+    "funcion2": "t.fromFrontMatter",
+    "appjs2": {
+     "appjs_bytes": [
+      2206018,
+      2206450
+     ],
+     "asar_bytes": [
+      2970165,
+      2970597
+     ],
+     "file": "040_t.fromFrontMatter.js"
+    },
+    "funcion3": "e.prototype.processFrontMatter",
+    "appjs3": {
+     "appjs_bytes": [
+      1807527,
+      1807754
+     ],
+     "asar_bytes": [
+      2571674,
+      2571901
+     ],
+     "file": "021_e.prototype.processFrontMatter.js"
+    }
+   },
+   "estado_glosa": "parcial",
+   "adaptacion": "Glosa guarda study.* propia y conserva claves ajenas; REA confirma la forma (metadata + properties) que conviene mapear sin inventar semántica.",
+   "prioridad": "media",
+   "riesgo": "medio",
+   "aceptacion": "Las propiedades del apunte se muestran y persisten; claves desconocidas se conservan sin corromperse."
+  },
+  {
+   "id": "F08",
+   "nombre": "Panel/render de propiedades",
+   "observado_en_target": "REA: renderProperties muestra calls, returns-to-call y argument-to-parameter; removeProperties contiene literal true; showPropertiesMenu/ensurePropertiesView presentes.",
+   "origen_evidencia": "REA",
+   "evidence_ids": [
+    "REA:ev_87d26e1f9bf43cc1bbd70d9cefeeab65951eb808a887f49bf4ed92a3b789a3bc"
+   ],
+   "rutas_rangos": {
+    "funcion": "t.prototype.renderProperties",
+    "appjs": {
+     "appjs_bytes": [
+      2486959,
+      2488531
+     ],
+     "asar_bytes": [
+      3251106,
+      3252678
+     ],
+     "file": "052_t.prototype.renderProperties.js"
+    },
+    "funcion2": "t.prototype.removeProperties",
+    "appjs2": {
+     "appjs_bytes": [
+      1859491,
+      1859878
+     ],
+     "asar_bytes": [
+      2623638,
+      2624025
+     ],
+     "file": "034_t.prototype.removeProperties.js"
+    }
+   },
+   "estado_glosa": "parcial",
+   "adaptacion": "Glosa ya tiene pestaña Propiedades; puede adoptar la idea de panel de propiedades de la nota sin dependencias nuevas.",
+   "prioridad": "media",
+   "riesgo": "bajo",
+   "aceptacion": "El panel lista propiedades con valor editable y borrado; cambios persisten."
+  },
+  {
+   "id": "F09",
+   "nombre": "Resolución de enlaces (linkpath)",
+   "observado_en_target": "REA: getLinkpathDest/_getLinkpathDest/resolveLinks/updateBacklinks/recomputeBacklink con relaciones reads/reads-property/writes; el corpus conserva sus rangos exactos.",
+   "origen_evidencia": "REA",
+   "evidence_ids": [
+    "REA:ev_87d26e1f9bf43cc1bbd70d9cefeeab65951eb808a887f49bf4ed92a3b789a3bc"
+   ],
+   "rutas_rangos": {
+    "f1": {
+     "appjs_bytes": [
+      1755718,
+      1756882
+     ],
+     "asar_bytes": [
+      2519865,
+      2521029
+     ],
+     "file": "015_t.prototype.getLinkpathDest.js"
+    },
+    "f2": {
+     "appjs_bytes": [
+      2383065,
+      2383793
+     ],
+     "asar_bytes": [
+      3147212,
+      3147940
+     ],
+     "file": "044_e.prototype._getLinkpathDest.js"
+    },
+    "f3": {
+     "appjs_bytes": [
+      1764578,
+      1764877
+     ],
+     "asar_bytes": [
+      2528725,
+      2529024
+     ],
+     "file": "016_t.prototype.resolveLinks.js"
+    },
+    "f4": {
+     "appjs_bytes": [
+      3078067,
+      3081805
+     ],
+     "asar_bytes": [
+      3842214,
+      3845952
+     ],
+     "file": "071_t.prototype.recomputeBacklink.js"
+    }
+   },
+   "estado_glosa": "parcial",
+   "adaptacion": "Glosa resuelve por título exacto (findNoteByTitle); la resolución de Obsidian considera rutas/alias. Adaptación acotada: aliases sin cambiar la resolución base.",
+   "prioridad": "media",
+   "riesgo": "medio",
+   "aceptacion": "Un enlace resuelve por título o alias declarado; ambigüedad se reporta."
+  },
+  {
+   "id": "F10",
+   "nombre": "Referencias inversas (backlinks)",
+   "observado_en_target": "REA: getBacklinks, updateBacklinks, openBacklinksForActiveFile, setBacklinkCollapsed, recomputeBacklink, toggleBacklinks, updateShowBacklinks, getEmbeds con relaciones estáticas y rangos exactos.",
+   "origen_evidencia": "REA",
+   "evidence_ids": [
+    "REA:ev_87d26e1f9bf43cc1bbd70d9cefeeab65951eb808a887f49bf4ed92a3b789a3bc"
+   ],
+   "rutas_rangos": {
+    "f1": {
+     "appjs_bytes": [
+      2212944,
+      2213212
+     ],
+     "asar_bytes": [
+      2977091,
+      2977359
+     ],
+     "file": "041_t.prototype.getBacklinks.js"
+    },
+    "f2": {
+     "appjs_bytes": [
+      3075514,
+      3075939
+     ],
+     "asar_bytes": [
+      3839661,
+      3840086
+     ],
+     "file": "069_t.prototype.setBacklinkCollapsed.js"
+    },
+    "f3": {
+     "appjs_bytes": [
+      3099002,
+      3099335
+     ],
+     "asar_bytes": [
+      3863149,
+      3863482
+     ],
+     "file": "073_t.prototype.updateShowBacklinks.js"
+    }
+   },
+   "estado_glosa": "existe",
+   "adaptacion": "Glosa ya calcula referencias inversas por título (getBacklinks); sólo se beneficiaría de aliases.",
+   "prioridad": "baja",
+   "riesgo": "bajo",
+   "aceptacion": "Las referencias inversas enumeran las notas que enlazan; con alias, las incluye."
+  },
+  {
+   "id": "F11",
+   "nombre": "Historial de navegación (adelante/atrás)",
+   "observado_en_target": "REA: addHistoryItem escribe la propiedad 'id'; removeHistoryItem, clearHistoryItems, restoreNavigation (setTimeout + literal true), onNavigated (literal string), onHistoryBack, pushUndoHistory, pushViewStackHistory, openHistory, listHistory, getHistory, setActiveHistoryItem, createHistoryItemAvatar con rangos exactos.",
+   "origen_evidencia": "REA",
+   "evidence_ids": [
+    "REA:ev_87d26e1f9bf43cc1bbd70d9cefeeab65951eb808a887f49bf4ed92a3b789a3bc"
+   ],
+   "rutas_rangos": {
+    "f1": {
+     "appjs_bytes": [
+      2981689,
+      2982320
+     ],
+     "asar_bytes": [
+      3745836,
+      3746467
+     ],
+     "file": "063_e.prototype.addHistoryItem.js"
+    },
+    "f2": {
+     "appjs_bytes": [
+      3115399,
+      3115673
+     ],
+     "asar_bytes": [
+      3879546,
+      3879820
+     ],
+     "file": "074_e.prototype.restoreNavigation.js"
+    },
+    "f3": {
+     "appjs_bytes": [
+      2410464,
+      2411014
+     ],
+     "asar_bytes": [
+      3174611,
+      3175161
+     ],
+     "file": "045_e.prototype.onNavigated.js"
+    },
+    "f4": {
+     "appjs_bytes": [
+      2949181,
+      2949413
+     ],
+     "asar_bytes": [
+      3713328,
+      3713560
+     ],
+     "file": "062_t.prototype.pushUndoHistory.js"
+    }
+   },
+   "estado_glosa": "desconocido",
+   "adaptacion": "Glosa navega entre apuntes/clases sin pila de historial explícita observable; evaluar antes de adaptar.",
+   "prioridad": "media",
+   "riesgo": "medio",
+   "aceptacion": "Atrás/adelante restauran el apunte y la posición previos; estado persiste durante la sesión."
+  },
+  {
+   "id": "F12",
+   "nombre": "Navegación a archivo/enlace y media",
+   "observado_en_target": "REA: openFile, openLinkText, navigate, navigateMedia (literales \"20%\" y \"-20%\"), navigateToPage, registerOpenFileHandler, openFileContextMenu con rangos exactos; navegación por offset porcentual observada como literal.",
+   "origen_evidencia": "REA",
+   "evidence_ids": [
+    "REA:ev_87d26e1f9bf43cc1bbd70d9cefeeab65951eb808a887f49bf4ed92a3b789a3bc"
+   ],
+   "rutas_rangos": {
+    "f1": {
+     "appjs_bytes": [
+      1576259,
+      1576884
+     ],
+     "asar_bytes": [
+      2340406,
+      2341031
+     ],
+     "file": "009_t.prototype.openFile.js"
+    },
+    "f2": {
+     "appjs_bytes": [
+      1576910,
+      1577658
+     ],
+     "asar_bytes": [
+      2341057,
+      2341805
+     ],
+     "file": "010_t.prototype.openLinkText.js"
+    },
+    "f3": {
+     "appjs_bytes": [
+      1700918,
+      1702313
+     ],
+     "asar_bytes": [
+      2465065,
+      2466460
+     ],
+     "file": "011_e.prototype.navigateMedia.js"
+    },
+    "f4": {
+     "appjs_bytes": [
+      2455711,
+      2456587
+     ],
+     "asar_bytes": [
+      3219858,
+      3220734
+     ],
+     "file": "050_t.prototype.navigate.js"
+    }
+   },
+   "estado_glosa": "parcial",
+   "adaptacion": "Glosa ya navega a apuntes/clases/ejercicios; el salto porcentual de media es específico de audio/video y no es prioritario.",
+   "prioridad": "baja",
+   "riesgo": "bajo",
+   "aceptacion": "Abrir un enlace navega a la nota destino sin perder el borrador."
+  },
+  {
+   "id": "F13",
+   "nombre": "Esquema (outline) de encabezados del apunte",
+   "observado_en_target": "REA: findCurrentOutlineItem (writes/reads, trace ev_557076), renderOutline, extractHeading, getHeadingRange, findActiveHeading, foldAllHeadings, onHeadingCollapseClick, createGroupHeadingEl, setHeading con rangos exactos. El trace resolvió findCurrentOutlineItem y su export default.",
+   "origen_evidencia": "REA",
+   "evidence_ids": [
+    "REA:ev_87d26e1f9bf43cc1bbd70d9cefeeab65951eb808a887f49bf4ed92a3b789a3bc",
+    "REA:ev_557076052e4cc16babbab7c2459728481777a0a01ca0f57a6dd1340cc1fb6e87"
+   ],
+   "rutas_rangos": {
+    "f1": {
+     "appjs_bytes": [
+      2651659,
+      2652315
+     ],
+     "asar_bytes": [
+      3415806,
+      3416462
+     ],
+     "file": "058_t.prototype.findCurrentOutlineItem.js"
+    },
+    "f2": {
+     "appjs_bytes": [
+      2417628,
+      2417912
+     ],
+     "asar_bytes": [
+      3181775,
+      3182059
+     ],
+     "file": "046_t.prototype.renderOutline.js"
+    },
+    "f3": {
+     "appjs_bytes": [
+      3489058,
+      3489346
+     ],
+     "asar_bytes": [
+      4253205,
+      4253493
+     ],
+     "file": "078_e.prototype.extractHeading.js"
+    },
+    "f4": {
+     "appjs_bytes": [
+      3489375,
+      3489808
+     ],
+     "asar_bytes": [
+      4253522,
+      4253955
+     ],
+     "file": "079_e.prototype.getHeadingRange.js"
+    }
+   },
+   "estado_glosa": "nuevo",
+   "adaptacion": "Glosa no tiene outline de encabezados del apunte (solo índice de lecciones): extraer ^#{1,6} y listar.",
+   "prioridad": "alta",
+   "riesgo": "bajo",
+   "aceptacion": "El esquema lista encabezados por nivel; el clic salta; apunte sin encabezados muestra aviso."
+  },
+  {
+   "id": "F14",
+   "nombre": "Generación de enlaces Markdown",
+   "observado_en_target": "REA: generateMarkdownLink con literal null y relaciones estáticas; complementa triggerWikilink.",
+   "origen_evidencia": "REA",
+   "evidence_ids": [
+    "REA:ev_87d26e1f9bf43cc1bbd70d9cefeeab65951eb808a887f49bf4ed92a3b789a3bc"
+   ],
+   "rutas_rangos": {
+    "funcion": "e.prototype.generateMarkdownLink",
+    "appjs": {
+     "appjs_bytes": [
+      1805890,
+      1806283
+     ],
+     "asar_bytes": [
+      2570037,
+      2570430
+     ],
+     "file": "020_e.prototype.generateMarkdownLink.js"
+    }
+   },
+   "estado_glosa": "parcial",
+   "adaptacion": "Glosa ya produce enlaces internos (#note=); la generación de Markdown enriquecido no es prioritaria.",
+   "prioridad": "baja",
+   "riesgo": "bajo",
+   "aceptacion": "Copiar enlace produce una referencia válida que abre la nota."
+  },
+  {
+   "id": "F15",
+   "nombre": "Fórmulas matemáticas (LaTeX/MathJax)",
+   "observado_en_target": "Inventario del ASAR (biblioteca lib/mathjax/obsidian-mathjax.js) y marcadores en app.js (yE(\"/lib/mathjax/…\"), loadMathJax). En el corpus reducido no se incluyó una función propia de render matemático.",
+   "origen_evidencia": "otra",
+   "evidence_ids": [
+    "OTRA:/tmp/glosa-obsidian-research/informe-deepseek.md",
+    "OTRA:i18n/es.txt (SHA 299edf9a…)"
+   ],
+   "rutas_rangos": {
+    "libreria": "lib/mathjax/obsidian-mathjax.js",
+    "marcador_appjs": "byte ~2000056 (prior)"
+   },
+   "estado_glosa": "nuevo",
+   "adaptacion": "Empaquetar renderer local (sin CDN) y añadir casos inlineMath/displayMath al renderer.",
+   "prioridad": "media-alta",
+   "riesgo": "alto",
+   "aceptacion": "$x^2$ y $$…$$ renderizan; un $ literal no rompe; cero requests de red."
+  },
+  {
+   "id": "F16",
+   "nombre": "Notas al pie ([^id])",
+   "observado_en_target": "i18n es 'Nota al pie' y literal '[^' en app.js (evidencia previa). No incluida en el corpus reducido.",
+   "origen_evidencia": "otra",
+   "evidence_ids": [
+    "OTRA:i18n/es.txt (SHA 299edf9a…)",
+    "OTRA:/tmp/glosa-obsidian-research/informe-deepseek.md"
+   ],
+   "rutas_rangos": {
+    "i18n_es": "líneas 628/992/1105/536/1398",
+    "marcador_appjs": "(prior)"
+   },
+   "estado_glosa": "nuevo",
+   "adaptacion": "Extender web/markdown.js y el editor en vivo con el token de nota al pie.",
+   "prioridad": "media",
+   "riesgo": "medio",
+   "aceptacion": "El marcador enlaza a su definición y viceversa; referencia sin definición se señala."
+  },
+  {
+   "id": "F17",
+   "nombre": "Panel de etiquetas (#tag)",
+   "observado_en_target": "i18n es 'Panel de Etiquetas' y clases CSS .tag/.tag-pane-tag (evidencia previa). No incluida en el corpus reducido.",
+   "origen_evidencia": "otra",
+   "evidence_ids": [
+    "OTRA:i18n/es.txt (SHA 299edf9a…)",
+    "OTRA:/tmp/glosa-obsidian-research/informe-deepseek.md"
+   ],
+   "rutas_rangos": {
+    "i18n_es": "líneas 1354/1355/1297/555/1358",
+    "css": "app.css .tag*"
+   },
+   "estado_glosa": "nuevo",
+   "adaptacion": "Parser de #etiqueta + panel reutilizando el panel de estudio; no crea cursos ni evaluaciones.",
+   "prioridad": "media",
+   "riesgo": "medio-alto",
+   "aceptacion": "El panel lista etiquetas con conteo y abre el origen; filtrar no altera cursos."
+  },
+  {
+   "id": "F18",
+   "nombre": "Diagramas Mermaid",
+   "observado_en_target": "Biblioteca lib/mermaid.min.js empaquetada y marker mermaid.initialize en app.js (evidencia previa). No incluida en el corpus reducido.",
+   "origen_evidencia": "otra",
+   "evidence_ids": [
+    "OTRA:/tmp/glosa-obsidian-research/informe-deepseek.md"
+   ],
+   "rutas_rangos": {
+    "libreria": "lib/mermaid.min.js",
+    "marcador_appjs": "byte ~1998940 (prior)"
+   },
+   "estado_glosa": "nuevo",
+   "adaptacion": "Sólo si hay demanda de diagramas; empaquetado sin CDN por privacidad.",
+   "prioridad": "baja",
+   "riesgo": "alto",
+   "aceptacion": "Un bloque ```mermaid renderiza sin requests de red; bloques inválidos no rompen la nota."
+  },
+  {
+   "id": "F19",
+   "nombre": "Vista previa de PDF incrustado",
+   "observado_en_target": "Biblioteca lib/pdfjs y loadPdfJs en app.js (evidencia previa).",
+   "origen_evidencia": "otra",
+   "evidence_ids": [
+    "OTRA:/tmp/glosa-obsidian-research/informe-deepseek.md"
+   ],
+   "rutas_rangos": {
+    "libreria": "lib/pdfjs",
+    "marcador_appjs": "loadPdfJs (prior)"
+   },
+   "estado_glosa": "existe",
+   "adaptacion": "Glosa ya tiene lector PDF con resaltados; no requiere adaptación.",
+   "prioridad": "baja",
+   "riesgo": "bajo",
+   "aceptacion": "El lector PDF abre y los resaltados persisten."
+  },
+  {
+   "id": "F20",
+   "nombre": "Marcadores de bloques a repasar",
+   "observado_en_target": "i18n es 'Marcadores/Marcador' y 'para enlazar bloques' (evidencia previa). No incluida en el corpus reducido.",
+   "origen_evidencia": "otra",
+   "evidence_ids": [
+    "OTRA:i18n/es.txt (SHA 299edf9a…)",
+    "OTRA:/tmp/glosa-obsidian-research/informe-deepseek.md"
+   ],
+   "rutas_rangos": {
+    "i18n_es": "líneas 1404/1421/1440/1413/522"
+   },
+   "estado_glosa": "nuevo",
+   "adaptacion": "Guardar marcadores (título+posición) en study metadata y listarlos en el Plan (pestaña Parciales).",
+   "prioridad": "media-alta",
+   "riesgo": "medio-alto",
+   "aceptacion": "Marcar un bloque lo lista en repaso; desmarcar lo quita; persiste y sobrevive a recarga."
+  }
+ ]
+}

@@ -98,7 +98,7 @@ function render() {
   ClassNotes.leave();
   if(!course()){
     $('course-select').replaceChildren();$('lesson-nav').replaceChildren();$('progress').replaceChildren();$('course-description').textContent='';$('note-count').textContent='';
-    $('main').replaceChildren(E('span',{class:'eyebrow'},'UN PLIEGO EN BLANCO'),E('h1',{},state.room?.title||'Tu pliego'),E('p',{class:'lede'},'Empezá por un apunte, importá un curso o preparalo con tu agente.'),E('div',{class:'pliego-actions'},E('button',{class:'quiet',onclick:()=>{view='notes';render();}},'Escribir un apunte'),E('button',{class:'quiet',onclick:()=>$('course-file').click()},'Importar curso'),E('button',{class:'text-button',onclick:()=>GlosaRoom.activate('primer-trazo')},'Volver a Primer trazo')));
+    $('main').replaceChildren(E('span',{class:'eyebrow'},'UN PLIEGO EN BLANCO'),E('h1',{},state.room?.title||'Tu pliego'),E('p',{class:'lede'},'Escribí un apunte o pedile a tu agente que cree un pliego completo desde tu carpeta de materiales. Abrilo desde GLOSA → Margen.'),E('div',{class:'pliego-actions'},E('button',{class:'quiet',onclick:()=>{view='notes';render();}},'Escribir un apunte'),E('button',{class:'quiet',onclick:()=>GlosaRoom.open()},'Abrir Margen'),E('button',{class:'text-button',onclick:()=>GlosaRoom.activate('primer-trazo')},'Volver a Primer trazo')));
     $('tutor-dock').hidden=true;return;
   }
   $('tutor-dock').hidden=false;
@@ -182,14 +182,64 @@ function renderStudy() {
   nodes.push(E('details',{class:'continuation-handoff'},E('summary',{},pending?'Continuación solicitada':'Pedir continuación'),E('p',{class:'muted'},'El agente puede preparar un refuerzo con tus respuestas y dudas cuando retomes el trabajo con él.'),E('button',{class:'text-button',disabled:pending?'disabled':undefined,onclick:async e=>{e.target.disabled=true;try{await saveEvent('continuation_requested',{});renderStudy();notify('Solicitud guardada. Retomá con tu agente para preparar la continuación.');}catch(err){e.target.disabled=false;notify(err.message);}}},pending?'Continuación pendiente del agente':'Preparar continuación')));
   $('main').replaceChildren(...nodes);
 }
+const nativeNotePattern=()=>/\[([^\]\n]+)\]\(#note=([A-Za-z0-9_.-]{1,100})\)/g;
+function visibleReadingText(text) { return (text||'').replace(nativeNotePattern(),'$1'); }
+function nativeNoteAnchor(target){
+  const anchor=target.closest?.('a[href]');if(!anchor)return null;
+  try{const url=new URL(anchor.href,location.href);return url.origin===location.origin&&url.pathname===location.pathname&&/^#note=[A-Za-z0-9_.-]{1,100}$/.test(url.hash)?anchor:null;}catch{return null;}
+}
+const NativeNotePreview=(()=>{
+  let panel=null,anchor=null,showTimer=null,hideTimer=null;
+  function close(){clearTimeout(showTimer);clearTimeout(hideTimer);anchor?.removeAttribute('aria-describedby');panel?.remove();panel=null;anchor=null;}
+  function keep(){clearTimeout(hideTimer);}
+  function later(){clearTimeout(showTimer);clearTimeout(hideTimer);hideTimer=setTimeout(close,180);}
+  function show(next){
+    if(!next.isConnected||getSelection()?.toString()||document.querySelector('dialog[open]'))return;
+    const id=new URL(next.href).hash.slice(6),note=state.library.notes.find(n=>n.id===id&&!n.deletedAt);if(!note)return;
+    close();anchor=next;
+    const body=E('div',{class:'native-note-preview-body note-markdown'});
+    body.append(NoteMarkdown.render(note.content||'Este apunte todavía no tiene contenido.'));
+    panel=E('aside',{id:'native-note-preview',class:'native-note-preview',role:'dialog','aria-label':'Vista previa: '+note.title},
+      E('header',{},E('strong',{},note.title),E('a',{href:'#note='+id},'Abrir nota')),body);
+    panel.addEventListener('pointerenter',keep);panel.addEventListener('pointerleave',later);
+    panel.addEventListener('focusin',keep);panel.addEventListener('focusout',event=>{if(!panel?.contains(event.relatedTarget))later();});
+    document.body.append(panel);anchor.setAttribute('aria-describedby',panel.id);
+    const rect=anchor.getBoundingClientRect(),box=panel.getBoundingClientRect(),gap=6;
+    const top=rect.bottom+gap+box.height<=innerHeight-8?rect.bottom+gap:Math.max(8,rect.top-gap-box.height);
+    panel.style.left=Math.max(8,Math.min(rect.left,innerWidth-box.width-8))+'px';panel.style.top=top+'px';
+  }
+  function schedule(next){keep();clearTimeout(showTimer);if(anchor===next&&panel)return;showTimer=setTimeout(()=>show(next),300);}
+  document.addEventListener('pointerover',event=>{if(event.pointerType==='touch'||event.buttons)return;const next=nativeNoteAnchor(event.target);if(next&&!next.closest('.native-note-preview'))schedule(next);});
+  document.addEventListener('pointerout',event=>{const next=nativeNoteAnchor(event.target);if(next&&!next.contains(event.relatedTarget)&&!panel?.contains(event.relatedTarget))later();});
+  document.addEventListener('focusin',event=>{const next=nativeNoteAnchor(event.target);if(next&&!next.closest('.native-note-preview'))schedule(next);});
+  document.addEventListener('focusout',event=>{if(nativeNoteAnchor(event.target)&&!panel?.contains(event.relatedTarget))later();});
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')close();});
+  document.addEventListener('pointerdown',event=>{if(!panel?.contains(event.target))close();});
+  window.addEventListener('scroll',event=>{if(!panel?.contains(event.target))close();},true);
+  window.addEventListener('resize',close);
+  return {close};
+})();
+document.addEventListener('click',async event=>{
+  const anchor=nativeNoteAnchor(event.target);if(!anchor)return;
+  event.preventDefault();
+  NativeNotePreview.close();
+  const id=new URL(anchor.href).hash.slice(6);
+  if(!state.library.notes.some(n=>n.id===id&&!n.deletedAt)){notify('No se encontró el apunte.');return;}
+  try{await WorkspaceKeys.go('notes');await ClassNotes.select(id);}catch(error){notify(error.message);}
+});
 function highlight(node,text,annotations) {
   const spans=[];
   for(const a of annotations){const d=a.data;if(d.removed)continue;if(Number.isInteger(d.start)&&Number.isInteger(d.end)&&d.end>d.start&&text.slice(d.start,d.end)===d.quote)spans.push({start:d.start,end:d.end,item:a});}
-  const bounds=[...new Set([0,text.length,...spans.flatMap(s=>[s.start,s.end])])].sort((a,b)=>a-b);node.replaceChildren();
+  const links=[...text.matchAll(nativeNotePattern())].map(m=>({start:m.index,labelStart:m.index+1,labelEnd:m.index+1+m[1].length,end:m.index+m[0].length,id:m[2]}));
+  const bounds=[...new Set([0,text.length,...spans.flatMap(s=>[s.start,s.end]),...links.flatMap(l=>[l.start,l.labelStart,l.labelEnd,l.end])])].sort((a,b)=>a-b);node.replaceChildren();
   for(let i=0;i<bounds.length-1;i++){
     const start=bounds[i],end=bounds[i+1],item=spans.findLast(s=>s.start<=start&&s.end>=end)?.item,value=text.slice(start,end);
-    if(!item){node.append(document.createTextNode(value));continue;}
-    const mark=E('mark',{tabindex:0,role:'button','data-annotation-id':item.id,'data-color':highlightColor(item.data.color),'aria-label':'Resaltado: '+item.data.quote,onkeydown:e=>{if(e.key==='Enter'){e.preventDefault();mark.click();}},onclick:()=>showReadingActions(mark,{note:()=>editAnnotation(item),tutor:()=>askTutor('Ayudame a entender este fragmento:\n\n'+item.data.quote),hasNote:!!item.data.comment,color:highlightColor(item.data.color),onColor:color=>recolorAnnotation(item,color),onDelete:()=>removeAnnotation(item)})},value);node.append(mark);
+    const link=links.find(l=>l.start<=start&&l.end>=end);
+    if(link&&(end<=link.labelStart||start>=link.labelEnd)){node.append(E('span',{hidden:true},value));continue;}
+    const parent=link?E('a',{href:'#note='+link.id}):node;
+    if(link)node.append(parent);
+    if(!item){parent.append(document.createTextNode(value));continue;}
+    const mark=E('mark',{tabindex:0,role:'button','data-annotation-id':item.id,'data-color':highlightColor(item.data.color),'aria-label':'Resaltado: '+visibleReadingText(item.data.quote),onkeydown:e=>{if(e.key==='Enter'){e.preventDefault();mark.click();}},onclick:event=>!event.target.closest('a')&&showReadingActions(mark,{note:()=>editAnnotation(item),tutor:()=>askTutor('Ayudame a entender este fragmento:\n\n'+visibleReadingText(item.data.quote)),hasNote:!!item.data.comment,color:highlightColor(item.data.color),onColor:color=>recolorAnnotation(item,color),onDelete:()=>removeAnnotation(item)})},value);if(link){mark.removeAttribute('role');mark.removeAttribute('tabindex');mark.removeAttribute('aria-label');}parent.append(mark);
   }
 }
 // Barra compacta anclada al fragmento y siempre dentro del viewport.
@@ -425,7 +475,7 @@ function renderNotebook() {
     const d=ev.data,l=course().lessons.find(x=>x.id===ev.lessonId);
     const item=E('article',{class:'notebook-item','data-annotation-id':ev.kind==='annotation'?ev.id:undefined},E('div',{class:'eyebrow'},`${kindLabel[ev.kind]} · ${dateLabel(ev.timestamp)}`),E('h3',{},l?.title||ev.lessonId));
     if(d.removed)item.append(E('p',{class:'muted'},'Quitado del resaltado. El fragmento y sus revisiones siguen en tu historial.'));
-    if(d.quote)item.append(E('blockquote',{},d.quote));
+    if(d.quote)item.append(E('blockquote',{},visibleReadingText(d.quote)));
     item.append(E('p',{},d.comment||d.text||(ev.kind==='tutor_reply'?readableTutor(d.reply,d):d.reply)||d.reason||d.explanation||''));
     if(d.reasoning)item.append(E('p',{},'Tu justificación: '+d.reasoning));
     if(ev.kind==='tutor_note')item.append(E('p',{class:'muted'},({doubt:'Duda abierta',insight:'Relación conceptual',decision:'Decisión de repaso'}[d.kind]||'Síntesis')+' · Propuesto por el tutor. La cita es tuya; la síntesis no demuestra aprendizaje.'));
@@ -509,7 +559,7 @@ function annotationActions(item){
   actions.push(E('button',{class:'text-button'+(pending?' danger':''),onclick:()=>pending?removeAnnotation(item):deleteAnnotation(item)},pending?'Quitar resaltado':'Borrar'));
   return E('span',{class:'annotation-actions'},...actions);
 }
-function editAnnotation(item){editingAnnotation=item;selection=null;$('selected-quote').textContent=item.data.quote||'';$('annotation-comment').value=item.data.comment||'';$('annotation-type').value=item.data.type==='highlight'?'personal':item.data.type||'doubt';$('annotation-share').checked=item.data.shareWithTutor!==false;$('annotation-dialog').showModal();$('annotation-comment').focus();}
+function editAnnotation(item){editingAnnotation=item;selection=null;$('selected-quote').textContent=visibleReadingText(item.data.quote);$('annotation-comment').value=item.data.comment||'';$('annotation-type').value=item.data.type==='highlight'?'personal':item.data.type||'doubt';$('annotation-share').checked=item.data.shareWithTutor!==false;$('annotation-dialog').showModal();$('annotation-comment').focus();}
 function deleteAnnotation(item){const dialog=E('dialog',{},E('h2',{},'Borrar anotación'),E('p',{},'Se elimina el comentario y sus revisiones de la base actual. Los respaldos descargados previamente no cambian.'),E('div',{class:'dialog-actions'},E('button',{class:'quiet',onclick:()=>dialog.close()},'Cancelar'),E('button',{class:'primary',onclick:async()=>{try{await api('/api/annotation',{action:'delete',id:item.id,expectedRevision:item.data.annotationRevision||0});dialog.close();await reload();notify('Anotación borrada.');}catch(e){notify(e.message);}}},'Borrar anotación')));dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);dialog.showModal();}
 function openStudyAnnotation(){
   if(view!=='study'||document.querySelector('dialog[open]')||document.body.classList.contains('tutor-open')||document.body.classList.contains('outline-open'))return;
@@ -519,7 +569,7 @@ function openStudyAnnotation(){
   const quote=s.toString();if(!quote.trim())return;
   const prefix=range.cloneRange();prefix.selectNodeContents(start);prefix.setEnd(range.startContainer,range.startOffset);
   editingAnnotation=null;selection={blockId:start.dataset.blockId,quote,start:prefix.toString().length,end:prefix.toString().length+quote.length};
-  $('selected-quote').textContent=quote;$('annotation-comment').value='';$('annotation-type').value='doubt';$('annotation-share').checked=true;$('annotation-dialog').showModal();$('annotation-comment').focus();
+  $('selected-quote').textContent=visibleReadingText(quote);$('annotation-comment').value='';$('annotation-type').value='doubt';$('annotation-share').checked=true;$('annotation-dialog').showModal();$('annotation-comment').focus();
 }
 document.addEventListener('mouseup',event=>{if(!event.target.closest?.('mark[data-annotation-id],.pdf-highlight,.reading-highlight-actions,.notes-splitter'))captureReadingHighlight();});
 $('annotation-form').addEventListener('submit',async ev=>{ev.preventDefault();try{const fields={comment:$('annotation-comment').value,type:$('annotation-type').value,shareWithTutor:$('annotation-share').checked};if(editingAnnotation){await api('/api/annotation',{...fields,action:'edit',id:editingAnnotation.id,expectedRevision:editingAnnotation.data.annotationRevision||0});}else{await saveEvent('annotation',{...selection,...fields});}$('annotation-dialog').close();editingAnnotation=null;window.getSelection()?.removeAllRanges();await reload();notify('Anotación guardada.');}catch(err){notify(err.message);}});

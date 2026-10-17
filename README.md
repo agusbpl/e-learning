@@ -35,6 +35,18 @@ El tutor es opcional. Al usarlo, el contexto elegido se envía al proveedor conf
 
 Hay dos integraciones MCP separadas y opcionales: el [tutor de apuntes](docs/mcp-tutor.md), que responde preguntas sobre notas compartidas, y la [autoría de cursos y lecciones](docs/mcp-autor.md), que ayuda a preparar materiales. Ninguna acredita dominio por sí sola ni reemplaza la revisión humana.
 
+Para preparar una materia, decile a tu agente: **«Usá el MCP de autoría para crear
+un pliego con /ruta/a/mis/materiales»**. El agente redacta la teoría, la ruta y las
+actividades y crea un directorio completo en tu Margen configurado (`~/Margen`
+por defecto). Abrilo desde **GLOSA → Margen**: ya tiene el curso incorporado.
+No necesitás ZIP ni importar cursos desde Notas.
+
+Si preferís no escribir el encargo, abrí **GLOSA → Preparar una materia con mi
+agente**. Elegí la carpeta; podés dejar que el agente proponga la ruta o agregar
+los datos del examen, el temario y tu disponibilidad. Revisá el texto y pulsá
+**Copiar** para pegarlo en tu agente. Este formulario no lee los materiales,
+no inicia programas y no crea pliegos por sí mismo.
+
 Los cursos y las evaluaciones requieren revisión humana de fuentes y rúbricas. La [regla de evaluación rigurosa](docs/evaluacion-rigurosa.md) describe los criterios del proyecto; las comprobaciones automáticas no acreditan calidad pedagógica por sí solas.
 
 ## Participar

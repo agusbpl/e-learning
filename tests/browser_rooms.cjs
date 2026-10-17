@@ -1,6 +1,6 @@
 // Isolated database and temp HOME; no provider calls or real history modifications.
 const {chromium}=require('playwright');
-const fs=require('fs'),os=require('os'),path=require('path'),net=require('net'),assert=require('assert/strict'),{spawn}=require('child_process');
+const fs=require('fs'),os=require('os'),path=require('path'),net=require('net'),assert=require('assert/strict'),{spawn,execFileSync}=require('child_process');
 (async()=>{
  const root=path.resolve(__dirname,'..'),data=fs.mkdtempSync(path.join(os.tmpdir(),'glosa-rooms-')),home=path.join(data,'home'),socket=net.createServer();
  fs.mkdirSync(home,{recursive:true});
@@ -26,8 +26,8 @@ const fs=require('fs'),os=require('os'),path=require('path'),net=require('net'),
   assert.match(await page.locator('#boveda-margen-info').textContent(),/Tu Margen está en/);
   assert.match(await page.locator('.boveda-row').filter({hasText:'Primer trazo'}).textContent(),/Tutorial incluido/);
   await page.locator('#room-upload').setInputFiles({name:'pliego.zip',mimeType:'application/zip',buffer:zip});
-  await page.waitForFunction(()=>GlosaRoom.id.startsWith('room-'));await page.waitForSelector('.activity');
-  const selected=await page.evaluate(()=>GlosaRoom.id);assert(selected.startsWith('room-'));
+  await page.waitForFunction(()=>typeof GlosaRoom!=='undefined' && GlosaRoom.id.startsWith('room-'));await page.waitForSelector('.activity');
+  const selected=await page.evaluate(()=>typeof GlosaRoom!=='undefined' && GlosaRoom.id);assert(selected.startsWith('room-'));
   await page.keyboard.type('gn');await page.evaluate(()=>ClassNotes.openList());await page.locator('.class-note-link').filter({hasText:'Nota para salas'}).click();await page.waitForSelector('#pdf-page-canvas canvas');
   assert.equal(await page.locator('#note-name-button').textContent(),'Nota para salas');
   await page.locator('.note-page-cell[data-page="1"] textarea').focus();const input=page.locator('.note-page-cell[data-page="1"] .cm-content');await input.fill('CAMBIO EN SALA IMPORTADA');await input.press('Escape');
@@ -49,16 +49,32 @@ const fs=require('fs'),os=require('os'),path=require('path'),net=require('net'),
   page.once('dialog',prompt=>prompt.accept('Pliego renombrado'));
   await row.locator('.boveda-rename').click();
   await page.waitForSelector('.boveda-row:has-text("Pliego renombrado")');
-  assert.equal(await page.evaluate(()=>GlosaRoom.id),selected,'renaming a pliego keeps its stable ID');
+  assert.equal(await page.evaluate(()=>typeof GlosaRoom!=='undefined' && GlosaRoom.id),selected,'renaming a pliego keeps its stable ID');
   const afterRename=await (await fetch(base+'/api/rooms',{headers:{'X-Glosa-Room':selected}})).json();
   const renamed=afterRename.pliegos.find(entry=>entry.id===selected);
   assert.equal(path.basename(renamed.path),'Pliego renombrado','the folder is physically renamed');
   assert.notEqual(renamed.path,item.path);
   const download=await page.locator('#room-download').getAttribute('href');assert(download.includes(selected));
   const downloaded=page.waitForEvent('download');await page.locator('#room-download').click();assert.equal((await downloaded).suggestedFilename(),'pliego-glosa.zip');
-  await page.locator('.room-choice').filter({hasText:'Biblioteca local'}).click();await page.waitForFunction(()=>GlosaRoom.id==='local');await page.waitForSelector('.activity');
-  assert.equal(await page.evaluate(()=>GlosaRoom.id),'local');
+  await page.locator('.room-choice').filter({hasText:'Biblioteca local'}).click();await page.waitForFunction(()=>typeof GlosaRoom!=='undefined' && GlosaRoom.id==='local');await page.waitForSelector('.activity');
+  assert.equal(await page.evaluate(()=>typeof GlosaRoom!=='undefined' && GlosaRoom.id),'local');
   await page.keyboard.type('gn');await page.evaluate(()=>ClassNotes.openList());await page.locator('.class-note-link').filter({hasText:'Nota para salas'}).click();await page.waitForSelector('#pdf-page-canvas canvas');assert.equal(await page.locator('.note-page-cell[data-page="1"] textarea').inputValue(),'Contenido original');
-  assert.deepEqual(errors,[]);console.log('OK: ZIP imported, isolated notes with identical IDs, PDF opened, export scoped, switch back preserved original; Margen card shows the human folder path and contents, and rename moves the folder keeping the ID.');
+  assert.equal(await page.getByRole('button',{name:/Cursos preparados/}).count(),0,'Notas has no course import tray');
+  const direct=JSON.parse(execFileSync(path.join(root,'.venv-author/bin/python'),['-c',`
+import json
+from pathlib import Path
+import author_mcp
+brief=author_mcp.source_folder_brief(str(Path('sources').resolve()))
+course=json.loads(Path('courses/default.json').read_text())
+course['sources'][0]['url']='/documents/'+next(f['documentId'] for f in brief['files'] if f['path']=='fixture.pdf')
+print(json.dumps(author_mcp.create_study_pliego(str(Path('sources').resolve()),'Pliego directo del agente',course,'Prueba de entrega directa y apertura, sin evaluar aprendizaje.')))
+`],{cwd:root,env:{...process.env,HOME:home,GLOSA_MARGEN_DIR:'',LEARNING_DATA_DIR:data,OPENROUTER_API_KEY:''},encoding:'utf8'}));
+  assert(fs.existsSync(path.join(direct.path,'pliego.json')));
+  await page.getByRole('button',{name:'Abrir Margen',exact:true}).click();
+  await page.locator('.room-choice').filter({hasText:'Pliego directo del agente'}).click();
+  await page.waitForFunction(expected=>typeof GlosaRoom!=='undefined' && GlosaRoom.id===expected,direct.id);
+  await page.waitForSelector('.activity');
+  assert.equal(await page.evaluate(()=>typeof GlosaRoom!=='undefined' && GlosaRoom.id),direct.id);
+  assert.deepEqual(errors,[]);console.log('OK: direct authoring creates a directory discovered and opened from GLOSA with its active course; no import tray in Notes. Backup import/export and room isolation preserved.');
  }finally{if(browser)await browser.close();service.kill();fs.rmSync(data,{recursive:true,force:true});}
 })().catch(e=>{console.error(e);process.exitCode=1;});

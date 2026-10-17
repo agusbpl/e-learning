@@ -348,7 +348,13 @@ def restore_room(bundle, data, root=ROOT):
             server.restore_snapshot(state)
             restored = server.snapshot()
         for key in ('courses', 'events', 'annotationRevisions', 'library', 'calendarEvents', 'settings', 'tutorModes'):
-            if restored[key] != state[key]:
+            actual, expected = restored[key], state[key]
+            if key == 'tutorModes':
+                # La identidad del Margen se recalcula en destino: no es dato
+                # portable. Preferencias, temarios y ediciones sí deben coincidir.
+                actual = {k: v for k, v in actual.items() if k != 'margenPath'}
+                expected = {k: v for k, v in expected.items() if k != 'margenPath'}
+            if actual != expected:
                 raise ValueError('La restauración no conserva exactamente '+key)
         import note_files as note_files_module
         from library import IDENTITY_FILE, Library

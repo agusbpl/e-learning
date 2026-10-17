@@ -1,0 +1,647 @@
+{
+  "scope": "Comprobación mecánica de procedencia y resultados de herramientas; NO evaluación de aprendizaje ni validación semántica de todas las propuestas.",
+  "checks": [
+    {
+      "check": "Obsidian: source identity",
+      "passed": true,
+      "detail": "958ce57fe22f87fdf121546e46dfccd9c8ee971ce3fd8f801d60d4ece39a2df9"
+    },
+    {
+      "check": "Obsidian fragment cf_000",
+      "passed": true,
+      "detail": "t.makeMetadataSeekable"
+    },
+    {
+      "check": "Obsidian fragment cf_001",
+      "passed": true,
+      "detail": "e.prototype.startHover"
+    },
+    {
+      "check": "Obsidian fragment cf_002",
+      "passed": true,
+      "detail": "e.prototype.activateHover"
+    },
+    {
+      "check": "Obsidian fragment cf_003",
+      "passed": true,
+      "detail": "t.callout"
+    },
+    {
+      "check": "Obsidian fragment cf_004",
+      "passed": true,
+      "detail": "e.prototype.renderSuggestions"
+    },
+    {
+      "check": "Obsidian fragment cf_005",
+      "passed": true,
+      "detail": "t.prototype.setSuggestions"
+    },
+    {
+      "check": "Obsidian fragment cf_006",
+      "passed": true,
+      "detail": "t.prototype.updateSuggestions"
+    },
+    {
+      "check": "Obsidian fragment cf_007",
+      "passed": true,
+      "detail": "e.prototype.applySearchFilter"
+    },
+    {
+      "check": "Obsidian fragment cf_008",
+      "passed": true,
+      "detail": "t.prototype.onSearchChanged"
+    },
+    {
+      "check": "Obsidian fragment cf_009",
+      "passed": true,
+      "detail": "t.prototype.openFile"
+    },
+    {
+      "check": "Obsidian fragment cf_010",
+      "passed": true,
+      "detail": "t.prototype.openLinkText"
+    },
+    {
+      "check": "Obsidian fragment cf_011",
+      "passed": true,
+      "detail": "e.prototype.navigateMedia"
+    },
+    {
+      "check": "Obsidian fragment cf_012",
+      "passed": true,
+      "detail": "e.prototype.setHeading"
+    },
+    {
+      "check": "Obsidian fragment cf_013",
+      "passed": true,
+      "detail": "e.prototype.insertCallout"
+    },
+    {
+      "check": "Obsidian fragment cf_014",
+      "passed": true,
+      "detail": "t.prototype.getLinkSuggestions"
+    },
+    {
+      "check": "Obsidian fragment cf_015",
+      "passed": true,
+      "detail": "t.prototype.getLinkpathDest"
+    },
+    {
+      "check": "Obsidian fragment cf_016",
+      "passed": true,
+      "detail": "t.prototype.resolveLinks"
+    },
+    {
+      "check": "Obsidian fragment cf_017",
+      "passed": true,
+      "detail": "t.prototype.computeFileMetadataAsync"
+    },
+    {
+      "check": "Obsidian fragment cf_018",
+      "passed": true,
+      "detail": "t.prototype.computeMetadataAsync"
+    },
+    {
+      "check": "Obsidian fragment cf_019",
+      "passed": true,
+      "detail": "t.prototype.rebuildProperties"
+    },
+    {
+      "check": "Obsidian fragment cf_020",
+      "passed": true,
+      "detail": "e.prototype.generateMarkdownLink"
+    },
+    {
+      "check": "Obsidian fragment cf_021",
+      "passed": true,
+      "detail": "e.prototype.processFrontMatter"
+    },
+    {
+      "check": "Obsidian fragment cf_022",
+      "passed": true,
+      "detail": "t.prototype.showSuggestions"
+    },
+    {
+      "check": "Obsidian fragment cf_023",
+      "passed": true,
+      "detail": "t.prototype.getSuggestions"
+    },
+    {
+      "check": "Obsidian fragment cf_024",
+      "passed": true,
+      "detail": "e.prototype.getSuggestionsAsync"
+    },
+    {
+      "check": "Obsidian fragment cf_025",
+      "passed": true,
+      "detail": "e.prototype.getDisplaySuggestions"
+    },
+    {
+      "check": "Obsidian fragment cf_026",
+      "passed": true,
+      "detail": "e.prototype.getHeadingSuggestions"
+    },
+    {
+      "check": "Obsidian fragment cf_027",
+      "passed": true,
+      "detail": "e.prototype.getGlobalHeadingSuggestions"
+    },
+    {
+      "check": "Obsidian fragment cf_028",
+      "passed": true,
+      "detail": "e.prototype.getBlockSuggestions"
+    },
+    {
+      "check": "Obsidian fragment cf_029",
+      "passed": true,
+      "detail": "e.prototype.getGlobalBlockSuggestions"
+    },
+    {
+      "check": "Obsidian fragment cf_030",
+      "passed": true,
+      "detail": "e.prototype.getFileSuggestions"
+    },
+    {
+      "check": "Obsidian fragment cf_031",
+      "passed": true,
+      "detail": "t.prototype.selectSuggestion"
+    },
+    {
+      "check": "Obsidian fragment cf_032",
+      "passed": true,
+      "detail": "t.prototype.renderSuggestion"
+    },
+    {
+      "check": "Obsidian fragment cf_033",
+      "passed": true,
+      "detail": "t.prototype.showPropertiesMenu"
+    },
+    {
+      "check": "Obsidian fragment cf_034",
+      "passed": true,
+      "detail": "t.prototype.removeProperties"
+    },
+    {
+      "check": "Obsidian fragment cf_035",
+      "passed": true,
+      "detail": "e.prototype.onHeadingCollapseClick"
+    },
+    {
+      "check": "Obsidian fragment cf_036",
+      "passed": true,
+      "detail": "e.prototype.foldAllHeadings"
+    },
+    {
+      "check": "Obsidian fragment cf_037",
+      "passed": true,
+      "detail": "t.prototype.showSearch"
+    },
+    {
+      "check": "Obsidian fragment cf_038",
+      "passed": true,
+      "detail": "e.prototype.getSearchCursor"
+    },
+    {
+      "check": "Obsidian fragment cf_039",
+      "passed": true,
+      "detail": "t.prototype.onSearchInput"
+    },
+    {
+      "check": "Obsidian fragment cf_040",
+      "passed": true,
+      "detail": "t.fromFrontMatter"
+    },
+    {
+      "check": "Obsidian fragment cf_041",
+      "passed": true,
+      "detail": "t.prototype.getBacklinks"
+    },
+    {
+      "check": "Obsidian fragment cf_042",
+      "passed": true,
+      "detail": "t.prototype.getEmbeds"
+    },
+    {
+      "check": "Obsidian fragment cf_043",
+      "passed": true,
+      "detail": "e.prototype.getLinkpathDest"
+    },
+    {
+      "check": "Obsidian fragment cf_044",
+      "passed": true,
+      "detail": "e.prototype._getLinkpathDest"
+    },
+    {
+      "check": "Obsidian fragment cf_045",
+      "passed": true,
+      "detail": "e.prototype.onNavigated"
+    },
+    {
+      "check": "Obsidian fragment cf_046",
+      "passed": true,
+      "detail": "t.prototype.renderOutline"
+    },
+    {
+      "check": "Obsidian fragment cf_047",
+      "passed": true,
+      "detail": "t.prototype.loadEmbed"
+    },
+    {
+      "check": "Obsidian fragment cf_048",
+      "passed": true,
+      "detail": "e.prototype.updateSearch"
+    },
+    {
+      "check": "Obsidian fragment cf_049",
+      "passed": true,
+      "detail": "e.prototype.renderSuggestion"
+    },
+    {
+      "check": "Obsidian fragment cf_050",
+      "passed": true,
+      "detail": "t.prototype.navigate"
+    },
+    {
+      "check": "Obsidian fragment cf_051",
+      "passed": true,
+      "detail": "t.prototype.onNavigated"
+    },
+    {
+      "check": "Obsidian fragment cf_052",
+      "passed": true,
+      "detail": "t.prototype.renderProperties"
+    },
+    {
+      "check": "Obsidian fragment cf_053",
+      "passed": true,
+      "detail": "t.prototype.createGroupHeadingEl"
+    },
+    {
+      "check": "Obsidian fragment cf_054",
+      "passed": true,
+      "detail": "t.prototype.getProperties"
+    },
+    {
+      "check": "Obsidian fragment cf_055",
+      "passed": true,
+      "detail": "t.prototype.triggerWikilink"
+    },
+    {
+      "check": "Obsidian fragment cf_056",
+      "passed": true,
+      "detail": "t.prototype.saveHistory"
+    },
+    {
+      "check": "Obsidian fragment cf_057",
+      "passed": true,
+      "detail": "t.prototype.showPreview"
+    },
+    {
+      "check": "Obsidian fragment cf_058",
+      "passed": true,
+      "detail": "t.prototype.findCurrentOutlineItem"
+    },
+    {
+      "check": "Obsidian fragment cf_059",
+      "passed": true,
+      "detail": "e.prototype.onNodeHover"
+    },
+    {
+      "check": "Obsidian fragment cf_060",
+      "passed": true,
+      "detail": "t.prototype.onHistoryBack"
+    },
+    {
+      "check": "Obsidian fragment cf_061",
+      "passed": true,
+      "detail": "t.prototype.registerOpenFileHandler"
+    },
+    {
+      "check": "Obsidian fragment cf_062",
+      "passed": true,
+      "detail": "t.prototype.pushUndoHistory"
+    },
+    {
+      "check": "Obsidian fragment cf_063",
+      "passed": true,
+      "detail": "e.prototype.addHistoryItem"
+    },
+    {
+      "check": "Obsidian fragment cf_064",
+      "passed": true,
+      "detail": "e.prototype.removeHistoryItem"
+    },
+    {
+      "check": "Obsidian fragment cf_065",
+      "passed": true,
+      "detail": "e.prototype.clearHistoryItems"
+    },
+    {
+      "check": "Obsidian fragment cf_066",
+      "passed": true,
+      "detail": "t.prototype.pushViewStackHistory"
+    },
+    {
+      "check": "Obsidian fragment cf_067",
+      "passed": true,
+      "detail": "e.prototype.updateBacklinks"
+    },
+    {
+      "check": "Obsidian fragment cf_068",
+      "passed": true,
+      "detail": "e.prototype.openBacklinksForActiveFile"
+    },
+    {
+      "check": "Obsidian fragment cf_069",
+      "passed": true,
+      "detail": "t.prototype.setBacklinkCollapsed"
+    },
+    {
+      "check": "Obsidian fragment cf_070",
+      "passed": true,
+      "detail": "t.prototype.onMetadataChanged"
+    },
+    {
+      "check": "Obsidian fragment cf_071",
+      "passed": true,
+      "detail": "t.prototype.recomputeBacklink"
+    },
+    {
+      "check": "Obsidian fragment cf_072",
+      "passed": true,
+      "detail": "t.prototype.toggleBacklinks"
+    },
+    {
+      "check": "Obsidian fragment cf_073",
+      "passed": true,
+      "detail": "t.prototype.updateShowBacklinks"
+    },
+    {
+      "check": "Obsidian fragment cf_074",
+      "passed": true,
+      "detail": "e.prototype.restoreNavigation"
+    },
+    {
+      "check": "Obsidian fragment cf_075",
+      "passed": true,
+      "detail": "e.prototype.createAndEmbedBase"
+    },
+    {
+      "check": "Obsidian fragment cf_076",
+      "passed": true,
+      "detail": "t.prototype.openHistory"
+    },
+    {
+      "check": "Obsidian fragment cf_077",
+      "passed": true,
+      "detail": "t.prototype.renderEmbed"
+    },
+    {
+      "check": "Obsidian fragment cf_078",
+      "passed": true,
+      "detail": "e.prototype.extractHeading"
+    },
+    {
+      "check": "Obsidian fragment cf_079",
+      "passed": true,
+      "detail": "e.prototype.getHeadingRange"
+    },
+    {
+      "check": "Obsidian fragment cf_080",
+      "passed": true,
+      "detail": "t.prototype.findActiveHeading"
+    },
+    {
+      "check": "Obsidian fragment cf_081",
+      "passed": true,
+      "detail": "e.prototype.onHoverLink"
+    },
+    {
+      "check": "Obsidian fragment cf_082",
+      "passed": true,
+      "detail": "e.prototype.onLinkHover"
+    },
+    {
+      "check": "Obsidian fragment cf_083",
+      "passed": true,
+      "detail": "e.prototype.ensurePropertiesView"
+    },
+    {
+      "check": "Obsidian fragment cf_084",
+      "passed": true,
+      "detail": "t.prototype.setActiveHistoryItem"
+    },
+    {
+      "check": "Obsidian fragment cf_085",
+      "passed": true,
+      "detail": "t.prototype.createHistoryItemAvatar"
+    },
+    {
+      "check": "Obsidian fragment cf_086",
+      "passed": true,
+      "detail": "t.prototype.openFileContextMenu"
+    },
+    {
+      "check": "Obsidian fragment cf_087",
+      "passed": true,
+      "detail": "e.prototype.listHistory"
+    },
+    {
+      "check": "Obsidian fragment cf_088",
+      "passed": true,
+      "detail": "t.prototype.getHistory"
+    },
+    {
+      "check": "Obsidian fragment cf_089",
+      "passed": true,
+      "detail": "t.prototype.navigateToPage"
+    },
+    {
+      "check": "Obsidian: 90 selected functions",
+      "passed": true,
+      "detail": "Corpus reducido, no app completa"
+    },
+    {
+      "check": "Obsidian: REA parse",
+      "passed": true,
+      "detail": "ev_87d26e1f9bf43cc1bbd70d9cefeeab65951eb808a887f49bf4ed92a3b789a3bc"
+    },
+    {
+      "check": "Obsidian trace trace-findCurrentOutlineItem.json",
+      "passed": true,
+      "detail": {
+        "id": "ev_557076052e4cc16babbab7c2459728481777a0a01ca0f57a6dd1340cc1fb6e87",
+        "terminal_paths": 0
+      }
+    },
+    {
+      "check": "Obsidian trace trace-startHover.json",
+      "passed": true,
+      "detail": {
+        "id": "ev_278724314d1b54e7f642e094846db186de0c3f5637efd1de8f474f8f88d18e26",
+        "terminal_paths": 0
+      }
+    },
+    {
+      "check": "Obsidian trace trace-updateSearch.json",
+      "passed": true,
+      "detail": {
+        "id": "ev_92a9b970950b93ed5ee104510033408c5c143b3b5ce712c839675fe7ce140a21",
+        "terminal_paths": 0
+      }
+    },
+    {
+      "check": "Obsidian trace trace-loadEmbed.json",
+      "passed": true,
+      "detail": {
+        "id": "ev_2f06611ab5c75108619373f555d2762e7d0db94af0d47f41cd5e979864aaad7d",
+        "terminal_paths": 0
+      }
+    },
+    {
+      "check": "Okular: original identity",
+      "passed": true,
+      "detail": "e011663feccf9977bb33af31cde27540c78a3ac19eab3cbcbad36a9c5944ad08"
+    },
+    {
+      "check": "Okular exact bytes nextBookmark",
+      "passed": true,
+      "detail": "0x78530"
+    },
+    {
+      "check": "Okular exact bytes previousBookmark",
+      "passed": true,
+      "detail": "0x78af0"
+    },
+    {
+      "check": "Okular exact bytes viewportIsValid",
+      "passed": true,
+      "detail": "0xa7c20"
+    },
+    {
+      "check": "Okular exact bytes viewportEqual",
+      "passed": true,
+      "detail": "0xa7c30"
+    },
+    {
+      "check": "Okular exact bytes viewportLess",
+      "passed": true,
+      "detail": "0xa7ca0"
+    },
+    {
+      "check": "Okular exact bytes viewportToString",
+      "passed": true,
+      "detail": "0xa7500"
+    },
+    {
+      "check": "Okular exact bytes continueSearch",
+      "passed": true,
+      "detail": "0x9d860"
+    },
+    {
+      "check": "Okular exact bytes continueSearchWithType",
+      "passed": true,
+      "detail": "0x9d920"
+    },
+    {
+      "check": "Okular exact bytes setViewportPage",
+      "passed": true,
+      "detail": "0x9b1a0"
+    },
+    {
+      "check": "Okular REA function nextBookmark",
+      "passed": true,
+      "detail": "ev_1e19c5d71b92a817e147a270fa3676184e1415878db6992a39f02cd46820997c"
+    },
+    {
+      "check": "Okular REA function previousBookmark",
+      "passed": true,
+      "detail": "ev_b6692368f431fa2cce049decd3bb2e1ae9621a40e6bfbfb9a4b5cf44eef6c7b5"
+    },
+    {
+      "check": "Okular REA function viewportLess",
+      "passed": true,
+      "detail": "ev_ef7fa65fedd087ab3a15c2ea68d2fae9869494c1aa2a83836c60f55cae485406"
+    },
+    {
+      "check": "Okular REA function viewportToString",
+      "passed": true,
+      "detail": "ev_0b38ef8390a4946813fa6a293fb64f01b70e0618d1336b576e389a6544a1b079"
+    },
+    {
+      "check": "Okular REA function continueSearch",
+      "passed": true,
+      "detail": "ev_95c488b21bf45b244764ba557a47c4c509e621328616109ef534dc27c76e84ef"
+    },
+    {
+      "check": "Okular REA function setViewportPage",
+      "passed": true,
+      "detail": "ev_00b402497a2c49756ebca9f70d1e34dbd47734434b7f99641c54dcc7d690820c"
+    },
+    {
+      "check": "KOReader REA capture 1",
+      "passed": true,
+      "detail": "ev_a39543fc74012390378482ed35d302c3fca58d1cb364a2ae11992398233a4a90"
+    },
+    {
+      "check": "KOReader REA capture 2",
+      "passed": true,
+      "detail": "ev_a6b04dfb3f4fc71608088072573849159793465f047669ca30bba74c14baa8d4"
+    },
+    {
+      "check": "KOReader REA capture 3",
+      "passed": true,
+      "detail": "ev_1a30a22265d8c7650c001923c769bb9f8f1e6cb58552ac3f2c70d2005b09d2af"
+    },
+    {
+      "check": "KOReader REA capture 4",
+      "passed": true,
+      "detail": "ev_9261afe5a0f397756071b9165d92a764f280547997d9b93240682c444222677e"
+    },
+    {
+      "check": "KOReader REA capture 5",
+      "passed": true,
+      "detail": "ev_063cb20c62a4e8ea739624b628738f7bd30e96573a0c3671a3d78f0bf1fcd64a"
+    },
+    {
+      "check": "KOReader vocab observations",
+      "passed": true,
+      "detail": "Primer acierto 30 min; olvido 5 min; techo de intervalo"
+    },
+    {
+      "check": "KOReader timer observations",
+      "passed": true,
+      "detail": "Reloj stub explícito; descomposición real"
+    },
+    {
+      "check": "KOReader Markdown observations",
+      "passed": true,
+      "detail": "Contenido y backlinks de datos de prueba"
+    },
+    {
+      "check": "KOReader history observations",
+      "passed": true,
+      "detail": "Filesystem stub explícito"
+    },
+    {
+      "check": "KOReader context observations",
+      "passed": true,
+      "detail": "Documento y widgets stub explícito"
+    },
+    {
+      "check": "obsidian inventory",
+      "passed": true,
+      "detail": "20 filas distintas, propuestas sujetas a revisión"
+    },
+    {
+      "check": "koreader inventory",
+      "passed": true,
+      "detail": "20 filas distintas, propuestas sujetas a revisión"
+    },
+    {
+      "check": "Glosa audit",
+      "passed": true,
+      "detail": "Revisión estática fuente; no prueba de runtime"
+    }
+  ]
+}

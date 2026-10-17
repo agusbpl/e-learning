@@ -1,0 +1,969 @@
+{
+  "scope": "Lectura estática de fuente completa; no ejecución ni acceso a datos personales. Ausente significa sin flujo encontrado en rutas revisadas, no prueba matemática global.",
+  "entries": [
+    {
+      "id": "G01",
+      "category": "PDF",
+      "name": "Buscar texto dentro del PDF",
+      "status": "ausente",
+      "evidence": [
+        {
+          "path": "web/notes.js",
+          "line": 267
+        },
+        {
+          "path": "web/notes.js",
+          "line": 476
+        },
+        {
+          "path": "tutor_context.py",
+          "line": 114
+        }
+      ],
+      "limitation": "El selector busca títulos; paint carga texto de una página. Hay recuperación textual para el tutor, no una interfaz de coincidencias del lector.",
+      "proposal": "Buscar frase y términos con resultados por página, contexto y navegación anterior/siguiente.",
+      "priority": "P0",
+      "acceptance": "Una consulta encuentra coincidencias de varias páginas y cada resultado abre y señala el fragmento."
+    },
+    {
+      "id": "G02",
+      "category": "PDF",
+      "name": "Índice jerárquico del documento",
+      "status": "ausente",
+      "evidence": [
+        {
+          "path": "web/notes.js",
+          "line": 458
+        },
+        {
+          "path": "web/notes.js",
+          "line": 476
+        }
+      ],
+      "limitation": "La ruta de carga/render inspeccionada no solicita getOutline.",
+      "proposal": "Mostrar índice nativo del PDF; usar índice manual claramente identificado cuando no exista.",
+      "priority": "P1",
+      "acceptance": "Elegir una sección abre su destino; un documento sin índice no muestra un índice inventado."
+    },
+    {
+      "id": "G03",
+      "category": "PDF",
+      "name": "Navegación de páginas visible",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/notes.js",
+          "line": 456
+        },
+        {
+          "path": "web/notes.js",
+          "line": 493
+        }
+      ],
+      "limitation": "El contador existe, pero pdf-page es un input hidden y el avance depende de comandos.",
+      "proposal": "Añadir salto visible por número, anterior/siguiente y etiquetas de página si el PDF las tiene.",
+      "priority": "P1",
+      "acceptance": "Se puede saltar a página válida sin conocer atajos; se distingue página PDF de numeración impresa."
+    },
+    {
+      "id": "G04",
+      "category": "PDF",
+      "name": "Continuidad entre páginas",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/notes.js",
+          "line": 275
+        },
+        {
+          "path": "web/notes.js",
+          "line": 476
+        }
+      ],
+      "limitation": "El lector dibuja una sola página; readStep cambia al llegar al borde.",
+      "proposal": "Ofrecer desplazamiento continuo con renderizado acotado y conservar modo página.",
+      "priority": "P2",
+      "acceptance": "El scroll atraviesa tres páginas sin vacíos ni crecimiento de canvases ilimitado."
+    },
+    {
+      "id": "G05",
+      "category": "PDF",
+      "name": "Volver al lugar exacto",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/notes.js",
+          "line": 458
+        },
+        {
+          "path": "web/notes.js",
+          "line": 476
+        },
+        {
+          "path": "web/notes.js",
+          "line": 253
+        }
+      ],
+      "limitation": "Se conserva página y paint permite preservar proporción al zoom; el salto de nota no implementa una pila general de retornos.",
+      "proposal": "Historial de ubicaciones con página, desplazamiento, bloque y selección/borrador.",
+      "priority": "P0",
+      "acceptance": "Abrir nota desde una lección y volver restaura párrafo y borrador; navegar por fuente restaura desplazamiento PDF."
+    },
+    {
+      "id": "G06",
+      "category": "PDF",
+      "name": "Enlaces internos y externos del PDF",
+      "status": "ausente",
+      "evidence": [
+        {
+          "path": "web/notes.js",
+          "line": 476
+        }
+      ],
+      "limitation": "paint crea canvas y TextLayer, sin AnnotationLayer ni resolución de destinos en la ruta inspeccionada.",
+      "proposal": "Renderizar enlaces del PDF, destinos internos y política segura para externos.",
+      "priority": "P1",
+      "acceptance": "Un enlace de índice y una referencia interna abren el destino correcto; un enlace externo se identifica."
+    },
+    {
+      "id": "G07",
+      "category": "PDF",
+      "name": "Selección a pregunta o ficha",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/notes.js",
+          "line": 449
+        },
+        {
+          "path": "web/notes.js",
+          "line": 500
+        },
+        {
+          "path": "web/study-tools.js",
+          "line": 173
+        }
+      ],
+      "limitation": "Se puede resaltar, comentar y consultar; la ficha se inserta aparte como plantilla.",
+      "proposal": "Crear una ficha/pregunta desde la selección con cita, hash, página y enlace de regreso.",
+      "priority": "P0",
+      "acceptance": "La pregunta conserva la cita y localización y no registra dominio por crear la ficha."
+    },
+    {
+      "id": "G08",
+      "category": "PDF",
+      "name": "Lectura de escaneos",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "library.py",
+          "line": 194
+        },
+        {
+          "path": "web/notes.js",
+          "line": 476
+        }
+      ],
+      "limitation": "Hay extracción y TextLayer; en estas rutas no hay flujo de OCR ni advertencia específica por página sin texto.",
+      "proposal": "Detectar páginas sin texto y ofrecer OCR local opcional conservando original y procedencia.",
+      "priority": "P1",
+      "acceptance": "Un escaneo informa que no tiene texto; el texto OCR se etiqueta y se puede corregir sin reemplazar el PDF."
+    },
+    {
+      "id": "G09",
+      "category": "PDF",
+      "name": "Marcadores de lectura",
+      "status": "ausente",
+      "evidence": [
+        {
+          "path": "web/notes.js",
+          "line": 409
+        },
+        {
+          "path": "web/notes.js",
+          "line": 493
+        }
+      ],
+      "limitation": "Hay anclas de anotación y página actual; no hay lista dedicada de marcadores sin comentario.",
+      "proposal": "Guardar marcadores nombrados por documento y recuperarlos desde la lección.",
+      "priority": "P2",
+      "acceptance": "Se marca una página sin escribir comentario y se recupera tras recargar."
+    },
+    {
+      "id": "G10",
+      "category": "PDF",
+      "name": "Accesibilidad del contenido PDF",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/notes.js",
+          "line": 476
+        }
+      ],
+      "limitation": "Canvas tiene aria-label y existe TextLayer; esta ruta no crea árbol estructural del documento.",
+      "proposal": "Vista de texto accesible por página con encabezados cuando existan y navegación de lectura.",
+      "priority": "P1",
+      "acceptance": "Un lector de pantalla recorre el contenido sin depender de coordenadas ni del canvas."
+    },
+    {
+      "id": "G11",
+      "category": "Notas y conceptos",
+      "name": "Conceptos enlazados en la lección",
+      "status": "existe",
+      "evidence": [
+        {
+          "path": "web/app.js",
+          "line": 185
+        },
+        {
+          "path": "web/app.js",
+          "line": 230
+        },
+        {
+          "path": "author_mcp.py",
+          "line": 279
+        }
+      ],
+      "limitation": "Existe enlace nativo estable y render compatible con resaltados; la autoría debe insertar los enlaces.",
+      "proposal": "Añadir revisión editorial de términos relevantes sin links y selector de nota durante autoría; mantener texto natural.",
+      "priority": "P0",
+      "acceptance": "Los términos se consultan dentro del párrafo; nunca se agrega un glosario previo obligatorio."
+    },
+    {
+      "id": "G12",
+      "category": "Notas y conceptos",
+      "name": "Preview contextual del concepto",
+      "status": "existe",
+      "evidence": [
+        {
+          "path": "web/app.js",
+          "line": 191
+        }
+      ],
+      "limitation": "La preview renderiza note.content completo; omite pageNotes y no contextualiza la acepción por lección.",
+      "proposal": "Conservar preview y permitir resumen/acepción pertinente, fuente y expandir contenido largo.",
+      "priority": "P1",
+      "acceptance": "Un concepto largo muestra una definición útil sin desbordar; sigue funcionando foco y Escape."
+    },
+    {
+      "id": "G13",
+      "category": "Notas y conceptos",
+      "name": "Consulta de conceptos en táctil",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/app.js",
+          "line": 211
+        },
+        {
+          "path": "web/app.js",
+          "line": 213
+        }
+      ],
+      "limitation": "pointerover ignora touch y el clic navega directamente a la nota.",
+      "proposal": "Ofrecer acción táctil para preview y otra para abrir sin perder ubicación.",
+      "priority": "P1",
+      "acceptance": "Un usuario táctil puede leer definición y cerrar manteniendo la lección en el mismo lugar."
+    },
+    {
+      "id": "G14",
+      "category": "Notas y conceptos",
+      "name": "Unificar enlaces por ID y wikilinks",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/app.js",
+          "line": 185
+        },
+        {
+          "path": "web/study-tools.js",
+          "line": 105
+        },
+        {
+          "path": "web/study-tools.js",
+          "line": 132
+        }
+      ],
+      "limitation": "Los enlaces nativos son por ID; referencias inversas de StudyTools siguen títulos exactos de wikilinks.",
+      "proposal": "Resolver ambas sintaxis a identidad de nota y mostrar backlinks también desde bloques de curso.",
+      "priority": "P0",
+      "acceptance": "Renombrar una nota no rompe referencias resueltas y un link nativo de lección aparece en sus backlinks."
+    },
+    {
+      "id": "G15",
+      "category": "Notas y conceptos",
+      "name": "Ambigüedad y alias de conceptos",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/study-tools.js",
+          "line": 105
+        },
+        {
+          "path": "web/study-tools.js",
+          "line": 138
+        }
+      ],
+      "limitation": "La resolución documentada usa título exacto normalizado; no hay selección por materia o acepción.",
+      "proposal": "Alias y selector de destino cuando coinciden títulos; no enlazar automáticamente homónimos.",
+      "priority": "P1",
+      "acceptance": "SI puede resolver a una nota elegida y dos conceptos iguales de materias distintas no se confunden."
+    },
+    {
+      "id": "G16",
+      "category": "Notas y conceptos",
+      "name": "Ficha como práctica recuperable",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/study-tools.js",
+          "line": 173
+        },
+        {
+          "path": "web/study-tools.js",
+          "line": 373
+        }
+      ],
+      "limitation": "La ficha es texto añadido al final de una nota, no una actividad con intento independiente.",
+      "proposal": "Permitir responder pregunta de ficha ocultando definición y registrar intento ligado a criterio explícito.",
+      "priority": "P0",
+      "acceptance": "Se puede responder antes de ver el contenido y la evaluación no confunde rellenar plantilla con evidencia."
+    },
+    {
+      "id": "G17",
+      "category": "Notas y conceptos",
+      "name": "Registro de errores y reintento",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/study-tools.js",
+          "line": 271
+        },
+        {
+          "path": "web/study-tools.js",
+          "line": 542
+        }
+      ],
+      "limitation": "Registro personal y corrección existen separados de los intentos y evaluaciones.",
+      "proposal": "Enlazar error con ejercicio, criterio y fuente; generar caso nuevo para comprobar resolución.",
+      "priority": "P0",
+      "acceptance": "Un error sigue pendiente hasta una comprobación nueva; su corrección previa no se muestra antes del intento."
+    },
+    {
+      "id": "G18",
+      "category": "Notas y conceptos",
+      "name": "Conceptos con relaciones explicadas",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/study-tools.js",
+          "line": 132
+        },
+        {
+          "path": "web/study-tools.js",
+          "line": 144
+        }
+      ],
+      "limitation": "Backlinks y menciones indican conexión textual, sin relación conceptual tipada.",
+      "proposal": "Relaciones pequeñas como se diferencia de, requiere, aplica a con explicación y fuente dentro de notas.",
+      "priority": "P2",
+      "acceptance": "Una comparación abre ambos conceptos y conserva su justificación; no depende de un grafo global."
+    },
+    {
+      "id": "G19",
+      "category": "Práctica y evaluación",
+      "name": "Cola de repaso por criterio",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "server.py",
+          "line": 334
+        },
+        {
+          "path": "tutor_mcp.py",
+          "line": 386
+        }
+      ],
+      "limitation": "La recomendación principal agrega por lección; sí hay criterionChecks en evaluación.",
+      "proposal": "Construir cola de criterios pendientes y frágiles, ordenada por parcial y evidencia independiente.",
+      "priority": "P0",
+      "acceptance": "Dos criterios con estados distintos generan tareas distintas sin trasladar dominio entre ellos."
+    },
+    {
+      "id": "G20",
+      "category": "Práctica y evaluación",
+      "name": "Retención después de acreditar",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "server.py",
+          "line": 350
+        },
+        {
+          "path": "tutor_modes.py",
+          "line": 372
+        }
+      ],
+      "limitation": "recommend omite lecciones independent; el caso todas acreditadas solo recomienda repaso integrador.",
+      "proposal": "Agendar comprobaciones espaciadas de recuperación con plazos explícitos y posibilidad de ajustar.",
+      "priority": "P0",
+      "acceptance": "Una lección acreditada reaparece para comprobación sin borrar su evidencia previa ni inventar olvido medido."
+    },
+    {
+      "id": "G21",
+      "category": "Práctica y evaluación",
+      "name": "Simulacro con corrección diferida",
+      "status": "ausente",
+      "evidence": [
+        {
+          "path": "web/app.js",
+          "line": 316
+        },
+        {
+          "path": "web/app.js",
+          "line": 355
+        }
+      ],
+      "limitation": "saveAnswer revela feedback choice antes de terminar el flujo de consulta; no hay objeto sesión de examen en esta ruta.",
+      "proposal": "Sesión de simulacro que fije preguntas y orden y revele correcciones al terminar.",
+      "priority": "P0",
+      "acceptance": "No se ve clave durante el intento y al terminar se conserva respuesta original, orden, ayudas y feedback."
+    },
+    {
+      "id": "G22",
+      "category": "Práctica y evaluación",
+      "name": "Tiempo de simulacro",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/app.js",
+          "line": 546
+        },
+        {
+          "path": "web/app.js",
+          "line": 620
+        }
+      ],
+      "limitation": "Existe tiempo estimado de estudio/sesión visible; no es un cronómetro por intento de simulacro.",
+      "proposal": "Cronómetro opcional con pausa e interrupciones diferenciadas; distinguir inconcluso de error conceptual.",
+      "priority": "P1",
+      "acceptance": "El vencimiento no convierte automáticamente una respuesta incompleta en falta de comprensión."
+    },
+    {
+      "id": "G23",
+      "category": "Práctica y evaluación",
+      "name": "Intercalación de unidades",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/app.js",
+          "line": 162
+        },
+        {
+          "path": "server.py",
+          "line": 334
+        }
+      ],
+      "limitation": "Actividades se presentan según secuencia de una lección y recomendación elige una lección.",
+      "proposal": "Sesiones mixtas por alcance confirmado y criterios, con selección trazable y azar del sistema cuando corresponda.",
+      "priority": "P0",
+      "acceptance": "Una sesión combina unidades incluidas sin sumar temario externo ni repetir la misma clave revelada."
+    },
+    {
+      "id": "G24",
+      "category": "Práctica y evaluación",
+      "name": "Reformular casos después de ayuda",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "tutor_mcp.py",
+          "line": 386
+        },
+        {
+          "path": "docs/evaluacion-rigurosa.md",
+          "line": 28
+        }
+      ],
+      "limitation": "La regla exige aplicación nueva; el formulario conserva el mismo ejercicio y prior response.",
+      "proposal": "Acción explícita Pedir comprobación nueva ligada al criterio, con versión y fuente verificadas.",
+      "priority": "P0",
+      "acceptance": "Después de ayuda se evalúa un caso distinto y se identifica la respuesta como independiente o asistida."
+    },
+    {
+      "id": "G25",
+      "category": "Práctica y evaluación",
+      "name": "Tablero de evidencia por criterio",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/app.js",
+          "line": 432
+        },
+        {
+          "path": "tutor_mcp.py",
+          "line": 386
+        }
+      ],
+      "limitation": "Hay detalles de contexto y evidencia y estado de lección; falta una vista transversal estructurada por criterio.",
+      "proposal": "Mostrar criterio, cita del estudiante, estado, independencia, fecha y próxima comprobación.",
+      "priority": "P0",
+      "acceptance": "Cada estado visible se puede rastrear a ejercicio, respuesta y cita real sin mostrar una nota numérica ficticia."
+    },
+    {
+      "id": "G26",
+      "category": "Práctica y evaluación",
+      "name": "Historial comparativo de intentos",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/app.js",
+          "line": 319
+        },
+        {
+          "path": "web/app.js",
+          "line": 468
+        }
+      ],
+      "limitation": "Se guardan respuestas en eventos y se muestra la última en formulario/cuaderno; no hay comparación dirigida por criterio.",
+      "proposal": "Comparar intentos de un mismo criterio y separar qué cambió tras explicación o transferencia.",
+      "priority": "P1",
+      "acceptance": "El usuario ve ambas respuestas originales y las ayudas intermedias sin sobrescribir historial."
+    },
+    {
+      "id": "G27",
+      "category": "Práctica y evaluación",
+      "name": "Incertidumbre y reclamo de evaluación",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "tutor_mcp.py",
+          "line": 386
+        },
+        {
+          "path": "docs/evaluacion-rigurosa.md",
+          "line": 27
+        }
+      ],
+      "limitation": "El contrato admite estados de criterio inciertos y reglas; el flujo de apelación no está en la UI inspeccionada.",
+      "proposal": "Acción revisar criterio que adjunte respuesta, rúbrica y fuente y deje auditoría de reevaluación.",
+      "priority": "P1",
+      "acceptance": "Una reevaluación conserva el dictamen previo y explica cambio o incertidumbre con fuentes."
+    },
+    {
+      "id": "G28",
+      "category": "Práctica y evaluación",
+      "name": "Práctica de producción no textual",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/app.js",
+          "line": 316
+        },
+        {
+          "path": "server.py",
+          "line": 133
+        }
+      ],
+      "limitation": "La UI de ejercicio admite choice y textarea de explicación/aplicación.",
+      "proposal": "Adjuntar desarrollo, esquema o imagen para materias que lo requieran; criterios que evalúen su contenido.",
+      "priority": "P2",
+      "acceptance": "Un procedimiento manuscrito se conserva como evidencia y el tutor explicita límites de lectura de la imagen."
+    },
+    {
+      "id": "G29",
+      "category": "Planificación",
+      "name": "Alcance confirmado del parcial",
+      "status": "existe",
+      "evidence": [
+        {
+          "path": "author_mcp.py",
+          "line": 386
+        },
+        {
+          "path": "tutor_mcp.py",
+          "line": 620
+        },
+        {
+          "path": "tutor_modes.py",
+          "line": 357
+        }
+      ],
+      "limitation": "Existe propuesta/confirmación de temario; el calendario local crea eventos sin seleccionar alcance en el formulario.",
+      "proposal": "Integrar selección y confirmación de unidades/notas al evento de parcial desde UI.",
+      "priority": "P0",
+      "acceptance": "Un parcial tiene alcance visible con procedencia y estado confirmado o propuesto antes de planificar."
+    },
+    {
+      "id": "G30",
+      "category": "Planificación",
+      "name": "Plan global y siguiente acción ejecutable",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/tutor-modes.js",
+          "line": 87
+        },
+        {
+          "path": "tutor_modes.py",
+          "line": 488
+        }
+      ],
+      "limitation": "El plan global lista cobertura y postergación; planRow muestra títulos como texto.",
+      "proposal": "Cada tarea debe abrir lección, fuente o comprobación concreta y volver al plan.",
+      "priority": "P0",
+      "acceptance": "Desde una prioridad global se abre la tarea exacta del pliego correcto con un clic."
+    },
+    {
+      "id": "G31",
+      "category": "Planificación",
+      "name": "Dos planificadores coherentes",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "server.py",
+          "line": 334
+        },
+        {
+          "path": "tutor_modes.py",
+          "line": 488
+        },
+        {
+          "path": "web/plan.js",
+          "line": 35
+        }
+      ],
+      "limitation": "Conviven recomendación local y asignación global con modelos diferentes de selección.",
+      "proposal": "Alinear motivo de siguiente tarea entre Hoy, recomendación de curso y Parciales, mostrando conflictos explícitos.",
+      "priority": "P0",
+      "acceptance": "La tarea recomendada indica si corresponde al curso o al plan global y explica cualquier diferencia."
+    },
+    {
+      "id": "G32",
+      "category": "Planificación",
+      "name": "Presupuesto y replanificación por hechos",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "server.py",
+          "line": 317
+        },
+        {
+          "path": "tutor_modes.py",
+          "line": 445
+        }
+      ],
+      "limitation": "Existen disponibilidades, asignación y tiempos; duración no acredita dominio.",
+      "proposal": "Replanificar por tareas realizadas/evidencia y disponibilidad corregida, con vista previa de qué queda afuera.",
+      "priority": "P1",
+      "acceptance": "Una sesión corta no marca dominio y el cambio de disponibilidad muestra tareas postergadas antes de aplicarse."
+    },
+    {
+      "id": "G33",
+      "category": "Planificación",
+      "name": "Eventos globales editables",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/plan.js",
+          "line": 8
+        },
+        {
+          "path": "web/plan.js",
+          "line": 56
+        },
+        {
+          "path": "author_mcp.py",
+          "line": 369
+        }
+      ],
+      "limitation": "El calendario por fecha filtra curso; hay vista global de parciales.",
+      "proposal": "Calendario conjunto con filtro por materia/pliego y detección de compromisos superpuestos.",
+      "priority": "P1",
+      "acceptance": "Dos parciales de distintos pliegos aparecen juntos sin duplicar eventos ni inventar horarios."
+    },
+    {
+      "id": "G34",
+      "category": "Planificación",
+      "name": "Preparación según formato docente",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/app.js",
+          "line": 316
+        },
+        {
+          "path": "author_mcp.py",
+          "line": 104
+        }
+      ],
+      "limitation": "Hay objetivos, rúbricas y tipos de ejercicio; no aparece ficha estructurada de formato real del parcial en estas rutas.",
+      "proposal": "Registrar formato declarado, duración, recursos permitidos y tipos de desempeño esperados con fuente.",
+      "priority": "P1",
+      "acceptance": "El plan distingue examen oral, desarrollo o múltiple opción sin inferir probabilidades de examen."
+    },
+    {
+      "id": "G35",
+      "category": "Tutor y contexto",
+      "name": "Contexto controlado por el estudiante",
+      "status": "existe",
+      "evidence": [
+        {
+          "path": "web/context.js",
+          "line": 15
+        },
+        {
+          "path": "web/context.js",
+          "line": 79
+        },
+        {
+          "path": "tutor_context.py",
+          "line": 139
+        }
+      ],
+      "limitation": "Hay selección de documentos, páginas, notas e historial y preview; es un flujo separado del problema puntual.",
+      "proposal": "Presets por parcial o tarea que muestren selección efectiva antes de preguntar y advertencias al truncar.",
+      "priority": "P1",
+      "acceptance": "Una pregunta puede reutilizar el alcance del parcial y ver exactamente qué fuentes e historial se enviarán."
+    },
+    {
+      "id": "G36",
+      "category": "Tutor y contexto",
+      "name": "Búsqueda contextual explicable",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "tutor_context.py",
+          "line": 114
+        },
+        {
+          "path": "web/context.js",
+          "line": 95
+        }
+      ],
+      "limitation": "La recuperación usa términos y scoring léxico por página; no equivale a cobertura semántica completa.",
+      "proposal": "Mostrar fragmentos recuperados, permitir fijar/descartar y ampliar consulta con sinónimos editables.",
+      "priority": "P1",
+      "acceptance": "El usuario detecta una página relevante omitida y puede incorporarla sin afirmar exhaustividad de búsqueda."
+    },
+    {
+      "id": "G37",
+      "category": "Tutor y contexto",
+      "name": "Abrir la fuente de una explicación",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/app.js",
+          "line": 144
+        },
+        {
+          "path": "web/context.js",
+          "line": 95
+        }
+      ],
+      "limitation": "Las referencias de bloques abren URLs con página; manifiesto de contexto muestra documentos/páginas como texto.",
+      "proposal": "Citas del tutor y del manifiesto clicables hacia lector integrado con regreso al chat.",
+      "priority": "P0",
+      "acceptance": "Una afirmación citada abre la página exacta y regresar mantiene pregunta y posición de conversación."
+    },
+    {
+      "id": "G38",
+      "category": "Tutor y contexto",
+      "name": "Separar consulta de evaluación",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/app.js",
+          "line": 355
+        },
+        {
+          "path": "tutor_mcp.py",
+          "line": 386
+        }
+      ],
+      "limitation": "Consultar al tutor guarda respuesta y activa ayuda; contrato distingue feedback y assessment.",
+      "proposal": "Acciones claras explicar duda, guardar intento y evaluar evidencia, manteniendo registro de ayudas.",
+      "priority": "P0",
+      "acceptance": "Pedir explicación no se presenta como acreditar; responder antes de ayuda queda identificable."
+    },
+    {
+      "id": "G39",
+      "category": "Navegación y accesibilidad",
+      "name": "Búsqueda unificada de estudio",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/app.js",
+          "line": 618
+        },
+        {
+          "path": "web/notes.js",
+          "line": 317
+        },
+        {
+          "path": "web/study-tools.js",
+          "line": 144
+        }
+      ],
+      "limitation": "Lecciones, notas, títulos PDF y menciones tienen búsquedas separadas.",
+      "proposal": "Una búsqueda por concepto con resultados etiquetados en bloques, notas, PDFs, errores y ejercicios del alcance.",
+      "priority": "P0",
+      "acceptance": "Cada resultado incluye contexto y destino exacto; se puede filtrar por parcial sin mezclar datos privados de otro pliego."
+    },
+    {
+      "id": "G40",
+      "category": "Navegación y accesibilidad",
+      "name": "Índice de encabezados de nota",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/notes.js",
+          "line": 94
+        },
+        {
+          "path": "web/notes.js",
+          "line": 124
+        }
+      ],
+      "limitation": "Existen celdas por página y Markdown; el índice general de UI se refiere a lecciones.",
+      "proposal": "Índice plegable de encabezados de la nota y páginas con marcas y dudas.",
+      "priority": "P1",
+      "acceptance": "Una nota larga permite saltar al encabezado y volver sin perder edición."
+    },
+    {
+      "id": "G41",
+      "category": "Navegación y accesibilidad",
+      "name": "Atajos descubribles y perfil estándar",
+      "status": "existe",
+      "evidence": [
+        {
+          "path": "web/keyboard.js",
+          "line": 5
+        },
+        {
+          "path": "web/keyboard.js",
+          "line": 154
+        },
+        {
+          "path": "web/keyboard.js",
+          "line": 162
+        }
+      ],
+      "limitation": "Hay perfiles, paleta y ayuda extensa; los comandos son un inventario general.",
+      "proposal": "Paleta contextual por vista y ayudas breves junto a acciones relevantes, con controles visibles equivalentes.",
+      "priority": "P1",
+      "acceptance": "Un usuario con perfil estándar completa lectura/anotación/retorno sin memorizar Vim."
+    },
+    {
+      "id": "G42",
+      "category": "Navegación y accesibilidad",
+      "name": "Audio de lectura como apoyo",
+      "status": "ausente",
+      "evidence": [
+        {
+          "path": "docs/pendientes.md",
+          "line": 7
+        },
+        {
+          "path": "web/notes.js",
+          "line": 476
+        }
+      ],
+      "limitation": "Voz y seguimiento están explícitamente pendientes; no son capacidades actuales.",
+      "proposal": "Lectura opcional desde selección, velocidad y pausa con proveedor/costo explícito y sincronización limitada.",
+      "priority": "P2",
+      "acceptance": "Detener audio conserva posición y escuchar no cambia estado de dominio."
+    },
+    {
+      "id": "G43",
+      "category": "Persistencia y autoría",
+      "name": "Recuperación de conflictos comprensible",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "library.py",
+          "line": 531
+        },
+        {
+          "path": "library.py",
+          "line": 559
+        },
+        {
+          "path": "library.py",
+          "line": 979
+        }
+      ],
+      "limitation": "Se detectan revisiones y se preserva archivo de conflicto; no hay comparación visual en estas rutas.",
+      "proposal": "Interfaz para comparar local/servidor/archivo y elegir o fusionar sin perder ninguna versión.",
+      "priority": "P1",
+      "acceptance": "Ediciones concurrentes se recuperan con ambas versiones visibles y IDs conservados."
+    },
+    {
+      "id": "G44",
+      "category": "Persistencia y autoría",
+      "name": "Versionar sin ocultar evidencia anterior",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "author_mcp.py",
+          "line": 296
+        },
+        {
+          "path": "server.py",
+          "line": 339
+        }
+      ],
+      "limitation": "Se conserva historial y previousCourse; recomendación filtra eventos por versión actual.",
+      "proposal": "Relacionar criterios estables entre versiones y mostrar evidencia histórica pendiente de revalidar, sin acreditarla automáticamente.",
+      "priority": "P0",
+      "acceptance": "Una edición tipográfica no hace invisible el historial; un cambio conceptual exige comprobación explicada."
+    },
+    {
+      "id": "G45",
+      "category": "Persistencia y autoría",
+      "name": "Previsualización y revisión semántica editorial",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "author_mcp.py",
+          "line": 181
+        },
+        {
+          "path": "author_mcp.py",
+          "line": 224
+        },
+        {
+          "path": "author_mcp.py",
+          "line": 296
+        }
+      ],
+      "limitation": "Hay chequeos, borradores y actualización atómica; la semántica no la garantiza validar formato.",
+      "proposal": "Informe revisable de cambios, fuentes, enlaces rotos y criterios afectados antes de activar versión.",
+      "priority": "P0",
+      "acceptance": "El autor puede inspeccionar diff y revisión semántica separada; IDs e historial siguen trazables."
+    },
+    {
+      "id": "G46",
+      "category": "Persistencia y autoría",
+      "name": "Uso sin conexión y continuidad móvil",
+      "status": "parcial",
+      "evidence": [
+        {
+          "path": "web/notes.js",
+          "line": 193
+        },
+        {
+          "path": "web/notes.js",
+          "line": 195
+        },
+        {
+          "path": "web/app.js",
+          "line": 66
+        }
+      ],
+      "limitation": "Hay borrador local pero API y PDF se sirven desde servidor; no se observó service worker en la superficie revisada.",
+      "proposal": "Definir modo desconectado explícito para lecturas seleccionadas y cola local de operaciones con resolución de conflictos.",
+      "priority": "P2",
+      "acceptance": "Sin conexión se informa qué está disponible; reconectar no duplica intentos ni pisa revisiones."
+    }
+  ]
+}

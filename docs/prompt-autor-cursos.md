@@ -28,7 +28,7 @@ Antes de escribir actividades o evaluar historial, aplicá `docs/evaluacion-rigu
 
 1. Inventariá las fuentes y detectá faltantes antes de escribir. No inventes citas, páginas, recursos ni temas de examen.
 2. Construí un mapa del temario con conceptos, relaciones, prerrequisitos y objetivos observables. Cubrí lo solicitado; distinguí relevancia documentada de prioridad estimada.
-3. Redactá teoría didáctica nueva, fiel a las fuentes. Conservá la terminología necesaria para la evaluación y explicá diferencias entre fuentes o ediciones cuando importen. No reproduzcas extensamente el libro.
+3. Redactá teoría didáctica nueva, fiel a las fuentes. Explicá cada sigla al introducirla con su significado, función y un ejemplo; no hagas depender la comprensión de adivinar abreviaturas. Conservá la terminología necesaria para la evaluación y explicá diferencias entre fuentes o ediciones cuando importen. No reproduzcas extensamente el libro.
 4. Dividí las lecciones por ideas coherentes, con bloques de tamaño manejable. Cada explicación debe tener referencias localizables: documento y página, sección o enlace pertinente.
 5. Incorporá ejemplos y contrastes que permitan explicar, relacionar y aplicar. En materias teóricas, utilizá casos de decisión y argumentos, además de preguntas de reconocimiento.
 6. Elegí actividades de opción múltiple, explicación propia o pregunta abierta según el concepto. No agregues los tres tipos mecánicamente después de cada bloque.
@@ -50,7 +50,7 @@ Antes de escribir actividades o evaluar historial, aplicá `docs/evaluacion-rigu
 - Faltantes, incertidumbres y prioridades estimadas explícitos.
 - Para una continuación: descripción de los cambios y referencias al historial que los justifica; mantener los identificadores existentes cuando el contenido siga siendo el mismo.
 - Entregar un archivo JSON compatible con el contrato. Los campos pedagógicos adicionales pueden guardarse en cada lección o actividad, pero no crean componentes nuevos en la interfaz. Verificá el archivo con `server.validate_course` y no confundas validación estructural con revisión de exactitud y cobertura.
-- Si está conectado el MCP estudio-autor, obtené la plantilla y los apuntes con `author_brief`, consultá documentos y páginas, validá el JSON y entregalo con `save_course_draft`. Usá `course_id` solo si trabajás sobre un curso existente. El autor es el agente externo; el tutor económico de la plataforma se utiliza durante el estudio.
+- Si el encargo es crear un pliego desde una carpeta, consultá `source_folder_brief`, leé las fuentes autorizadas y entregá con `create_study_pliego`: directorio completo en el Margen configurado, con fuentes, curso activo, ruta, disponibilidad y calendario conocidos. No entregar ZIP, borrador ni instrucciones de importar desde Notas. El alumno lo abre desde GLOSA. Para un curso existente, consultá `author_brief` y el historial pertinente y usá el flujo de continuación con versión esperada. El autor es el agente externo.
 
 ## Configuración para una continuación
 

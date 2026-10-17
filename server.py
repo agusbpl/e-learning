@@ -771,6 +771,12 @@ class Handler(BaseHTTPRequestHandler):
         if not self.allowed(): return self.send({'error':'Origen no permitido.'},403)
         path = parse.urlparse(self.path).path
         try:
+            if path=='/api/author-folders':
+                import author_pliego
+                folder=parse.parse_qs(parse.urlparse(self.path).query).get('path',[''])[0]
+                return self.send({**author_pliego.browse_folders(folder),
+                                  'margen':rooms.margen(DATA,create=False)['path'],
+                                  'authorCommand':str(ROOT/'start-author.sh')})
             if path=='/api/rooms': return self.send({'rooms': rooms.list_rooms(DATA, ROOT), 'active': active_workspace()['id'], **rooms.inventory(DATA, ROOT)})
             if path=='/api/rooms/export':
                 scope=active_workspace()
@@ -846,7 +852,7 @@ class Handler(BaseHTTPRequestHandler):
                 with file.open('rb') as stream:
                     stream.seek(start)
                     return self.send(stream.read(end-start+1),status,content_type={'.mp4':'video/mp4','.webm':'video/webm','.jpg':'image/jpeg'}[file.suffix],extra_headers=headers)
-            files={'/rooms.js':('web/rooms.js','text/javascript; charset=utf-8'),'/plan.js':('web/plan.js','text/javascript; charset=utf-8'),'/context.js':('web/context.js','text/javascript; charset=utf-8'),'/silent.css':('web/silent.css','text/css; charset=utf-8'),'/':('web/index.html','text/html; charset=utf-8'),'/keyboard.js':('web/keyboard.js','text/javascript; charset=utf-8'),'/randomize.js':('web/randomize.js','text/javascript; charset=utf-8'),'/app.js':('web/app.js','text/javascript; charset=utf-8'),'/notes.js':('web/notes.js','text/javascript; charset=utf-8'),'/style.css':('web/style.css','text/css; charset=utf-8')}
+            files={'/author-prompt.js':('web/author-prompt.js','text/javascript; charset=utf-8'),'/rooms.js':('web/rooms.js','text/javascript; charset=utf-8'),'/plan.js':('web/plan.js','text/javascript; charset=utf-8'),'/context.js':('web/context.js','text/javascript; charset=utf-8'),'/silent.css':('web/silent.css','text/css; charset=utf-8'),'/':('web/index.html','text/html; charset=utf-8'),'/keyboard.js':('web/keyboard.js','text/javascript; charset=utf-8'),'/randomize.js':('web/randomize.js','text/javascript; charset=utf-8'),'/app.js':('web/app.js','text/javascript; charset=utf-8'),'/notes.js':('web/notes.js','text/javascript; charset=utf-8'),'/style.css':('web/style.css','text/css; charset=utf-8')}
             files['/notes.css']=('web/notes.css','text/css; charset=utf-8')
             files['/live-markdown.js']=('web/live-markdown.js','text/javascript; charset=utf-8')
             files['/markdown.js']=('web/markdown.js','text/javascript; charset=utf-8')

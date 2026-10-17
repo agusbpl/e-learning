@@ -38,3 +38,10 @@ output/*.tar.gz
 output/preview-check.js
 output/vista-estudio-celular.html
 sites/
+
+test-results/
+
+tests/debug_*.cjs
+
+# Capturas originales de investigación: respaldo local, fuera de la distribución.
+docs/investigaciones/**/evidencia/

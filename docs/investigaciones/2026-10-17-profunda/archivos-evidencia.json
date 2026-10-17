@@ -1,0 +1,282 @@
+[
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/out/rea-s1.json",
+    "stored": "evidencia/koreader/rea-s1.json",
+    "rawSha256": "8842cc834f71e1e6806d43b8fddc1fd1dbf05753e0d75aef46935b8433ead4bd",
+    "rawBytes": 10620,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/out/rea-s2.json",
+    "stored": "evidencia/koreader/rea-s2.json",
+    "rawSha256": "6775051cd456ba01ec8301bb19608f5c95bee3eccf73b4f381b0330138e17b50",
+    "rawBytes": 7493,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/out/rea-s3.json",
+    "stored": "evidencia/koreader/rea-s3.json",
+    "rawSha256": "240b7ffa4a003c297c8a2fa9d185fc6e6b67cdeae57a7f5257f7c90468e95ca5",
+    "rawBytes": 9372,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/out/rea-s4.json",
+    "stored": "evidencia/koreader/rea-s4.json",
+    "rawSha256": "97ada6ed2892e068241d90805ca91c5b549ad627f6b46d7c4fd0f23f2836eaa9",
+    "rawBytes": 8757,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/out/rea-s5.json",
+    "stored": "evidencia/koreader/rea-s5.json",
+    "rawSha256": "2a6b30f5c1b45f0c7f9592077a3f6a3f09973b02fe3cd4800b1c9a7ba30c9b74",
+    "rawBytes": 7838,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/harness/h3_md.lua",
+    "stored": "evidencia/koreader/harness/h3_md.lua",
+    "rawSha256": "e80e6a63d1fb228f2f38512529acd136c27514ae35a188a6fd629be9b43439bc",
+    "rawBytes": 1891,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/harness/h2_readtimer.lua",
+    "stored": "evidencia/koreader/harness/h2_readtimer.lua",
+    "rawSha256": "0b95437d5aaeac13472419658664b1f01ea9c07edd56fd879de3d607e1f2ed33",
+    "rawBytes": 2775,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/harness/h1_vocab.lua",
+    "stored": "evidencia/koreader/harness/h1_vocab.lua",
+    "rawSha256": "a20b24790fe6711fb37705fd4c410a4c8b48000d16f5ec2dcf6630043551212c",
+    "rawBytes": 2483,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/harness/h5_readersearch.lua",
+    "stored": "evidencia/koreader/harness/h5_readersearch.lua",
+    "rawSha256": "247a4259d760d62098302479ca9a76cf00d365d83bae0c167f301e5d0e4b3228",
+    "rawBytes": 3553,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/harness/h4_readhistory.lua",
+    "stored": "evidencia/koreader/harness/h4_readhistory.lua",
+    "rawSha256": "9a83947cf736a72b5318178bf6ad93b348dc3bfdbc27380bdcd6c94f8390cb68",
+    "rawBytes": 2828,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/scenarios/s5-h5_readersearch.json",
+    "stored": "evidencia/koreader/scenarios/s5-h5_readersearch.json",
+    "rawSha256": "398d4721d402f7db2ba8748383c03573934537a131ca75e25faf49a6dd8db1d3",
+    "rawBytes": 586,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/scenarios/s4-h4_readhistory.json",
+    "stored": "evidencia/koreader/scenarios/s4-h4_readhistory.json",
+    "rawSha256": "0ca904ed81caf8ed450d173bd66b608f4f5398189fde5c223aedf6ad377cd963",
+    "rawBytes": 585,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/scenarios/s3-h3_md.json",
+    "stored": "evidencia/koreader/scenarios/s3-h3_md.json",
+    "rawSha256": "6615c1aafb977bf0a79eea6a1b9e5075c42be94d4075bd3be9b91b9063f3a562",
+    "rawBytes": 576,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/scenarios/s2-h2_readtimer.json",
+    "stored": "evidencia/koreader/scenarios/s2-h2_readtimer.json",
+    "rawSha256": "ac6ada00bdb2c9f01085c9159ea2c257b859a42aa8c377e2042cbc679c9d0bd7",
+    "rawBytes": 583,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/scenarios/s1-h1_vocab.json",
+    "stored": "evidencia/koreader/scenarios/s1-h1_vocab.json",
+    "rawSha256": "ccf58c43847aabfb91066776f520a668cfa4309fcfdd5eabc978ce8b78cd67c2",
+    "rawBytes": 579,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/evidencia/03-indice.txt",
+    "stored": "evidencia/koreader/evidencia/03-indice.txt",
+    "rawSha256": "a0ad877b526fa3f0ffaea5448161c89642f6507c5159d74a44469b1d373af8c5",
+    "rawBytes": 1325,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/evidencia/02-rea-capturas-meta.json",
+    "stored": "evidencia/koreader/evidencia/02-rea-capturas-meta.json",
+    "rawSha256": "22cbe16b4342e4512e42804625ed05ae6cef546078b9668e208e980365041712",
+    "rawBytes": 2646,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/evidencia/00-luajit.sha256",
+    "stored": "evidencia/koreader/evidencia/00-luajit.sha256",
+    "rawSha256": "c3b38d0432e04be8b7de7ca1c543c4f43e74d25c6f905342bb13ee8548270be4",
+    "rawBytes": 142,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/koreader/evidencia/01-modulos-ejecutados.sha256.tsv",
+    "stored": "evidencia/koreader/evidencia/01-modulos-ejecutados.sha256.tsv",
+    "rawSha256": "1c224e7df278db001df30a8f417c8746517449638f612a85c734b5aab9a9edca",
+    "rawBytes": 530,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/okular/fragments/provenance.json",
+    "stored": "evidencia/okular/provenance.json",
+    "rawSha256": "30301decb174fe5f680ef7f436720963e19feb75f36f32506acdc80520da503f",
+    "rawBytes": 3311,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/okular/fragments/dossiers-summary.json",
+    "stored": "evidencia/okular/dossiers-summary.json",
+    "rawSha256": "c95b5cce39360a6f3a718b652eed27a57a9e08ccaa55117deff984e74fc0a77b",
+    "rawBytes": 32802,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/okular/fragments/functions.json",
+    "stored": "evidencia/okular/functions.json",
+    "rawSha256": "4314ee6022383f762f36756ebca981420c97bd96d49368616342961bbb54610a",
+    "rawBytes": 4660,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/okular/fragments/open.json",
+    "stored": "evidencia/okular/open.json",
+    "rawSha256": "046c8617d2d0d9eda1049d7b5aa105a7a1df97767f245d621906bec9b03ab8d3",
+    "rawBytes": 255,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/okular/fragments/close.json",
+    "stored": "evidencia/okular/close.json",
+    "rawSha256": "f14e43c9fc4672a009e750f81c508c90aa566fe48060743ef662afc5fb14df83",
+    "rawBytes": 20,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/okular/fragments/export.json",
+    "stored": "evidencia/okular/export.json",
+    "rawSha256": "83ba132b2fc7030a03fa63c43406094e4cda5ba3a0196b56214419894f5b3f5c",
+    "rawBytes": 157,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/okular/fragments/nextBookmark.json",
+    "stored": "evidencia/okular/nextBookmark.json.gz",
+    "rawSha256": "a38a69deaf3531db0c4b6fe86b1e24fbd91ef7539eff6501c0603a68fd19b626",
+    "rawBytes": 4248409,
+    "gzip": true
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/okular/fragments/previousBookmark.json",
+    "stored": "evidencia/okular/previousBookmark.json.gz",
+    "rawSha256": "c56ba3dd076aada8f5d3ee1be3035dcd1d9dab4936c6a40415858d858540bc60",
+    "rawBytes": 4480791,
+    "gzip": true
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/okular/fragments/viewportLess.json",
+    "stored": "evidencia/okular/viewportLess.json.gz",
+    "rawSha256": "22a7a1de999ce065fed0cc980927b51b8de6d38ecd8e43533a23238a21b52fc0",
+    "rawBytes": 138465,
+    "gzip": true
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/okular/fragments/viewportToString.json",
+    "stored": "evidencia/okular/viewportToString.json.gz",
+    "rawSha256": "6421aa2fb7e89ea4816686ea1e5380c926e47aa29d750a4faa92a7fd84fbd5a5",
+    "rawBytes": 6949109,
+    "gzip": true
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/okular/fragments/continueSearch.json",
+    "stored": "evidencia/okular/continueSearch.json.gz",
+    "rawSha256": "acd08a1fad70383151f4493e8351d7ab8d785ff1c9163a1e5288dcaaf2db119d",
+    "rawBytes": 254621,
+    "gzip": true
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/okular/fragments/setViewportPage.json",
+    "stored": "evidencia/okular/setViewportPage.json.gz",
+    "rawSha256": "3f040044a26205990e99ca3fb669c541d621221155f6db9bf66582a2c5fda1dd",
+    "rawBytes": 161460,
+    "gzip": true
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/okular/extract_native.py",
+    "stored": "evidencia/okular/extract_native.py",
+    "rawSha256": "ab73a49cbe18b295ea5974311b7d0adf112fed42a4bc02ed58ea32d713c1acc4",
+    "rawBytes": 2908,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/okular/fragment_probe.py",
+    "stored": "evidencia/okular/fragment_probe.py",
+    "rawSha256": "19a90296f08b7ffc4000cecbccbbe11617290e52836e5848be86bcbe539f94fc",
+    "rawBytes": 1403,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/obsidian/corpus/INDEX.json",
+    "stored": "evidencia/obsidian/corpus-INDEX.json",
+    "rawSha256": "cfb412854147df51710cca86d231b0fbe7501d2425fbe644426cf510df91bf5e",
+    "rawBytes": 47987,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/obsidian/tools/extract_functions.mjs",
+    "stored": "evidencia/obsidian/extract_functions.mjs",
+    "rawSha256": "ad178473f03c9e4a55d6af0ad41ad244d3c79d0d249f0a23fd9a668ae9ef1e1c",
+    "rawBytes": 10349,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/obsidian/evidence/re05-corpus-analysis.json",
+    "stored": "evidencia/obsidian/re05-corpus-analysis.json.gz",
+    "rawSha256": "69c6227afc7d59d810ca6cae70d62be65af32a5d34acfe65e0c3ea999e227fa1",
+    "rawBytes": 21503237,
+    "gzip": true
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/obsidian/evidence/trace-findCurrentOutlineItem.json",
+    "stored": "evidencia/obsidian/trace-findCurrentOutlineItem.json",
+    "rawSha256": "f1d34c220b4d2ac0c89a31fdd467a650a52974537599c5429f0003072245422b",
+    "rawBytes": 18929,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/obsidian/evidence/trace-startHover.json",
+    "stored": "evidencia/obsidian/trace-startHover.json",
+    "rawSha256": "deb8346f4d0c91aacc371bff8f87d0225d9b443c0b37fa9405e4e736979866df",
+    "rawBytes": 18915,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/obsidian/evidence/trace-updateSearch.json",
+    "stored": "evidencia/obsidian/trace-updateSearch.json",
+    "rawSha256": "9cee992a98319c6394043079e6a9b79fd11ee3f7aabb0f2083cc2a15d5be72ad",
+    "rawBytes": 18733,
+    "gzip": false
+  },
+  {
+    "source": "/tmp/glosa-deep-20261017/obsidian/evidence/trace-loadEmbed.json",
+    "stored": "evidencia/obsidian/trace-loadEmbed.json",
+    "rawSha256": "83d0529832afeacb33d6cf6469b2ce8f744adb9aa73bdda6456583b7a7d8a6ff",
+    "rawBytes": 18673,
+    "gzip": false
+  }
+]

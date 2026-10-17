@@ -1,0 +1,40 @@
+{
+  "model": "opencode/deepseek-v4.1-flash-free",
+  "interface": "opencode run --standalone --format json --auto",
+  "jobs": {
+    "obsidian": {
+      "sessions": [
+        "ses_eb555cdbcffemMsQfH2qGbrgFU"
+      ],
+      "steps": 42,
+      "reportedCost": 0,
+      "errors": [],
+      "reportSha256": "3de165cc3c167f9005f5190d05b1b9bb03226de9c488dbe938d79ea8cdf395a4",
+      "originalDirectory": "/tmp/glosa-obsidian-research",
+      "trace": "/tmp/glosa-obsidian-research/opencode-events.jsonl"
+    },
+    "okular": {
+      "sessions": [
+        "ses_eb554452dffemkQ3CH2ZGTc9JI"
+      ],
+      "steps": 46,
+      "reportedCost": 0,
+      "errors": [],
+      "reportSha256": "b1afc05c4b42bc1daeb52597b470cb0d7713c1a311287108701745d22ad52c7b",
+      "originalDirectory": "/tmp/glosa-okular-research",
+      "trace": "/tmp/glosa-okular-research/opencode-events.jsonl"
+    },
+    "koreader": {
+      "sessions": [
+        "ses_eb5544019ffeFq5MNKLX4b7a7Z"
+      ],
+      "steps": 42,
+      "reportedCost": 0,
+      "errors": [],
+      "reportSha256": "decb57a680a9cf58064305cedff563c6ded1173b4c4adbc63e7f707995dbb659",
+      "originalDirectory": "/tmp/glosa-koreader-research",
+      "trace": "/tmp/glosa-koreader-research/opencode-events.jsonl"
+    }
+  },
+  "scope": "Investigación estática; sin implementar funciones ni leer datos personales."
+}
